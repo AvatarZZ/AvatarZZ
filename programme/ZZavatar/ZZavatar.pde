@@ -13,6 +13,7 @@ import KinectPV2.*;
 // déclaration de variables globales ... penser à créer des objets
 boolean debug;
 KinectPV2 kinect;  // représente le capteur kinect
+PShape clone;
 Skeleton [] squelette;  // permettra de contenir les données des utilisateurs (6 maximum)
 
     
@@ -33,6 +34,8 @@ void setup() {
   
   // debug
   debug = false;
+  
+  clone.loadshape("clone_trooper - Copie.dae");
 }
 
 // fonction principale répétée en boucle
