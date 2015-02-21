@@ -1,19 +1,20 @@
 package projectkinect;
 
 import java.util.ArrayList;
-
-import com.sun.javafx.iio.common.PushbroomScaler;
+import java.lang.Enum;
 
 import processing.core.*;
-import processing.data.*;
-import processing.opengl.PGraphics3D;
-import saito.objloader.OBJModel;
+import sun.font.EAttribute;
+import KinectPV2.*;
 
 
 public class ProjectKinect extends PApplet {
 
-	//protected PShape perso;
+	protected PShape perso;
 	protected ZZModel clone;
+	protected KinectPV2 kinect;
+	Skeleton [] squelette;
+	KJoint [] oldJoints;
 	protected boolean debug;
 	
 	//------ déclaration des variables de couleur utiles ----
@@ -40,24 +41,40 @@ public class ProjectKinect extends PApplet {
 	public void setup() {
 		// fenêtre
 		size(1280, 960, P3D);
+		// limitation du rafraichissement
+		frameRate(25);
 		
 		debug = false;
 		
 		clone = new ZZModel();
 		clone.load("man.obj");
-		/*
+		println("Nombre de vertices : "+ clone.getChild("head").getVertexCount());
+		
 		perso = loadShape("man.obj");
 		perso.scale(32);
 		perso.rotateZ(PI);
 		perso.rotateY(PI);
-		perso.translate(0, 0, -4);*/
+		perso.translate(0, 0, -4);
 		clone.scale(64);
 		clone.rotateZ(PI);
 		clone.rotateY(PI);
-		clone.translate(0, -1, -4);
+		clone.translate(0, -1, 0);
+		
+		// kinect
+		kinect = new KinectPV2(this);
+		kinect.enableDepthMaskImg(true);
+		kinect.enableSkeleton(true);
+		kinect.enableSkeleton3dMap(true);
+		kinect.init();
+  
+		// squelette
+		squelette = new Skeleton[6];
+		oldJoints = new KJoint[25];
 	}
 	
 	public void draw() {
+		KJoint[] joints;
+		
 		// effacer écran
 		background(100);
 		lights();
@@ -67,9 +84,36 @@ public class ProjectKinect extends PApplet {
 		}
 		
 		vision();
+		 
+		/* traitement kinect
+		// acquisition des informations
+		squelette = kinect.getSkeleton3d();
+		for (int i = 0; i < squelette.length; i++) {
+			if (squelette[i].isTracked()) {
+		    	joints = squelette[i].getJoints();
+		    	for (int j = 0; j < joints.length; j++) {
+					if (joints[j].getType() == SkeletonProperties.JointType_SpineBase) {
+						text("X : " + joints[j].getX() + "\nY : " + joints[j].getY() + "\nZ : " + joints[j].getZ(), -100, 150, 50);
+						float cx = joints[j].getX()/100;//-oldJoints[j].getX();
+						float cy = joints[j].getY()/100;//-oldJoints[j].getY();
+						float cz = -joints[j].getZ()/100;//-oldJoints[j].getZ();
+						clone.translate(cx, cy, cz);
+					}
+				}
+		    	oldJoints = joints;
+		    	drawBody(joints);
+			}
+		}*/
+		//(clone.getChild("forearm_R")).setVertex(0).rotateX((float) 0.01);
+		stroke(255, 0, 0);
+		//println(perso.getChildCount()*3);
+		for (int i = 0; i < perso.getChildCount()*3; i++) {
+			perso.getChild(11).setVertex(1, mouseX, mouseY, 0);
+		}
 		
 		clone.draw();
-		//shape(perso);
+		sphere(5);
+		shape(perso);
 	}
 	
 	public void vision() {
@@ -144,6 +188,7 @@ public class ProjectKinect extends PApplet {
 		}
 	}
 
+	// si clic
 	public // si clic
 	void mousePressed()	{
 	    
@@ -164,6 +209,7 @@ public class ProjectKinect extends PApplet {
 	    
 	}
 	
+	// nécessaire pour tourner sur java
 	public static void main(String _args[]) {
 		PApplet.main(new String[] { projectkinect.ProjectKinect.class.getName() });
 	}
@@ -171,9 +217,16 @@ public class ProjectKinect extends PApplet {
 	class ZZModel {
 
 		protected PShape model;
+		protected ZZkeleton skeleton;
 
 		protected ZZModel() {
 			model = createShape(GROUP);
+			skeleton = new ZZkeleton();
+		}
+
+		protected ZZModel(String filename) {
+			this();
+			this.load(filename);
 		}
 		
 		public void load(String filename) {
@@ -183,42 +236,55 @@ public class ProjectKinect extends PApplet {
 			 * 
 			 ***************************************************************/
 			
-			ArrayList<PVector> vertices = new ArrayList<PVector>();
-			String[] lines = loadStrings(filename);
-			PShape currentShape = model; 
-			int j = 0;
-			println("there are " + lines.length + " lines");
-			for(int i = 0 ; i < lines.length; i++) {
-				//println(lines[i]);
-				if(lines[i].contains("v ")) {
-					float[] line = parseFloat(lines[i].substring(2).split(" "));
-					vertices.add(new PVector(line[0], line[1], line[2]));
-				} else if(lines[i].contains("vt ")) {
-					
-				} else if(lines[i].contains("f ")) {
-					String[] tmp = lines[i].substring(2).split(" ");
-					PShape nouv = createShape();
-					int cx = parseInt(tmp[0].split("/")[0])-1;
-					int cy = parseInt(tmp[1].split("/")[0])-1;
-					int cz = parseInt(tmp[2].split("/")[0])-1;
-					nouv.beginShape();
-					noStroke();
-					nouv.vertex(0,0,0);
-					nouv.vertex(0,0,0);
-					nouv.vertex(0,0,0);
-					nouv.endShape(CLOSE);
-					nouv.setVertex(0, vertices.get(cx));
-					nouv.setVertex(1, vertices.get(cy));
-					nouv.setVertex(2, vertices.get(cz));
-					currentShape.addChild(nouv);
-				} else if(lines[i].contains("o ")) {
-					
-				} else if(lines[i].contains("g ")) {
-					currentShape = createShape(GROUP);
-					println("Nouveau groupe : " + lines[i].split(" ")[1]);
-					currentShape.setName(lines[i].split(" ")[1]);
-					model.addChild(currentShape);
+			ArrayList<PVector> vertices;
+			String[] file;
+			PShape currentShape;
+			
+			if(!(filename.contains(".obj"))) {
+				println("Chargement du modèle : attention, il se peut que " + filename + " soit incompatible");
+			}
+			
+			file = loadStrings(filename);
+			currentShape = model;
+			vertices = new ArrayList<PVector>();
+			
+			if(file != null) {
+				for(int i = 0 ; i < file.length; i++) {
+					//println(file[i]);
+					if(file[i].contains("v ")) {
+						float[] line = parseFloat(file[i].substring(2).split(" "));
+						vertices.add(new PVector(line[0], line[1], line[2]));
+					} else if(file[i].contains("vt ")) {
+						
+					} else if(file[i].contains("f ")) {
+						String[] tmp = file[i].substring(2).split(" ");
+						PShape nouv = createShape();
+						int cx = parseInt(tmp[0].split("/")[0])-1;
+						int cy = parseInt(tmp[1].split("/")[0])-1;
+						int cz = parseInt(tmp[2].split("/")[0])-1;
+						nouv.beginShape();
+						noStroke();
+						nouv.vertex(0,0,0);
+						nouv.vertex(0,0,0);
+						nouv.vertex(0,0,0);
+						nouv.endShape(CLOSE);
+						nouv.setVertex(0, vertices.get(cx));
+						nouv.setVertex(1, vertices.get(cy));
+						nouv.setVertex(2, vertices.get(cz));
+						currentShape.addChild(nouv);
+					} else if(file[i].contains("o ")) {
+						
+					} else if(file[i].contains("g ")) {
+						currentShape = createShape(GROUP);
+						println("Nouveau groupe : " + file[i].split(" ")[1]);
+						currentShape.setName(file[i].split(" ")[1]);
+						model.addChild(currentShape);
+					}
 				}
+				skeleton.load("skeleton.sk");
+				println("Chargement du modèle : terminé");
+			} else {
+				println("Chargement du modèle : erreur à l'ouverture du fichier " + filename);
 			}
 		}
 		
@@ -292,5 +358,187 @@ public class ProjectKinect extends PApplet {
 			model.translate(x, y, z);
 		}
 		
+		public PShape getChild(String target) {
+			/***************************************************************
+			 * 
+			 * retourne le sous groupe target du modèle
+			 * 
+			 ***************************************************************/
+			
+			return model.getChild(target);
+		}
+		
+		public PShape[] getChildren() {
+			/***************************************************************
+			 * 
+			 * retourne le sous groupe target du modèle
+			 * 
+			 ***************************************************************/
+			
+			return model.getChildren();
+		}
+		
+		public int getVertexCount() {
+			/***************************************************************
+			 * 
+			 * retourne le sous groupe target du modèle
+			 * 
+			 ***************************************************************/
+			
+			return model.getVertexCount();
+		}
+		
+	}
+	
+	class ZZkeleton {
+		public final static int WAIST			= 0;
+		public final static int ROOT			= 1;
+		public final static int NECK			= 2;
+		public final static int HEAD			= 3;
+		public final static int SHOULDER_LEFT	= 4;
+		public final static int ELBOW_LEFT		= 5;
+		public final static int WRIST_LEFT	    = 6;
+		public final static int HAND_LEFT		= 7;
+		public final static int SHOULDER_RIGHT	= 8;
+		public final static int ELBOW_RIGHT		= 9;
+		public final static int WRIST_RIGHT		= 10;
+		public final static int HAND_RIGHT		= 11;
+		public final static int HIP_LEFT		= 12;
+		public final static int KNEE_LEFT		= 13;
+		public final static int ANKLE_LEFT		= 14;
+		public final static int FOOT_LEFT		= 15;
+		public final static int HIP_RIGHT		= 16;
+		public final static int KNEE_RIGHT		= 17;
+		public final static int ANKLE_RIGHT		= 18;
+		public final static int FOOT_RIGHT		= 19;
+		public final static int TORSO			= 20;
+		public final static int INDEX_LEFT		= 21;
+		public final static int THUMB_LEFT		= 22;
+		public final static int INDEX_RIGHT		= 23;
+		public final static int THUMB_RIGHT		= 24;
+		
+		protected ZZoint[] joints;
+		protected int jointsNumber;
+		protected String name;
+		
+		public ZZkeleton() {
+			jointsNumber = 25;
+			joints = new ZZoint[jointsNumber];
+			name = "default";
+		}
+		
+		public ZZkeleton(String filename) {
+			this();
+			this.load(filename);
+		}
+		
+ 		protected int getTypeCode(String type) {
+			/***************************************************************
+			 * 
+			 * matching entre les valeurs des fichiers et du code
+			 * 
+			 ***************************************************************/
+			
+			int code = -1;
+
+			if(type.equals("WAIST")) code = 0;
+			else if(type.equals("ROOT")) code = 1;
+			else if(type.equals("NECK")) code = 2;
+			else if(type.equals("HEAD")) code = 3;
+			else if(type.equals("SHOULDER_LEFT")) code = 4;
+			else if(type.equals("ELBOW_LEFT")) code = 5;
+			else if(type.equals("WRIST_LEFT")) code = 6;
+			else if(type.equals("HAND_LEFT")) code = 7;
+			else if(type.equals("SHOULDER_RIGHT")) code = 8;
+			else if(type.equals("ELBOW_RIGHT")) code = 9;
+			else if(type.equals("WRIST_RIGHT")) code = 10;
+			else if(type.equals("HAND_RIGHT")) code = 11;
+			else if(type.equals("HIP_LEFT")) code = 12;
+			else if(type.equals("KNEE_LEFT")) code = 13;
+			else if(type.equals("ANKLE_LEFT")) code = 14;
+			else if(type.equals("FOOT_LEFT")) code = 15;
+			else if(type.equals("HIP_RIGHT")) code = 16;
+			else if(type.equals("KNEE_RIGHT")) code = 17;
+			else if(type.equals("ANKLE_RIGHT")) code = 18;
+			else if(type.equals("FOOT_RIGHT")) code = 19;
+			else if(type.equals("TORSO")) code = 20;
+			else if(type.equals("INDEX_LEFT")) code = 21;
+			else if(type.equals("THUMB_LEFT")) code = 22;
+			else if(type.equals("INDEX_RIGHT")) code = 23;
+			else if(type.equals("THUMB_RIGHT")) code = 24;
+			
+			return code;
+		}
+	
+		protected int[] getTypeCode(String[] type) {
+			/***************************************************************
+			 * 
+			 * matching entre les valeurs des fichiers et du code
+			 * 
+			 ***************************************************************/
+			
+			int [] retour = new int[type.length];
+			
+			for (int i = 0; i < retour.length; i++) {
+				retour[i] = getTypeCode(type[i]);
+			}
+			
+			return retour;
+		}
+ 		
+ 		public void load(String filename) {
+			/***************************************************************
+			 * 
+			 * charge le squelette à partir d'un fichier .sk
+			 * 
+			 ***************************************************************/
+			
+			String[] file;
+			
+			if(!(filename.contains(".sk"))) {
+				println("Chargement du squelette : attention, il se peut que " + filename + " soit incompatible");
+			}
+			
+			file = loadStrings(filename);
+			
+			if(file != null) {
+				int index = 0;
+				while (index < file.length) {
+					if (file[index].contains("sk ")) {
+						name = file[index].substring(3);
+					}
+					else if (file[index].contains("j ")) {
+						int type = getTypeCode((file[index].split(" "))[1]);
+						joints[type] = new ZZoint(parseFloat(file[index+1].substring(2).split(" ")), 
+												  getTypeCode(file[index+2].split(" ")[1]), 
+												  getTypeCode(file[index+3].substring(2).split(" ")));
+						index += 3;
+					}
+					index++;
+				}
+				println("Chargement du squelette : terminé");
+			} else {
+				println("Chargement du squelette : erreur à l'ouverture du fichier " + filename);
+			}
+		}
+	}
+	
+	class ZZoint {
+		protected PVector coor;
+		protected PVector origin;
+		protected int parent;
+		protected int[] children;
+
+		public ZZoint(float[] o, int p, int[] c) {
+			origin = coor = new PVector(o[0], o[1], o[2]);
+			parent = p;
+			children = c;
+		}
+		
+		public ZZoint() {
+			origin = coor = null;
+			parent = -1;
+			children = null;
+		}
 	}
 }
