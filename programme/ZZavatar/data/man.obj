@@ -5514,11 +5514,11 @@ vt 0.38127 0.81338
 vt 0.39257 0.79938
 vt 0.39733 0.83315
 
-# shoulder_R, 93 grouped triangles
+# SHOULDER_RIGHT, 93 grouped triangles
 
 usemtl Shape.002
-o shoulder_R
-g shoulder_R
+o SHOULDER_RIGHT
+g SHOULDER_RIGHT
 
 f 124/1 44/2 148/3
 f 44/4 46/5 148/6
@@ -5613,11 +5613,11 @@ f 65/268 125/269 67/270
 f 125/271 126/272 67/273
 f 67/274 126/275 127/276
 f 126/277 128/278 127/279
-# torso, 126 grouped triangles
+# TORSO, 126 grouped triangles
 
 usemtl Shape.003
-o torso
-g torso
+o TORSO
+g TORSO
 
 f 127/280 128/281 129/282
 f 137/283 138/284 139/285
@@ -5745,11 +5745,11 @@ f 445/646 455/647 457/648
 f 169/649 168/650 439/651
 f 411/652 164/653 410/654
 f 67/655 62/656 63/657
-# shoulder_L, 73 grouped triangles
+# SHOULDER_LEFT, 73 grouped triangles
 
 usemtl Shape.003
-o shoulder_L
-g shoulder_L
+o SHOULDER_LEFT
+g SHOULDER_LEFT
 
 f 56/658 130/659 54/660
 f 130/661 131/662 54/663
@@ -5824,11 +5824,11 @@ f 86/865 59/866 84/867
 f 59/868 57/869 84/870
 f 84/871 57/872 55/873
 f 61/874 78/875 63/876
-# arm_L, 91 grouped triangles
+# ELBOW_LEFT, 91 grouped triangles
 
 usemtl Shape.003
-o arm_L
-g arm_L
+o ELBOW_LEFT
+g ELBOW_LEFT
 
 f 180/877 181/878 182/879
 f 181/880 183/881 182/882
@@ -5921,11 +5921,11 @@ f 75/1138 122/1139 88/1140
 f 122/1141 90/1142 88/1143
 f 73/1144 122/1145 75/1146
 f 77/1147 88/1148 76/1149
-# forearm_L, 86 grouped triangles
+# WRIST_LEFT, 86 grouped triangles
 
 usemtl Shape.002
-o forearm_L
-g forearm_L
+o WRIST_LEFT
+g WRIST_LEFT
 
 f 182/1150 183/1151 184/1152
 f 190/1153 191/1154 192/1155
@@ -6013,11 +6013,11 @@ f 737/1396 739/1397 751/1398
 f 735/1399 400/1400 733/1401
 f 742/1402 731/1403 269/1404
 f 290/1405 193/1406 191/1407
-# forearm_R, 79 grouped triangles
+# WRIST_RIGHT, 79 grouped triangles
 
 usemtl Shape.002
-o forearm_R
-g forearm_R
+o WRIST_RIGHT
+g WRIST_RIGHT
 
 f 185/1408 186/1409 187/1410
 f 186/1411 188/1412 187/1413
@@ -6098,11 +6098,11 @@ f 387/1633 386/1634 300/1635
 f 214/1636 298/1637 212/1638
 f 330/1639 206/1640 205/1641
 f 185/1642 205/1643 186/1644
-# arm_R, 62 grouped triangles
+# ELBOW_RIGHT, 62 grouped triangles
 
 usemtl Shape.002
-o arm_R
-g arm_R
+o ELBOW_RIGHT
+g ELBOW_RIGHT
 
 f 196/1645 198/1646 197/1647
 f 197/1648 198/1649 199/1650
@@ -6166,11 +6166,11 @@ f 426/1819 284/1820 425/1821
 f 284/1822 286/1823 425/1824
 f 425/1825 286/1826 424/1827
 f 196/1828 195/1829 206/1830
-# thumb_L, 41 grouped triangles
+# THUMB_LEFT, 41 grouped triangles
 
 usemtl Shape.002
-o thumb_L
-g thumb_L
+o THUMB_LEFT
+g THUMB_LEFT
 
 f 215/1831 216/1832 217/1833
 f 216/1834 218/1835 217/1836
@@ -6213,11 +6213,11 @@ f 769/1942 720/1943 718/1944
 f 769/1945 718/1946 768/1947
 f 730/1948 738/1949 743/1950
 f 727/1951 723/1952 725/1953
-# fingers_L, 75 grouped triangles
+# INDEX_LEFT, 75 grouped triangles
 
 usemtl Shape.002
-o fingers_L
-g fingers_L
+o INDEX_LEFT
+g INDEX_LEFT
 
 f 217/1954 218/1955 219/1956
 f 218/1957 220/1958 219/1959
@@ -6294,11 +6294,11 @@ f 220/2167 228/2168 222/2169
 f 230/2170 220/2171 272/2172
 f 748/2173 756/2174 237/2175
 f 232/2176 274/2177 234/2178
-# thumb_R, 38 grouped triangles
+# THUMB_RIGHT, 38 grouped triangles
 
 usemtl Shape.002
-o thumb_R
-g thumb_R
+o THUMB_RIGHT
+g THUMB_RIGHT
 
 f 239/2179 240/2180 241/2181
 f 241/2182 242/2183 243/2184
@@ -6338,11 +6338,11 @@ f 759/2281 239/2282 261/2283
 f 759/2284 760/2285 239/2286
 f 403/2287 402/2288 259/2289
 f 405/2290 404/2291 373/2292
-# fingers_R, 74 grouped triangles
+# INDEX_RIGHT, 74 grouped triangles
 
 usemtl Shape.002
-o fingers_R
-g fingers_R
+o INDEX_RIGHT
+g INDEX_RIGHT
 
 f 240/2293 242/2294 241/2295
 f 242/2296 244/2297 243/2298
@@ -6418,11 +6418,11 @@ f 749/2503 409/2504 408/2505
 f 358/2506 375/2507 356/2508
 f 242/2509 409/2510 244/2511
 f 252/2512 240/2513 253/2514
-# handle_L, 13 grouped triangles
+# HAND_LEFT, 13 grouped triangles
 
 usemtl Shape.002
-o handle_L
-g handle_L
+o HAND_LEFT
+g HAND_LEFT
 
 f 270/2515 272/2516 271/2517
 f 392/2518 394/2519 393/2520
@@ -6437,11 +6437,11 @@ f 716/2542 742/2543 271/2544
 f 742/2545 269/2546 271/2547
 f 751/2548 739/2549 393/2550
 f 393/2551 739/2552 741/2553
-# handle_R, 24 grouped triangles
+# HAND_RIGHT, 24 grouped triangles
 
 usemtl Shape.002
-o handle_R
-g handle_R
+o HAND_RIGHT
+g HAND_RIGHT
 
 f 352/2554 361/2555 360/2556
 f 369/2557 371/2558 370/2559
@@ -6467,11 +6467,11 @@ f 752/2614 760/2615 758/2616
 f 760/2617 759/2618 758/2619
 f 758/2620 753/2621 752/2622
 f 374/2623 350/2624 360/2625
-# waist, 147 grouped triangles
+# WAIST, 147 grouped triangles
 
 usemtl Shape.002
-o waist
-g waist
+o WAIST
+g WAIST
 
 f 460/2626 461/2627 452/2628
 f 461/2629 462/2630 459/2631
@@ -6650,11 +6650,11 @@ f 500/3043 785/3044 502/3045
 f 785/3046 782/3047 502/3048
 f 783/3049 782/3050 784/3051
 f 782/3052 785/3053 784/3054
-# tigh_R, 109 grouped triangles
+# KNEE_RIGHT, 109 grouped triangles
 
 usemtl Shape.002
-o tigh_R
-g tigh_R
+o KNEE_RIGHT
+g KNEE_RIGHT
 
 f 512/3055 513/3056 514/3057
 f 513/3058 515/3059 514/3060
@@ -6765,11 +6765,11 @@ f 647/3370 646/3371 787/3372
 f 599/3373 597/3374 630/3375
 f 623/3376 631/3377 624/3378
 f 597/3379 595/3380 631/3381
-# tigh_L, 110 grouped triangles
+# KNEE_LEFT, 110 grouped triangles
 
 usemtl Shape.002
-o tigh_L
-g tigh_L
+o KNEE_LEFT
+g KNEE_LEFT
 
 f 516/3382 517/3383 518/3384
 f 517/3385 519/3386 518/3387
@@ -6881,11 +6881,11 @@ f 565/3700 653/3701 564/3702
 f 565/3703 622/3704 653/3705
 f 564/3706 541/3707 540/3708
 f 539/3709 518/3710 561/3711
-# leg_R, 54 grouped triangles
+# ANKLE_RIGHT, 54 grouped triangles
 
 usemtl Shape.002
-o leg_R
-g leg_R
+o ANKLE_RIGHT
+g ANKLE_RIGHT
 
 f 630/3796 640/3797 641/3798
 f 641/3799 642/3800 629/3801
@@ -6941,11 +6941,11 @@ f 679/3946 664/3947 665/3948
 f 673/3949 665/3950 666/3951
 f 676/3952 674/3953 687/3954
 f 641/3955 640/3956 666/3957
-# leg_L, 52 grouped triangles
+# ANKLE_LEFT, 52 grouped triangles
 
 usemtl Shape.002
-o leg_L
-g leg_L
+o ANKLE_LEFT
+g ANKLE_LEFT
 
 f 655/3958 656/3959 657/3960
 f 656/3961 658/3962 657/3963
@@ -6999,11 +6999,11 @@ f 672/4102 670/4103 695/4104
 f 670/4105 668/4106 694/4107
 f 678/4108 668/4109 667/4110
 f 655/4111 688/4112 656/4113
-# foot_L, 24 grouped triangles
+# FOOT_LEFT, 24 grouped triangles
 
 usemtl Shape.002
-o foot_L
-g foot_L
+o FOOT_LEFT
+g FOOT_LEFT
 
 f 698/4114 699/4115 700/4116
 f 699/4117 701/4118 700/4119
@@ -7029,11 +7029,11 @@ f 801/4174 791/4175 799/4176
 f 799/4177 791/4178 798/4179
 f 791/4180 672/4181 798/4182
 f 801/4183 690/4184 791/4185
-# foot_R, 24 grouped triangles
+# FOOT_RIGHT, 24 grouped triangles
 
 usemtl Shape.002
-o foot_R
-g foot_R
+o FOOT_RIGHT
+g FOOT_RIGHT
 
 f 706/4186 707/4187 708/4188
 f 707/4189 709/4190 708/4191
@@ -7059,11 +7059,11 @@ f 792/4246 795/4247 797/4248
 f 797/4249 795/4250 796/4251
 f 792/4252 684/4253 795/4254
 f 709/4255 707/4256 794/4257
-# head, 142 grouped triangles
+# HEAD, 142 grouped triangles
 
 usemtl Shape.003
-o head
-g head
+o HEAD
+g HEAD
 
 f 78/4258 40/4259 79/4260
 f 40/4261 80/4262 79/4263
@@ -7207,11 +7207,11 @@ f 38/4672 39/4673 40/4674
 f 39/4675 41/4676 40/4677
 f 40/4678 41/4679 42/4680
 f 41/4681 43/4682 42/4683
-# neck, 7 grouped triangles
+# NECK, 7 grouped triangles
 
 usemtl Shape.003
-o neck
-g neck
+o NECK
+g NECK
 
 f 42/4684 81/4685 80/4686
 f 80/4687 81/4688 82/4689

@@ -1,6 +1,9 @@
 package projectkinect;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.lang.Enum;
 
 import processing.core.*;
@@ -42,13 +45,12 @@ public class ProjectKinect extends PApplet {
 		// fenêtre
 		size(1280, 960, P3D);
 		// limitation du rafraichissement
-		frameRate(25);
+		//frameRate(25);
 		
 		debug = false;
 		
 		clone = new ZZModel();
 		clone.load("man.obj");
-		println("Nombre de vertices : "+ clone.getChild("head").getVertexCount());
 		
 		perso = loadShape("man.obj");
 		perso.scale(32);
@@ -66,10 +68,12 @@ public class ProjectKinect extends PApplet {
 		kinect.enableSkeleton(true);
 		kinect.enableSkeleton3dMap(true);
 		kinect.init();
-  
+		
 		// squelette
 		squelette = new Skeleton[6];
 		oldJoints = new KJoint[25];
+		
+		clone.rotatePart(6, PI/2, PI/2);
 	}
 	
 	public void draw() {
@@ -107,13 +111,21 @@ public class ProjectKinect extends PApplet {
 		//(clone.getChild("forearm_R")).setVertex(0).rotateX((float) 0.01);
 		stroke(255, 0, 0);
 		//println(perso.getChildCount()*3);
+
+			for (int j = 0; j < clone.getChild("HEAD").getChildCount() ; j++) {
+				for (int i = 0; i < clone.getChild("HEAD").getChild(j).getVertexCount(); i++) {
+					ZZector tmp = new ZZector(clone.getChild("HEAD").getChild(j).getVertex(i));
+					tmp.rotate(0,(float) 0.1);
+					clone.getChild("HEAD").getChild(j).setVertex(i, tmp);
+				}
+			}
 		for (int i = 0; i < perso.getChildCount()*3; i++) {
 			perso.getChild(11).setVertex(1, mouseX, mouseY, 0);
 		}
 		
 		clone.draw();
 		sphere(5);
-		shape(perso);
+		//shape(perso);
 	}
 	
 	public void vision() {
@@ -124,7 +136,7 @@ public class ProjectKinect extends PApplet {
         rotateX(radians(angleX)); // rotation de angleX ° autour de l'axe des X (horizontal) par rapport référence dessin
         rotateY(radians(0)); // rotation autour de l'axe des y (vertical) par rapport référence dessin
         rotateZ(radians(angleZ)); // rotation autour de l'axe des z (avant-arriere) par rapport référence dessin
-        
+     
 	}
 	
 	public void debugTools() {
@@ -188,6 +200,8 @@ public class ProjectKinect extends PApplet {
 		}
 	}
 
+	
+	
 	// si clic
 	public // si clic
 	void mousePressed()	{
@@ -218,10 +232,14 @@ public class ProjectKinect extends PApplet {
 
 		protected PShape model;
 		protected ZZkeleton skeleton;
+		ArrayList<ZZertex> vertices;
+		ArrayList<Integer>[] groups;
 
 		protected ZZModel() {
 			model = createShape(GROUP);
 			skeleton = new ZZkeleton();
+			vertices = new ArrayList<ZZertex>();
+			groups = new ArrayList[25];
 		}
 
 		protected ZZModel(String filename) {
@@ -236,9 +254,15 @@ public class ProjectKinect extends PApplet {
 			 * 
 			 ***************************************************************/
 			
-			ArrayList<PVector> vertices;
 			String[] file;
 			PShape currentShape;
+			int [] counter = new int[3];
+			
+			counter[2] = -1;
+			
+			for (int i = 0; i < groups.length; i++) {
+				groups[i] = new ArrayList<Integer>();
+			}
 			
 			if(!(filename.contains(".obj"))) {
 				println("Chargement du modèle : attention, il se peut que " + filename + " soit incompatible");
@@ -246,32 +270,35 @@ public class ProjectKinect extends PApplet {
 			
 			file = loadStrings(filename);
 			currentShape = model;
-			vertices = new ArrayList<PVector>();
 			
 			if(file != null) {
 				for(int i = 0 ; i < file.length; i++) {
-					//println(file[i]);
 					if(file[i].contains("v ")) {
 						float[] line = parseFloat(file[i].substring(2).split(" "));
-						vertices.add(new PVector(line[0], line[1], line[2]));
+						vertices.add(new ZZertex(line[0], line[1], line[2]));
 					} else if(file[i].contains("vt ")) {
 						
 					} else if(file[i].contains("f ")) {
 						String[] tmp = file[i].substring(2).split(" ");
+						if(counter[0]==22){println(file[i]);}
 						PShape nouv = createShape();
-						int cx = parseInt(tmp[0].split("/")[0])-1;
-						int cy = parseInt(tmp[1].split("/")[0])-1;
-						int cz = parseInt(tmp[2].split("/")[0])-1;
+						int [] c = new int[3];
+
 						nouv.beginShape();
 						noStroke();
-						nouv.vertex(0,0,0);
-						nouv.vertex(0,0,0);
-						nouv.vertex(0,0,0);
+						for (int lol = 0 ; lol < 3 ; lol++)
+							nouv.vertex(0,0,0);
 						nouv.endShape(CLOSE);
-						nouv.setVertex(0, vertices.get(cx));
-						nouv.setVertex(1, vertices.get(cy));
-						nouv.setVertex(2, vertices.get(cz));
+						
+						for (int j = 0; j < c.length; j++) {
+							c[j] = parseInt(tmp[j].split("/")[0])-1;
+							nouv.setVertex(j, vertices.get(c[j]));
+							vertices.get(c[j]).addOccurence(counter[2], counter[1], j);
+							groups[counter[0]].add(c[j]);
+						}
+						
 						currentShape.addChild(nouv);
+						counter[1]++;
 					} else if(file[i].contains("o ")) {
 						
 					} else if(file[i].contains("g ")) {
@@ -279,6 +306,9 @@ public class ProjectKinect extends PApplet {
 						println("Nouveau groupe : " + file[i].split(" ")[1]);
 						currentShape.setName(file[i].split(" ")[1]);
 						model.addChild(currentShape);
+						counter[0] = skeleton.getTypeCode(currentShape.getName());
+						counter[1] = 0;
+						counter[2]++;
 					}
 				}
 				skeleton.load("skeleton.sk");
@@ -288,12 +318,39 @@ public class ProjectKinect extends PApplet {
 			}
 		}
 		
+		public void move(Skeleton sklKin) {
+			/***************************************************************
+			 * 
+			 *	algorithme principal d'animation du modèle
+			 * 
+			 ***************************************************************/
+
+			// déclaration de variables
+			
+			
+			/** calcul de la translation générale et des rotations locales **/
+			
+
+			/** applications des transformations **/
+			for (int i = 0; i < model.getChildCount(); i++) {
+				for (int j = 0; j < model.getChild(i).getChildCount(); j++) {
+					for (int k = 0; k < model.getChild(i).getChildCount(); k++) {
+						
+					}
+				}
+			}
+			
+			/** mise à jour des données **/
+			skeleton.update(sklKin);
+		}
+		
 		public void draw() {
 			/***************************************************************
 			 * 
 			 * affiche simplement le modèle
 			 * 
 			 ***************************************************************/
+			
 			pushMatrix();
 		    shape(model);
 		    popMatrix();
@@ -328,10 +385,41 @@ public class ProjectKinect extends PApplet {
 			model.rotateX(angle);
 		}
 		
+		public void rotatePart(int part, float theta, float phi) {
+			/***************************************************************
+			 * 
+			 *	fait tourner tout une partie du modèle
+			 * 
+			 ***************************************************************/
+			
+			ArrayList<Integer> jts = partWithChildren(part);
+			HashSet<Integer> vtcs = new HashSet<Integer>();
+			PVector center = skeleton.joints[skeleton.joints[part].getParent()];
+			
+			for (int i = 0; i < jts.size(); i++) {
+				vtcs.addAll(groups[jts.get(i)]);
+			}
+			for (Iterator iterator = vtcs.iterator(); iterator.hasNext();) {
+				Integer integer = (Integer) iterator.next();
+				vertices.get(integer).rotateAround(center, theta, phi);
+				vertices.get(integer).apply(model);
+			}
+		}
+		
+		protected ArrayList<Integer> partWithChildren(int part) {
+			/***************************************************************
+			 * 
+			 *	retourne la liste des vertices d'une partie et de ses enfants
+			 * 
+			 ***************************************************************/
+						
+			return skeleton.getMember(part);
+		}
+		
 		public void rotateY(float angle) {
 			/***************************************************************
 			 * 
-			 * rotation du modèle autour de l'axe Y
+			 *	rotation du modèle autour de l'axe Y
 			 * 
 			 ***************************************************************/
 			
@@ -466,6 +554,7 @@ public class ProjectKinect extends PApplet {
 			else if(type.equals("THUMB_LEFT")) code = 22;
 			else if(type.equals("INDEX_RIGHT")) code = 23;
 			else if(type.equals("THUMB_RIGHT")) code = 24;
+			else if(type.equals("(null)")) code = WAIST;
 			
 			return code;
 		}
@@ -521,24 +610,206 @@ public class ProjectKinect extends PApplet {
 				println("Chargement du squelette : erreur à l'ouverture du fichier " + filename);
 			}
 		}
+ 		
+ 		public void update(Skeleton sklKin) {
+			/***************************************************************
+			 * 
+			 *	met à jour les données du squelette
+			 * 
+			 ***************************************************************/
+			
+ 			KJoint[] tmp = sklKin.getJoints();
+ 			for (int i = 0; i < jointsNumber; i++) {
+				joints[i].set(tmp[i].getX(), tmp[i].getY(), tmp[i].getZ());
+			}
+ 		}
+ 		
+ 		public void update(ZZkeleton skl) {
+			/***************************************************************
+			 * 
+			 *	met à jour les données du squelette
+			 * 
+			 ***************************************************************/
+			
+ 			for (int i = 0; i < jointsNumber; i++) {
+				joints[i].set(skl.joints[i].get());
+			}
+ 		}
+ 		
+ 		public ArrayList<Integer> getMember(int part) {
+			/***************************************************************
+			 * 
+			 *	renvoie la liste des joints du membre
+			 * 
+			 ***************************************************************/
+			
+ 			ArrayList<Integer> toReturn = new ArrayList<Integer>();
+ 			ArrayList<Integer> pile = new ArrayList<Integer>();
+ 			pile.add(part);
+ 			
+ 			while (!(pile.isEmpty())) {
+ 				int [] tmp = joints[pile.get(0)].getChildren();
+ 				if (tmp != null) {
+	 				for (int i = 0; i < tmp.length; i++) {
+						pile.add(tmp[i]);
+					}
+ 				}
+				toReturn.add(pile.remove(0));
+			}
+ 			
+ 			return toReturn;
+ 		}
 	}
 	
-	class ZZoint {
-		protected PVector coor;
+	class ZZector extends PVector {
 		protected PVector origin;
+		
+		public ZZector() {
+			this(0, 0, 0);
+		}
+
+		public ZZector(float x, float y) {
+			this(x, y, 0);
+		}
+		
+		public ZZector(float x, float y, float z) {
+			super(x, y, z);
+			origin = new PVector(x, y, z);
+		}
+		
+		public ZZector(PVector v) {
+			this(v.x, v.y, v.z);
+		}
+		
+		public void reset() {
+			this.set(origin.array());
+		}
+		
+		public void rotate(float theta, float phi) {
+		    float temp = x;
+
+		    x = x*PApplet.cos(theta) - y*PApplet.sin(theta);
+		    y = temp*PApplet.sin(theta) + y*PApplet.cos(theta);
+		    
+		    temp = x;
+		    
+		    x = x*PApplet.cos(phi) - z*PApplet.sin(phi);
+		    z = temp*PApplet.sin(phi) + z*PApplet.cos(phi);
+		}
+		
+		public void rotateAround(PVector center, float theta, float phi) {
+			/***************************************************************
+			 * 
+			 *	rotation autour d'un point dans un espace 3D
+			 * 
+			 ***************************************************************/
+
+			this.sub(center);
+			rotate(theta, phi);
+			this.add(center);
+		}
+		
+		public void rotateAround(PVector center, float theta) {
+			/***************************************************************
+			 * 
+			 *	rotation autour d'un point dans un espace 3D
+			 * 
+			 ***************************************************************/
+			
+			rotateAround(center, theta, 0);
+		}
+	}
+	
+	class ZZoint extends ZZector {
 		protected int parent;
 		protected int[] children;
 
 		public ZZoint(float[] o, int p, int[] c) {
-			origin = coor = new PVector(o[0], o[1], o[2]);
+			super(o[0], o[1], o[2]);
+			origin = new PVector(o[0], o[1], o[2]);
 			parent = p;
-			children = c;
+			children = c[0] == -1 ? null : c;
 		}
 		
-		public ZZoint() {
-			origin = coor = null;
-			parent = -1;
-			children = null;
+		public int getParent() {
+			/***************************************************************
+			 * 
+			 *	retourne le code valeur du joint père
+			 * 
+			 ***************************************************************/
+
+			return parent;
+		}
+		
+		public int[] getChildren() {
+			/***************************************************************
+			 * 
+			 * 	retourne les codes de valeur des joints enfants
+			 * 
+			 ***************************************************************/
+
+			return children;
+		}
+		
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			String retour = new String("Parent : " + parent + " ; Enfants : ");
+			for (int i = 0; i < children.length; i++) {
+				retour += children[i] + " ";
+			}
+			return retour;
+		}
+	}
+	
+	class ZZertex extends ZZector {
+		protected ArrayList<Integer> group;
+		protected ArrayList<Integer> placeInGroup;
+		protected ArrayList<Integer> placeInShape;
+		protected float coef; /** correspond à la cardinalité de group **/
+		
+		public ZZertex(float x, float y, float z) {
+			super(x, y, z);
+			group = new ArrayList<Integer>();
+			placeInGroup = new ArrayList<Integer>();
+			placeInShape = new ArrayList<Integer>();
+			coef = 0;
+		}
+		
+		public void addOccurence(int gnum, int snum, int vnum) {
+			/***************************************************************
+			 * 
+			 *	ajoute cette occurence de vertex
+			 * 
+			 ***************************************************************/
+
+			group.add(gnum);
+			coef += group.contains(gnum) ? 0 : 1;
+			placeInGroup.add(snum);
+			placeInShape.add(vnum);
+		}
+		
+		public void apply(PShape shape) {
+			/***************************************************************
+			 * 
+			 *	applique la valeur du vertex à toutes ses occurences dans un modèle
+			 * 
+			 ***************************************************************/
+			
+			for (int i = 0; i < numberOfOccurences(); i++) {
+				println(group.get(i) +" "+ placeInGroup.get(i) +" "+ placeInShape.get(i)+ " nb : " + ((shape.getChild(group.get(i))).getChildCount()));
+				((shape.getChild(group.get(i))).getChild(placeInGroup.get(i))).setVertex(placeInShape.get(i), this);
+			}
+		}
+
+		public int numberOfOccurences() {
+			/***************************************************************
+			 * 
+			 *	retourne le nombre de groupes auxquels appartient ce vertex
+			 * 
+			 ***************************************************************/
+
+			return group.size();
 		}
 	}
 }
