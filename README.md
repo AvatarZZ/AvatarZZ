@@ -1,4 +1,4 @@
-# Projet ZZ1 
+# Projet ZZ1 Contrôle d'avatar par capteur Kinect
 Projet de première année à l'ISIMA
 
 Pour exécuter les programmes contenant la librairie KinectPV2, il est tout d'abord nécessaire de télécharger et installer le SDK Microsoft Kinect 2.0 soit sur le site officiel soit sur ce repository.
