@@ -139,7 +139,7 @@ class ZZkeleton {
      //public void update(Skeleton sklKin) {
       /***************************************************************
        * 
-       *  met à jour les données du squelette
+       *  met à jour les données du squelette � partir du squelette de la Kinect 2
        * 
        ***************************************************************/
       /*

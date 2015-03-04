@@ -1,0 +1,1 @@
+ProjectKinect contient le projet Eclipse et ZZavatar le projet sous Processing 2.2.1

@@ -1,5 +1,5 @@
-import processing.*;
 import processing.core.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,7 +13,7 @@ class ZZModel {
 
     protected ZZModel(PApplet a) {
       app = a;
-      model = app.createShape(app.GROUP);
+      model = app.createShape(PConstants.GROUP);
       skeleton = new ZZkeleton(app);
       vertices = new ArrayList<ZZertex>();
       groups = new ArrayList[25];
@@ -42,7 +42,7 @@ class ZZModel {
       }
       
       if(!(filename.contains(".obj"))) {
-        app.println("Chargement du modèle : attention, il se peut que " + filename + " soit incompatible");
+        PApplet.println("Chargement du modèle : attention, il se peut que " + filename + " soit incompatible");
       }
       
       file = app.loadStrings(filename);
@@ -51,7 +51,7 @@ class ZZModel {
       if(file != null) {
         for(int i = 0 ; i < file.length; i++) {
           if(file[i].contains("v ")) {
-            float[] line = app.parseFloat(file[i].substring(2).split(" "));
+            float[] line = PApplet.parseFloat(file[i].substring(2).split(" "));
             vertices.add(new ZZertex(line[0], line[1], line[2]));
           } else if(file[i].contains("vt ")) {
             
@@ -64,10 +64,10 @@ class ZZModel {
             app.noStroke();
             for (int lol = 0 ; lol < 3 ; lol++)
               nouv.vertex(0,0,0);
-            nouv.endShape(app.CLOSE);
+            nouv.endShape(PConstants.CLOSE);
             
             for (int j = 0; j < c.length; j++) {
-              c[j] = app.parseInt(tmp[j].split("/")[0])-1;
+              c[j] = PApplet.parseInt(tmp[j].split("/")[0])-1;
               nouv.setVertex(j, vertices.get(c[j]));
               vertices.get(c[j]).addOccurence(counter[2], counter[1], j);
               groups[counter[0]].add(c[j]);
@@ -78,8 +78,8 @@ class ZZModel {
           } else if(file[i].contains("o ")) {
             
           } else if(file[i].contains("g ")) {
-            currentShape = app.createShape(app.GROUP);
-            app.println("Nouveau groupe : " + file[i].split(" ")[1]);
+            currentShape = app.createShape(PConstants.GROUP);
+            PApplet.println("Nouveau groupe : " + file[i].split(" ")[1]);
             currentShape.setName(file[i].split(" ")[1]);
             model.addChild(currentShape);
             counter[0] = skeleton.getTypeCode(currentShape.getName());
@@ -88,38 +88,12 @@ class ZZModel {
           }
         }
         skeleton.load("skeleton.sk");
-        app.println("Chargement du modèle : terminé");
+        PApplet.println("Chargement du modèle : terminé");
       } else {
-        app.println("Chargement du modèle : erreur à l'ouverture du fichier " + filename);
+        PApplet.println("Chargement du modèle : erreur à l'ouverture du fichier " + filename);
       }
     }
     
-//    public void move(Skeleton sklKin) {
-      /***************************************************************
-       * 
-       *  algorithme principal d'animation du modèle
-       * 
-       ***************************************************************/
-
-      // déclaration de variables
-      
-      
-      // calcul de la translation générale et des rotations locales 
-      
-
-      // applications des transformations
-/*      for (int i = 0; i < model.getChildCount(); i++) {
-        for (int j = 0; j < model.getChild(i).getChildCount(); j++) {
-          for (int k = 0; k < model.getChild(i).getChildCount(); k++) {
-            
-          }
-        }
-      }
-
-      // mise à jour des données
-      skeleton.update(sklKin);
-    }
-*/
     public void draw() {
       /***************************************************************
        * 
@@ -161,10 +135,10 @@ class ZZModel {
       model.rotateX(angle);
     }
     
-    public void rotatePart(int part, float theta, float phi) {
+    public void rotatePart(int part, float theta, float phi, float epsilon) {
       /***************************************************************
        * 
-       *  fait tourner tout une partie du modèle
+       *  fait tourner toute une partie du mod�le
        * 
        ***************************************************************/
       
@@ -177,9 +151,19 @@ class ZZModel {
       }
       for (Iterator iterator = vtcs.iterator(); iterator.hasNext();) {
         Integer integer = (Integer) iterator.next();
-        vertices.get(integer).rotateAround(center, theta, phi);
+        vertices.get(integer).rotateAround(center, theta, phi, epsilon);
         vertices.get(integer).apply(model);
       }
+    }
+    
+    public void rotatePart(int part, float theta, float phi) {
+	    /***************************************************************
+	     * 
+	     *  fait tourner toute une partie du mod�le
+	     * 
+	     ***************************************************************/
+      
+    	rotatePart(part, theta, phi, 0);
     }
     
     protected ArrayList<Integer> partWithChildren(int part) {
@@ -251,5 +235,33 @@ class ZZModel {
       
       return model.getVertexCount();
     }
+    
+    
+//  public void move(Skeleton sklKin) {
+    /***************************************************************
+     * 
+     *  algorithme principal d'animation du modèle
+     * 
+     ***************************************************************/
+
+    // déclaration de variables
+    
+    
+    // calcul de la translation générale et des rotations locales 
+    
+
+    // applications des transformations
+/*      for (int i = 0; i < model.getChildCount(); i++) {
+      for (int j = 0; j < model.getChild(i).getChildCount(); j++) {
+        for (int k = 0; k < model.getChild(i).getChildCount(); k++) {
+          
+        }
+      }
+    }
+
+    // mise à jour des données
+    skeleton.update(sklKin);
+  }
+*/
     
   }
