@@ -35,20 +35,24 @@ public class ProjectKinect extends PApplet {
 	    // fenêtre
 	    size(1280, 960, P3D);
 	    // limitation du rafraichissement
-	    //frameRate(25);
+	    frameRate(25);
 	    
 	    debug = false;
 	    
 	    clone = new ZZModel(this);
 	    clone.load("man.obj");
-
+	    
+	    //Orientation et echelle du modele
 	    clone.scale(64);
 	    clone.rotateZ(PI);
 	    clone.rotateY(PI);
 	    clone.translate(0, -1, 0);
 	    
-	    // rotation du bras droit
-	    clone.rotatePart(6, PI/2, PI/2);
+	    // rotation de l'avant bras bras droit
+	    clone.rotatePart(ZZkeleton.WRIST_LEFT, 0, PI/2);
+	    
+	    //Initialisation du bras le long du corp (ou presque)
+	    //clone.rotatePart(ZZkeleton.ELBOW_LEFT, PI/2, 0);
 	}
 	  
 	public void draw() {    
@@ -83,8 +87,8 @@ public class ProjectKinect extends PApplet {
 	    }
 	    
 	    clone.rotatePart(ZZkeleton.HEAD, 0, -angleMouv/2);
-	    clone.rotatePart(ZZkeleton.ELBOW_LEFT, 0, angleMouv);
-	    clone.rotatePart(ZZkeleton.KNEE_RIGHT, 0, 0, angleMouv);
+	    clone.rotatePart(ZZkeleton.ELBOW_LEFT, 0, angleMouv, 0);
+	    //clone.rotatePart(ZZkeleton.KNEE_RIGHT, 0, 0, angleMouv);
 	    
 	    //Afficher le clone
 	    clone.draw();
@@ -161,8 +165,6 @@ public class ProjectKinect extends PApplet {
 	        break;
 	    }
 	}
-
-	  
 	  
 	// si clic
 	public void mousePressed()  {

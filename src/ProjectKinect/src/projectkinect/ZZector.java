@@ -27,32 +27,28 @@ class ZZector extends PVector {
     }
     
     public void rotate(float theta, float phi) {
-        float temp = x;
-
-        x = x*PApplet.cos(theta) - y*PApplet.sin(theta);
-        y = temp*PApplet.sin(theta) + y*PApplet.cos(theta);
-        
-        temp = x;
-        
-        x = x*PApplet.cos(phi) - z*PApplet.sin(phi);
-        z = temp*PApplet.sin(phi) + z*PApplet.cos(phi);
+    //Rotation de vector selon 2 angles
+    	rotate(theta, phi, 0);
     }
     
     public void rotate(float theta, float phi, float epsilon) {
-        float temp = x;
-
+    //Rotation de vector selon 3 angles
+    	float tmp;
+    	
+        //Rotation selon theta (axe x)
+    	tmp = x;
         x = x*PApplet.cos(theta) - y*PApplet.sin(theta);
-        y = temp*PApplet.sin(theta) + y*PApplet.cos(theta);
+        y = tmp*PApplet.sin(theta) + y*PApplet.cos(theta);
         
-        temp = x;
-        
+        //Rotation selon phi (axe z)
+        tmp = x;
         x = x*PApplet.cos(phi) - z*PApplet.sin(phi);
-        z = temp*PApplet.sin(phi) + z*PApplet.cos(phi);
+        z = tmp*PApplet.sin(phi) + z*PApplet.cos(phi);
         
-        temp = y;
-        
-        y = y*PApplet.cos(phi) - z*PApplet.sin(phi);
-        z = temp*PApplet.sin(phi) + z*PApplet.cos(phi);
+        //Rotation selon epsilon (axe y)
+        tmp = y; 
+		y = y*PApplet.cos(epsilon) - z*PApplet.sin(epsilon);
+        z = tmp*PApplet.sin(epsilon) + z*PApplet.cos(epsilon);
     }
 
     public void rotateAround(PVector center, float theta, float phi, float epsilon) {
