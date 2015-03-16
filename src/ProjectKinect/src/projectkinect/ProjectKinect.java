@@ -35,12 +35,12 @@ public class ProjectKinect extends PApplet {
 	    // fenêtre
 	    size(1280, 960, P3D);
 	    // limitation du rafraichissement
-	    frameRate(25);
+	    //frameRate(25);
 	    
 	    debug = false;
 	    
 	    clone = new ZZModel(this);
-	    clone.load("man.obj");
+	    clone.load("./data/man.obj");
 	    
 	    //Orientation et echelle du modele
 	    clone.scale(64);

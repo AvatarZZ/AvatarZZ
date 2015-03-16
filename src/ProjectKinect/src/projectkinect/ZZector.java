@@ -27,12 +27,22 @@ class ZZector extends PVector {
     }
     
     public void rotate(float theta, float phi) {
-    //Rotation de vector selon 2 angles
+		/***************************************************************
+		 * 
+    	 *	Rotation de vector selon 2 angles
+		 * 
+		 ***************************************************************/
+    	
     	rotate(theta, phi, 0);
     }
     
     public void rotate(float theta, float phi, float epsilon) {
-    //Rotation de vector selon 3 angles
+		/***************************************************************
+		 * 
+    	 *	Rotation de vector selon 3 angles
+		 * 
+		 ***************************************************************/
+    	
     	float tmp;
     	
         //Rotation selon theta (axe x)
