@@ -7,7 +7,7 @@ newmtl Shape.002
 	Kd 0.512 0.512 0.512
 	Ks 0.0 0.0 0.0
 	Ka 0.0 0.0 0.0
-	map_Kd ..\..\..\..\OneDrive\Workspace\ProjectKinect\data\..\..\..\..\OneDrive\Workspace\ProjectKinect\data\.\clonon.png
+	map_Kd .\clonon.png
 
 newmtl Shape.003
 	Ns 1
@@ -16,5 +16,5 @@ newmtl Shape.003
 	Kd 0.512 0.512 0.512
 	Ks 0.0 0.0 0.0
 	Ka 0.0 0.0 0.0
-	map_Kd ..\..\..\..\OneDrive\Workspace\ProjectKinect\data\..\..\..\..\OneDrive\Workspace\ProjectKinect\data\.\clonon.png
+	map_Kd .\clonon.png
 
