@@ -1,20 +1,20 @@
-# Material file for man.obj
+# Material file for droid.obj
 
-newmtl Shape.002
+newmtl Shape
 	Ns 1
 	d 1
 	illum 2
 	Kd 0.512 0.512 0.512
 	Ks 0.0 0.0 0.0
 	Ka 0.0 0.0 0.0
-	map_Kd .\clonon.png
+	map_Kd .\droid.png
 
-newmtl Shape.003
+newmtl Shape.001
 	Ns 1
 	d 1
 	illum 2
 	Kd 0.512 0.512 0.512
 	Ks 0.0 0.0 0.0
 	Ka 0.0 0.0 0.0
-	map_Kd .\clonon.png
+	map_Kd .\droid.png
 

@@ -118,7 +118,10 @@ class ZZModel {
 					currentMat = ZZMaterial.textureByName(materiel, file[i].split(" ")[1]);
 				}
 			}
-			skeleton.load("./data/skeleton.sk");
+			// squelette au format sk
+			//skeleton.load("./data/skeleton.sk");		rajouter le cas où quand le squelette n'est pas trouvé on utilise le squelette de base
+			// squelette au format bvh
+			skeleton.loadBVH(filename.replace("obj", "bvh"));
 			PApplet.println("Chargement du modèle : terminé");
 		} else {
 			PApplet.println("Chargement du modèle : erreur à l'ouverture du fichier " + filename);
@@ -267,6 +270,37 @@ class ZZModel {
     	return model.getVertexCount();
     }
     
+    public static ArrayList<ZZModel> loadModels(PApplet a, String filename) {
+    	/***************************************************************
+    	 * 
+    	 *  permet le chargement de plusieurs modèles à partir d'un fichier
+    	 * 
+    	 ***************************************************************/
+    		
+    		InputStream file = null;
+    		String [] lines = null;
+    		ArrayList<ZZModel> retour = null;
+    		
+    		try {
+    			file = new FileInputStream(filename);
+    		} catch (FileNotFoundException e) {
+    			PApplet.println("Chargement de la base de données : le fichier " + filename + " n'existe pas.");
+    		}
+    		
+    		lines = PApplet.loadStrings(file);
+    		retour = new ArrayList<ZZModel>();
+    		
+    		if(lines != null) {
+    			for (int i = 0; i < lines.length; i++) {
+    				retour.add(new ZZModel(a, "./data/"+lines[i]+".obj"));
+    			}
+    			PApplet.println("Chargement de la base de données : terminé");
+    		} else {
+    			PApplet.println("Chargement de la base de données : erreur lors du chargement de fichier " + filename);
+    		}
+    		return retour;
+    }
+    
     
 //  public void move(Skeleton sklKin) {
     /***************************************************************
@@ -278,7 +312,7 @@ class ZZModel {
     // déclaration de variables
     
     
-    // calcul de la translation gÃ©nÃ©rale et des rotations locales 
+    // calcul de la translation generale et des rotations locales 
     
 
     // applications des transformations
@@ -290,7 +324,7 @@ class ZZModel {
       }
     }
 
-    // mise Ã  jour des donnÃ©es
+    // mise a jour des donnees
     skeleton.update(sklKin);
   }
 */
