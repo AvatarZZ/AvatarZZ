@@ -41,12 +41,8 @@ public class ZZkinect {
 		
 		rgbImage = kinect.rgbImage();		//mise a jour de l'image couleur
 		depthImage = kinect.depthImage();	//mise a jour de la profondeur
-		
-		kinect.
+			
 	}
-	
-	public boolean 
-	
 	
 	@Override
 	public String toString() {
