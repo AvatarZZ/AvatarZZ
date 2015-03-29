@@ -10,6 +10,7 @@ public class ProjectKinect extends PApplet {
 	protected ZZModel clone;
 	protected ArrayList<ZZModel> avatars;
 	protected boolean debug;
+	protected ZZkinect kinect;
 
 	//------ déclaration des variables de couleur utiles ----
 	int jaune=color(255,255,0);
@@ -20,7 +21,10 @@ public class ProjectKinect extends PApplet {
 	int blanc=color(255,255,255);
 	int bleuclair=color(0,255,255);
 	int violet=color(255,0,255);
-
+	
+	int widthWindow = 1280;	//largeur de la fenetre principale
+	int heightWindow = 960;	//hauteur de la fenetre principale
+	
 	int distanceCamXZ=400; // variable distance à la caméra dans plan XZ
 	int distanceCamYZ=0; // variable distance à la caméra dans plan YZ
 
@@ -30,15 +34,19 @@ public class ProjectKinect extends PApplet {
 	int vTest = 0; float angleMouv = PI/(2*60); // utile aux tests de mouvement
 
 	public void setup() {
-	    // fenêtre
-	    size(1280, 960, P3D);
-	    // limitation du rafraichissement
-	    //frameRate(25);
+	    size(widthWindow, heightWindow, P3D);				//ouverture de la fenetre en P3D
+	    frame.setTitle("Project Kinect");	//modification du titre de la frame
+	    //frameRate(25);					//limitation du rafraichissement
 	    
-	    debug = false;
+	    debug = false;	//options de debug
 	    
+	    //initialisation de la kinect
+	    kinect = new ZZkinect(this);
+	    
+	    //chargement des modeles a partir de la liste
 	    avatars = ZZModel.loadModels(this, "./data/avatars.bdd");
-	    
+
+	    //recuperation du premier clone pour affichage
 	    clone = avatars.get(0);
 	    
 	    //Orientation et echelle du modele et rotation de l'avant bras bras droit
@@ -46,6 +54,7 @@ public class ProjectKinect extends PApplet {
 	    	avatars.get(i).scale(64);
 	    	avatars.get(i).rotatePart(ZZkeleton.WRIST_LEFT, 0, PI/2);
 		}
+	    
 	    /*clone.rotateZ(PI);
 	    clone.rotateY(PI);
 	    clone.translate(0, -1, 0);*/
@@ -55,27 +64,23 @@ public class ProjectKinect extends PApplet {
 	}
 	  
 	public void draw() {
-	    // effacer écran
-	    background(100);
-	    lights();
+	    background(100);	//efface l'ecran
+	    lights();			//ajout de lumiere
 	    
-	    if(debug) { // deboggage
-	      debugTools();
-	    }
+	    if(debug) {debugTools();} //outils de debug
+	    
+	    if (kinect != null) { //si la kinect est presente
+			kinect.refresh();	//mise a jour de la kinect
+			
+			image(kinect.rgbImage, 0, 0);	//affiche l'image couleur en haut a gauche
+			image(kinect.depthImage, widthWindow-kinect.width,0);	//affiche la profondeur en haut a droite
+			
+			
+		}
 	    
 	    vision();
 
 	    stroke(255, 0, 0);
-
-	    //Test pour faire tourner la tete par la méthode du "face par face" (basique)
-/*	    for (int j = 0; j < clone.getChild("HEAD").getChildCount() ; j++) {
-	      for (int i = 0; i < clone.getChild("HEAD").getChild(j).getVertexCount(); i++) {
-	        ZZector tmp = new ZZector(clone.getChild("HEAD").getChild(j).getVertex(i));
-	        tmp.rotate(0,(float) 0.1);
-	        clone.getChild("HEAD").getChild(j).setVertex(i, tmp);
-	      }
-	    }
-*/
 	    
 	    // test de mouvement
 	    if(vTest<60) {
