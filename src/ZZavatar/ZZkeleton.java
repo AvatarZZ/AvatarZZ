@@ -1,4 +1,8 @@
 import processing.core.*;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 class ZZkeleton {
@@ -28,21 +32,19 @@ class ZZkeleton {
     public final static int INDEX_RIGHT    = 23;
     public final static int THUMB_RIGHT    = 24;
     
-    protected PApplet app;
     protected ZZoint[] joints;
     protected int jointsNumber;
     protected String name;
     
-    public ZZkeleton(PApplet a) {
-      app = a;
+    public ZZkeleton() {
       jointsNumber = 25;
       joints = new ZZoint[jointsNumber];
       name = "default";
     }
     
     public ZZkeleton(PApplet a, String filename) {
-      this(a);
-      this.load(filename);
+      this();
+      this.load(a, filename);
     }
     
      protected int getTypeCode(String type) {
@@ -85,61 +87,144 @@ class ZZkeleton {
     }
   
     protected int[] getTypeCode(String[] type) {
-      /***************************************************************
-       * 
-       * matching entre les valeurs des fichiers et du code
-       * 
-       ***************************************************************/
+    	/***************************************************************
+    	 * 
+    	 * matching entre les valeurs des fichiers et du code
+    	 * 
+    	 ***************************************************************/
       
-      int [] retour = new int[type.length];
-      
-      for (int i = 0; i < retour.length; i++) {
-        retour[i] = getTypeCode(type[i]);
-      }
-      
-      return retour;
+    	int [] retour = new int[type.length];
+  
+    	for (int i = 0; i < retour.length; i++) {
+    		retour[i] = getTypeCode(type[i]);
+    	}
+  
+    	return retour;
     }
+    
+   public void load(PApplet a, String filename) {
+	   /***************************************************************
+   	 	* 
+   	 	*	charge le squelette � partir d'un fichier .sk
+   	 	* 
+   	 	***************************************************************/
      
-     public void load(String filename) {
-      /***************************************************************
-       * 
-       * charge le squelette à partir d'un fichier .sk
-       * 
-       ***************************************************************/
-      
-      String[] file;
-      
-      if(!(filename.contains(".sk"))) {
-        PApplet.println("Chargement du squelette : attention, il se peut que " + filename + " soit incompatible");
-      }
-      
-      file = app.loadStrings(filename);
-      
-      if(file != null) {
-        int index = 0;
-        while (index < file.length) {
-          if (file[index].contains("sk ")) {
-            name = file[index].substring(3);
-          }
-          else if (file[index].contains("j ")) {
-            int type = getTypeCode((file[index].split(" "))[1]);
-            joints[type] = new ZZoint(PApplet.parseFloat(file[index+1].substring(2).split(" ")), 
-                          getTypeCode(file[index+2].split(" ")[1]), 
-                          getTypeCode(file[index+3].substring(2).split(" ")));
-            index += 3;
-          }
-          index++;
-        }
-        PApplet.println("Chargement du squelette : terminé");
-      } else {
-        PApplet.println("Chargement du squelette : erreur à l'ouverture du fichier " + filename);
-      }
-    }
+	 	String[] file;
+	 	InputStream fichier = null;		// pour ouvrir le fichier
+     
+	 	if(!(filename.contains(".sk"))) {
+	 		PApplet.println("Chargement du squelette : attention, il se peut que " + filename + " soit incompatible");
+	 	}
+     
+	 	// ouverture du fichier
+		file = a.loadStrings(filename);
+     
+	 	if(file != null) {
+	 		int index = 0;
+	 		while (index < file.length) {
+	 			if (file[index].contains("sk ")) {
+	 				name = file[index].substring(3);
+	 			}
+	 			else if (file[index].contains("j ")) {
+	 				int type = getTypeCode((file[index].split(" "))[1]);
+	 				joints[type] = new ZZoint(PApplet.parseFloat(file[index+1].substring(2).split(" ")), 
+	 											getTypeCode(file[index+2].split(" ")[1]), 
+												getTypeCode(file[index+3].substring(2).split(" ")));
+	 				index += 3;
+	 			}
+	 			index++;
+	 		}
+	 		PApplet.println("Chargement du squelette : termin�");
+	 	} else {
+	 		PApplet.println("Chargement du squelette : erreur � l'ouverture du fichier " + filename);
+	 	}
+   }
+   
+   public void loadBVH(PApplet a, String filename) {
+	   /***************************************************************
+   	 	* 
+   	 	*	charge le squelette � partir d'un fichier .bvh
+   	 	* 
+   	 	***************************************************************/
+     
+	 	String[] file;
+	 	InputStream fichier = null;		// pour ouvrir le fichier
+	 	boolean again = true;
+	 	int [] tree = new int[3];		// sauvegarde de la hierarchie
+	 	int level = 1;	// niveau dans l'arborescence
+     
+	 	if(!(filename.contains(".bvh"))) {
+	 		PApplet.println("Chargement du squelette : attention, il se peut que " + filename + " soit incompatible");
+	 	}
+     
+	 	// ouverture du fichier
+		
+		file = a.loadStrings(filename);
+     
+	 	if(file != null) {
+	 		int index = 0;
+	 		while (index < file.length && again) {
+	 			if (file[index].contains("HIERARCHY")) { // chargement du squelette
+	 				name = file[index];
+	 			} else if (file[index].contains("ROOT ")) {	// initialisation des variables
+	 				tree[0] = -1;
+	 				tree[1] = getTypeCode(file[index].split(" ")[0]);
+	 				tree[2] = getTypeCode(file[index].split(" ")[1]);
+	 			} else if (file[index].contains("JOINT ")) {		//	on trouve un fils
+	 				tree[0] = tree[1];
+	 				tree[1] = tree[2];
+	 				tree[2] = getTypeCode(file[index].split(" ")[1]);
+	 			} else if (file[index].contains("{")) {		//	on descend dans la hierarchie
+	 				
+	 			} else if (file[index].contains("}")) {		//	on remonte
+	 				level = -1;
+	 				tree[2] = tree[1];
+	 				tree[1] = tree[0];
+	 				if(tree[1]!=-1) {
+	 					tree[0] = joints[tree[1]].getParent();
+	 				}
+	 			} else if (file[index].contains("OFFSET ")) {	// coordonnees du joint, ajout de celui-ci	 				
+	 				float [] father = null;
+	 				float [] coords = PApplet.parseFloat(file[index].substring(file[index].indexOf("T")+2).split(" "));
+	 				float tmp = coords[1];
+	 				
+	 				// calcul du point par somme des coordonnees du pere avec l'offset
+	 				father = tree[0] != -1 ? joints[tree[0]].get(father) : new float[] {0,0,0};
+	 				coords[0] = coords[0] + father[0];
+	 				coords[1] = coords[2] + father[1];
+	 				coords[2] = -tmp + father[2];
+	 				
+	 				if(level>0) {	// si l'on ne vient pas de remonter l'arborescence
+	 					joints[tree[1]] = new ZZoint(coords, tree[0]);
+		 				if(tree[0]!=-1) {
+		 					joints[tree[0]].addChild(tree[1]);
+		 				}
+	 				} else if(coords[0] == father[0] && coords[1] == father[1] && coords[2] == father[2]) { // on se trouve � la racine
+	 					tree[1] = tree[0];
+	 					tree[0] = joints[tree[0]].getParent();
+	 				}
+	 					
+	 				level = 1;	// on descend
+	 			} else if (file[index].contains("CHANNELS ")) {		// OSEF
+	 				
+	 			} else if (file[index].contains("End Site")) {		// feuille trouvee
+	 				tree[0] = tree[1];
+	 				tree[1] = tree[2];
+	 			} else if(file[index].contains("MOTION")) {	// coordonnees de motion capture non traitees
+	 				again = !again;
+	 			}
+	 			index++;
+	 		}
+	 		PApplet.println("Chargement du squelette : termin�");
+	 	} else {
+	 		PApplet.println("Chargement du squelette : erreur � l'ouverture du fichier " + filename);
+	 	}
+   }
      
      //public void update(Skeleton sklKin) {
       /***************************************************************
        * 
-       *  met à jour les données du squelette � partir du squelette de la Kinect 2
+       *  met � jour les donn�es du squelette � partir du squelette de la Kinect 2
        * 
        ***************************************************************/
       /*
@@ -149,39 +234,57 @@ class ZZkeleton {
       }
      }
      */
-     public void update(ZZkeleton skl) {
-      /***************************************************************
-       * 
-       *  met à jour les données du squelette
-       * 
-       ***************************************************************/
-      
-       for (int i = 0; i < jointsNumber; i++) {
-        joints[i].set(skl.joints[i].get());
-      }
-     }
      
-     public ArrayList<Integer> getMember(int part) {
-      /***************************************************************
-       * 
-       *  renvoie la liste des joints du membre
-       * 
-       ***************************************************************/
+     public void update(ZZkeleton skl) {
+     	 /***************************************************************
+     	  * 
+	      *  met � jour les donn�es du squelette
+	      * 
+	      ***************************************************************/
+	      
+    	 for (int i = 0; i < jointsNumber; i++) {
+    		 joints[i].set(skl.joints[i].get());
+     	 }
+    }
+     
+    public ArrayList<Integer> getMember(int part) {
+    	 /***************************************************************
+    	  * 
+    	  *  renvoie la liste des joints du membre
+    	  * 
+    	  ***************************************************************/
       
-       ArrayList<Integer> toReturn = new ArrayList<Integer>();
-       ArrayList<Integer> pile = new ArrayList<Integer>();
-       pile.add(part);
+    	 ArrayList<Integer> toReturn = new ArrayList<Integer>();
+    	 ArrayList<Integer> pile = new ArrayList<Integer>();
+    	 pile.add(part);
        
-       while (!(pile.isEmpty())) {
-         int [] tmp = joints[pile.get(0)].getChildren();
-         if (tmp != null) {
-           for (int i = 0; i < tmp.length; i++) {
-            pile.add(tmp[i]);
-          }
-         }
-        toReturn.add(pile.remove(0));
-      }
+    	 while (!(pile.isEmpty())) {
+    		 Integer[] tmp = joints[pile.get(0)].getChildren();
+    		 if (tmp != null) {
+    			 for (int i = 0; i < tmp.length; i++) {
+    				 pile.add(tmp[i]);
+    			 }
+    		 }
+    		 toReturn.add(pile.remove(0));
+    	 }
        
-       return toReturn;
-     }
+    	 return toReturn;
+ 	}
+    
+    @Override
+    public String toString() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  toString permettant l'affichage des donn�es du squelette
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		String retour = new String();
+    	
+    	for (int i = 0; i < joints.length; i++) {
+			retour += "Joint : " + i + " " + joints[i]  + "\n";
+		}
+    	
+    	return retour;
+    }
 }
