@@ -26,7 +26,7 @@ public class ZZavatar extends PApplet {
 	final int widthWindow = 1280;	//largeur de la fenetre principale
 	final int heightWindow = 960;	//hauteur de la fenetre principale
 	
-	int distanceCamXZ=400; // variable distance à la caméra dans plan XZ
+	int distanceCamXZ=0; // variable distance à la caméra dans plan XZ
 	int distanceCamYZ=0; // variable distance à la caméra dans plan YZ
 
 	int angleCamXZ=270; // angle dans le plan XZ de la visée de la caméra avec l'axe des X dans le plan XZ
@@ -38,9 +38,9 @@ public class ZZavatar extends PApplet {
     	 *  fonction setup() standard
     	 * 
     	 ***************************************************************/
-    	
-	    size(widthWindow, heightWindow, P3D);	// ouverture de la fenetre en P3D
+
 	    frame.setTitle("ZZavatar");				// modification du titre de la frame
+	    size(widthWindow, heightWindow, P3D);	// ouverture de la fenetre en P3D
 	    //frameRate(25);						// limitation du rafraichissement
 	    
 	    // options de debug
@@ -55,12 +55,13 @@ public class ZZavatar extends PApplet {
 
 	    // recuperation du premier clone pour affichage
 	    clone = avatars.get(0);
-	    
-	    // Orientation et echelle du modele et rotation de l'avant bras bras droit
+
+	    // Orientation et echelle du modele
 	    for (int i = 0; i < avatars.size(); i++) {
 	    	avatars.get(i).scale(64);
+	    	avatars.get(i).rotateY(PI);
 	    	avatars.get(i).rotateX(PI);
-		}
+		}	    
 	}
 	  
 	public void draw() {
@@ -91,10 +92,12 @@ public class ZZavatar extends PApplet {
 			}
 		}
 	    
+	    // gestion de la camera
 	    vision();
 	    
 	    //Afficher le clone
 	    clone.draw();
+	    
 	    //Afficher le centre de la scène
 	    shape(debugSphere);
 	    lights();			// ajout de lumiere
@@ -128,15 +131,15 @@ public class ZZavatar extends PApplet {
 	    
 	    //---- Ox
 	    stroke(rouge);
-	    line (0,0,0,150,0,0);
+	    line (0,0,0,800,0,0);
 	    
 	    // --- Oy
 	    stroke(vert);
-	    line (0,0,0,0,-150,0);
+	    line (0,0,0,0,-800,0);
 	    
 	    // --- Oz
 	    stroke(bleu);
-	    line (0,0,0,0,0,-150); 
+	    line (0,0,0,0,0,-800); 
 	    
 	    text(clone.getChildCount(), 100, -100);
 	    debugSkeleton(clone.skeleton);
@@ -155,8 +158,6 @@ public class ZZavatar extends PApplet {
 			translate(sk.joints[i].x, sk.joints[i].y, sk.joints[i].z);
 			shape(debugSphere);
 			popMatrix();
-			text(((Boolean)(kinect.skeletonsV2[0].isTracked())).toString(), -kinect.width/8, -kinect.height/8);
-			fill(153, 0, 0);
 		}
     }
 

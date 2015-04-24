@@ -88,7 +88,6 @@ public class ZZkinect {
 			retour = getSkeleton_1(numUser);
 		} else if (version==2) {
 			retour = getSkeleton_2(numUser);
-			PApplet.println("coucou");
 		}
 		
 		return retour;

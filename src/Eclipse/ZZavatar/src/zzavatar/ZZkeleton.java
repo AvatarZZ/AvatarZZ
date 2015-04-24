@@ -203,7 +203,7 @@ class ZZkeleton {
 	 				 father = tree[0] != -1 ? joints[tree[0]].get(father) : new float[] {0,0,0};
 	 				 coords[0] = coords[0] + father[0];
 	 				 coords[1] = coords[2] + father[1];
-	 				 coords[2] = tmp + father[2];
+	 				 coords[2] = -tmp + father[2];
 	 				
 	 				 if(level>0) {	// si l'on ne vient pas de remonter l'arborescence
 	 					 joints[tree[1]] = new ZZoint(coords, tree[0]);
@@ -280,9 +280,7 @@ class ZZkeleton {
    	 	 * 
    	 	 ***************************************************************/
     	
-		for (int i = 0; i < joints.length; i++) {
-			joints[i].rotateAround(new PVector(0,0,0), angle, 0, 0);
-		}
+		rotateAround(new PVector(0,0,0), angle, 0, 0);
     }
     
     protected void rotateY(float angle) {
@@ -292,9 +290,7 @@ class ZZkeleton {
    	 	 * 
    	 	 ***************************************************************/
     	
-		for (int i = 0; i < joints.length; i++) {
-			joints[i].rotateAround(new PVector(0,0,0), 0, angle, 0);
-		}
+		rotateAround(new PVector(0,0,0), 0, angle, 0);
     }
     
     protected void rotateZ(float angle) {
@@ -304,8 +300,18 @@ class ZZkeleton {
    	 	 * 
    	 	 ***************************************************************/
     	
+		rotateAround(new PVector(0,0,0), 0, 0, angle);
+    }
+    
+    protected void rotateAround(PVector center, float theta, float phi, float epsilon) {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  pivote le squelette autour d'un certain point
+   	 	 * 
+   	 	 ***************************************************************/
+    	
 		for (int i = 0; i < joints.length; i++) {
-			joints[i].rotateAround(new PVector(0,0,0), 0, 0, angle);
+			joints[i].rotateAround(center, theta, phi, epsilon);
 		}
     }
     
@@ -329,7 +335,7 @@ class ZZkeleton {
    	 	 ***************************************************************/
     	
 		for (int i = 0; i < joints.length; i++) {
-			joints[i].mult(s);;
+			joints[i].mult(s);
 		}
     }
 }

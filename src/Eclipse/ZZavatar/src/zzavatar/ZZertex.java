@@ -30,7 +30,7 @@ class ZZertex extends ZZector {
     	placeInShape.add(vnum);
     }
     
-    public void apply(PShape shape) {
+    public void apply(PShape shape) {	// modifie les vertices et pas la matrice
     	/***************************************************************
     	 * 
     	 *  applique la valeur du vertex a toutes ses occurences dans un modele

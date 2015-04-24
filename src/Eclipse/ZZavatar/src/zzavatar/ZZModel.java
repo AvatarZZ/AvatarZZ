@@ -23,7 +23,7 @@ class ZZModel {
     ArrayList<ZZector> vertiTexture;
     ArrayList<Integer>[] groups;
 	ArrayList<ZZMaterial> materiel = null;
-	protected int idUser = 1; // determine le numero du joueur (6 max.)
+	protected int idUser = 0; // determine le numero du joueur (6 max.)
 
     protected ZZModel(PApplet a) {
     	app = a;
@@ -35,8 +35,8 @@ class ZZModel {
     }
 
     protected ZZModel(PApplet a, String filename) {
-      this(a);
-      this.load(filename);
+    	this(a);
+      	this.load(filename);
     }
     
     public void load(String filename) {
@@ -136,7 +136,7 @@ class ZZModel {
     public void draw() {
     	/***************************************************************
     	 * 
-    	 *	affiche simplement le modèle
+    	 *	affiche simplement le modele
     	 * 
     	 ***************************************************************/
     	
@@ -148,14 +148,14 @@ class ZZModel {
     public int getChildCount() {
     	/***************************************************************
     	 * 
-    	 *	donne le nombre de groupes enfant
+    	 *	donne le nombre de groupes enfants
     	 * 
     	 ***************************************************************/
     	
     	return model.getChildCount();
     }
     
-    public void scale(float s) {
+    public void scale2(float s) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
     	 *	change la taille du modèle
@@ -166,7 +166,22 @@ class ZZModel {
     	skeleton.scale(s);
     }
     
-    public void rotateX(float angle) {
+    public void scale(float s) {
+    	/***************************************************************
+    	 * 
+    	 *	change la taille du modèle
+    	 * 
+    	 ***************************************************************/
+
+    	for (int i = 0; i < vertices.size(); i++) {
+    		vertices.get(i).mult(s);
+    		vertices.get(i).apply(model);
+		}
+    	
+    	skeleton.scale(s);
+    }
+    
+    public void rotateX2(float angle) {	// deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
     	 *	rotation du modèle autour de l'axe X
@@ -175,6 +190,52 @@ class ZZModel {
       
     	model.rotateX(angle);
     	skeleton.rotateX(angle);
+    	
+    }
+    
+    public void rotateX(float angle) {
+    	/***************************************************************
+    	 * 
+    	 *	rotation du modèle autour de l'axe X
+    	 * 
+    	 ***************************************************************/
+    	
+    	rotateAround(new PVector(0, 0, 0), angle, 0, 0);
+    }
+    
+    public void rotateY(float angle) {
+    	/***************************************************************
+    	 * 
+    	 *	rotation du modèle autour de l'axe Y
+    	 * 
+    	 ***************************************************************/
+    	
+    	rotateAround(new PVector(0, 0, 0), 0, angle, 0);
+    }
+    
+    public void rotateZ(float angle) {
+    	/***************************************************************
+    	 * 
+    	 *	rotation du modèle autour de l'axe Z
+    	 * 
+    	 ***************************************************************/
+    	
+    	rotateAround(new PVector(0, 0, 0), 0, 0, angle);
+    }
+    
+    public void rotateAround(PVector center, float theta, float phi, float epsilon) {
+    	/***************************************************************
+    	 * 
+    	 *	rotation du modèle autour d'un point
+    	 * 
+    	 ***************************************************************/
+    	
+    	for (int i = 0; i < vertices.size(); i++) {
+    		vertices.get(i).rotateAround(center, theta, phi, epsilon);
+    		vertices.get(i).apply(model);
+		}
+    	
+    	skeleton.rotateAround(center, theta, phi, epsilon);
     }
     
     public void rotatePart(int part, float theta, float phi, float epsilon) {
@@ -190,11 +251,12 @@ class ZZModel {
       
     	for (int i = 0; i < jts.size(); i++) {
     		vtcs.addAll(groups[jts.get(i)]);
+    		skeleton.joints[jts.get(i)].rotateAround(center, theta, phi);	// mise a jour du squelette
     	}
     	for (Iterator iterator = vtcs.iterator(); iterator.hasNext();) {
     		Integer integer = (Integer) iterator.next();
-    		vertices.get(integer).rotateAround(center, theta, phi, epsilon);
-    		vertices.get(integer).apply(model);
+    		vertices.get(integer).rotateAround(center, theta, phi, epsilon);	// rotation autour du point center
+    		vertices.get(integer).apply(model);									// modifie toutes les occurences
     	}
     }
     
@@ -218,7 +280,7 @@ class ZZModel {
     	return skeleton.getMember(part);
     }
     
-    public void rotateY(float angle) {
+    public void rotateY2(float angle) { // deprecated : ne modifie pas les vertices mais joue sur la matrice 
     	/***************************************************************
     	 * 
     	 *  rotation du modèle autour de l'axe Y
@@ -229,7 +291,7 @@ class ZZModel {
     	skeleton.rotateY(angle);
     }
     
-    public void rotateZ(float angle) {
+    public void rotateZ2(float angle) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
     	 *	rotation du modèle autour de l'axe Z
@@ -240,7 +302,7 @@ class ZZModel {
     	skeleton.rotateZ(angle);
     }
     
-    public void translate(float x, float y, float z) {
+    public void translate2(float x, float y, float z) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
     	 *	translation du modèle
@@ -248,6 +310,21 @@ class ZZModel {
     	 ***************************************************************/
 
     	model.translate(x, y, z);
+    	skeleton.translate(x, y, z);
+    }
+    
+    public void translate(float x, float y, float z) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
+    	/***************************************************************
+    	 * 
+    	 *	translation du modèle
+    	 * 
+    	 ***************************************************************/
+
+    	for (int i = 0; i < vertices.size(); i++) {
+    		vertices.get(i).add(x, y, z);
+    		vertices.get(i).apply(model);
+		}
+    	
     	skeleton.translate(x, y, z);
     }
     
@@ -331,8 +408,6 @@ class ZZModel {
 
 	    // translation generale
     	ZZector dl = newPosition[ZZkeleton.ROOT];
-    	PApplet.println(newPosition[ZZkeleton.ROOT]);
-    	PApplet.println(skeleton.joints[ZZkeleton.ROOT]);
     	dl.sub(skeleton.joints[ZZkeleton.ROOT]);
     	this.translate(dl);
     }

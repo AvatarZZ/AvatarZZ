@@ -63,9 +63,9 @@ class ZZector extends PVector {
 
     public void rotateAround(PVector center, float theta, float phi, float epsilon) {
 		/***************************************************************
-		 * 
+		 *
 		 *  rotation autour d'un point dans un espace 3D
-		 * 
+		 *
 		 ***************************************************************/
 		
 		this.sub(center);
@@ -80,9 +80,7 @@ class ZZector extends PVector {
 		 * 
 		 ***************************************************************/
 		
-		this.sub(center);
-		rotate(theta, phi);
-		this.add(center);
+		rotateAround(center, theta, phi, 0);
     }
     
     public void rotateAround(PVector center, float theta) {
