@@ -77,10 +77,7 @@ class ZZoint extends ZZector {
     @Override
     public String toString() {
     	// TODO Auto-generated method stub
-    	String retour = new String("Coordonnees : " + x + " " + y + " " + z + " Parent : " + parent + " ; Enfants : ");
-    	for (int i = 0; i < children.size(); i++) {
-    		retour += children.get(i) + " ";
-    	}
+    	String retour = new String("Coordonnees : " + x + " " + y + " " + z);
     	return retour;
     }
     

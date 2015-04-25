@@ -2,6 +2,8 @@ package zzavatar;
 
 import java.util.ArrayList;
 
+import KinectPV2.KJoint;
+import KinectPV2.KinectPV2;
 import processing.core.*;
 
 
@@ -13,7 +15,7 @@ public class ZZavatar extends PApplet {
 	protected ZZkinect kinect;
 	protected PShape debugSphere;
 
-	//------ déclaration des variables de couleur utiles ----
+	// declaration des variables de couleur utiles
 	final int jaune=color(255,255,0);
 	final int vert=color(0,255,0);
 	final int rouge=color(255,0,0);
@@ -23,14 +25,14 @@ public class ZZavatar extends PApplet {
 	final int bleuclair=color(0,255,255);
 	final int violet=color(255,0,255);
 	
-	final int widthWindow = 1280;	//largeur de la fenetre principale
-	final int heightWindow = 960;	//hauteur de la fenetre principale
+	final int widthWindow = 1920;//1280;	//largeur de la fenetre principale
+	final int heightWindow = 1080;//960;	//hauteur de la fenetre principale
 	
-	int distanceCamXZ=0; // variable distance à la caméra dans plan XZ
-	int distanceCamYZ=0; // variable distance à la caméra dans plan YZ
+	int distanceCamXZ = 100; // variable distance à la caméra dans plan XZ
+	int distanceCamYZ = 100; // variable distance à la caméra dans plan YZ
 
-	int angleCamXZ=270; // angle dans le plan XZ de la visée de la caméra avec l'axe des X dans le plan XZ
-	int angleCamYZ=90; // angle avec axe YZ de la visée de la caméra dans le plan YZ
+	int angleCamXZ = 270; // angle dans le plan XZ de la visée de la caméra avec l'axe des X dans le plan XZ
+	int angleCamYZ = 90; // angle avec axe YZ de la visée de la caméra dans le plan YZ
 
 	public void setup() {
     	/***************************************************************
@@ -41,6 +43,7 @@ public class ZZavatar extends PApplet {
 
 	    frame.setTitle("ZZavatar");				// modification du titre de la frame
 	    size(widthWindow, heightWindow, P3D);	// ouverture de la fenetre en P3D
+	    sketchFullScreen();
 	    //frameRate(25);						// limitation du rafraichissement
 	    
 	    // options de debug
@@ -78,15 +81,27 @@ public class ZZavatar extends PApplet {
 	    if (kinect.available()) { 	// si la kinect est presente
 			kinect.refresh();		// mise a jour de la kinect
 			pushMatrix();
-			translate(0, 0, -500);
-			image(kinect.rgbImage, -kinect.width/2, -kinect.height/2);	// affiche l'image couleur en haut a gauche
+			translate(-kinect.width/2, -kinect.height/2, -800);
+			image(kinect.rgbImage, 0, 0);	// affiche l'image couleur en haut a gauche
+			
+			kinect.drawSkeletons();
 			
 			translate(0, 0, 50);
-			image(kinect.kinectV2.getBodyTrackImage(), -kinect.width/2, -kinect.height/2);	// affiche la profondeur en haut a droite
+			image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
 			popMatrix();
 			
 			for (int i = 0; i < kinect.skeletonsV2.length; i++) {
 				if (kinect.skeletonsV2[i].isTracked()) {
+					
+					/***************** DEBUG du move ***************************
+					for (int j = 0; j < kinect.getSkeleton(i).length; j++) {
+						pushMatrix();
+						stroke(rouge);
+						translate(4*kinect.getSkeleton(i)[j].x, 4*kinect.getSkeleton(i)[j].y, 4*kinect.getSkeleton(i)[j].z);
+						shape(debugSphere);
+						popMatrix();
+					}
+					***********************************************************/
 					clone.move(kinect.getSkeleton(i));
 				}
 			}
@@ -107,23 +122,24 @@ public class ZZavatar extends PApplet {
 	    // gestion de la camera
 	    vision();
 	    
-	    //Afficher le clone
+	    // Afficher le clone
 	    clone.draw();
 	    
-	    //Afficher le centre de la scène
+	    // Afficher le centre de la scène
 	    shape(debugSphere);
 	    lights();			// ajout de lumiere
 	}
 	  
-	public void vision() { // comportement "spécial"
+	public void vision() { // comportement "special"
     	/***************************************************************
     	 * 
     	 *  gere la camera
     	 * 
     	 ***************************************************************/
     	
-	    //Modifie la camera afin de voir convenablement le modele
-		camera(distanceCamXZ*cos(radians(angleCamXZ)), distanceCamXZ*sin(radians(angleCamYZ)), ((height/2)/tan((float) (PI*30 / 180))), 0, 0, 0, 0, 1, 0);
+	    // Modifie la camera afin de voir convenablement le modele
+		camera(0, 0, 200, 0, 0, 0, 0, 1, 0);
+		//camera(distanceCamXZ*cos(radians(angleCamXZ)), distanceCamYZ*sin(radians(angleCamYZ)), ((height/2)/tan((float) (PI*30 / 180))), 0, 0, 0, 0, 1, 0);
 	}
 	  
 	public void debugTools() {
@@ -202,13 +218,13 @@ public class ZZavatar extends PApplet {
 	    	  	distanceCamXZ=distanceCamXZ+5;
 		        break;
 	    	case CODED :
-    	  		if (keyCode == UP) { // si touche Haut appuyée
+    	  		if (keyCode == UP) { 			// si touche Haut appuyée
     	  			angleCamYZ=angleCamYZ+5;
-                } else if (keyCode == DOWN) {// si touche BAS appuyée
+                } else if (keyCode == DOWN) {	// si touche BAS appuyée
                 	angleCamYZ=angleCamYZ-5;
-                } else if (keyCode == LEFT) {// si touche GAUCHE appuyée
+                } else if (keyCode == LEFT) {	// si touche GAUCHE appuyée
                 	angleCamXZ=angleCamXZ+5;
-                } else if (keyCode == RIGHT) {// si touche DROITE appuyée
+                } else if (keyCode == RIGHT) {	// si touche DROITE appuyée
                 	angleCamXZ=angleCamXZ-5;
                 }
     	  		break;
@@ -262,6 +278,6 @@ public class ZZavatar extends PApplet {
     	 ***************************************************************/
     	
 		PApplet.main(new String[] { zzavatar.ZZavatar.class.getName() });
-	}
+	}	
 }
 	

@@ -75,7 +75,7 @@ class ZZModel {
 			for(int i = 0 ; i < file.length; i++) {
 				if(file[i].contains("v ")) {	// lorsque l'on trouve un sommet
 					float[] line = PApplet.parseFloat(file[i].substring(2).split(" "));
-					vertices.add(new ZZertex(line[0], line[1], line[2]));
+					vertices.add(new ZZertex(-line[0], line[1], line[2]));
 				} else if(file[i].contains("vt ")) {	// lorsque l'on trouve un sommet de texture
 					float[] line = PApplet.parseFloat(file[i].substring(3).split(" "));
 					vertiTexture.add(new ZZector(line[0], 1-line[1]));	// attention inversion de opengl
@@ -124,7 +124,7 @@ class ZZModel {
 				}
 			}
 			// squelette au format sk
-			//skeleton.load("./data/skeleton.sk");		rajouter le cas où quand le squelette n'est pas trouvé on utilise le squelette de base
+			//skeleton.load("./data/skeleton.sk");		// rajouter le cas où quand le squelette n'est pas trouvé on utilise le squelette de base
 			// squelette au format bvh
 			skeleton.loadBVH(filename.replace("obj", "bvh"));
 			PApplet.println("Chargement du modèle : terminé");
@@ -200,7 +200,7 @@ class ZZModel {
     	 * 
     	 ***************************************************************/
     	
-    	rotateAround(new PVector(0, 0, 0), angle, 0, 0);
+    	rotateAround(ZZector.ORIGIN, angle, 0, 0);
     }
     
     public void rotateY(float angle) {
@@ -210,7 +210,7 @@ class ZZModel {
     	 * 
     	 ***************************************************************/
     	
-    	rotateAround(new PVector(0, 0, 0), 0, angle, 0);
+    	rotateAround(ZZector.ORIGIN, 0, angle, 0);
     }
     
     public void rotateZ(float angle) {
@@ -220,7 +220,7 @@ class ZZModel {
     	 * 
     	 ***************************************************************/
     	
-    	rotateAround(new PVector(0, 0, 0), 0, 0, angle);
+    	rotateAround(ZZector.ORIGIN, 0, 0, angle);
     }
     
     public void rotateAround(PVector center, float theta, float phi, float epsilon) {
@@ -328,7 +328,7 @@ class ZZModel {
     	skeleton.translate(x, y, z);
     }
     
-    public void translate(ZZector zz) {
+    public void translate(PVector zz) {
     	/***************************************************************
     	 * 
     	 *	translation du modèle
@@ -405,11 +405,66 @@ class ZZModel {
 	     *  algorithme principal d'animation du modele
 	     * 
 	     ***************************************************************/
-
-	    // translation generale
-    	ZZector dl = newPosition[ZZkeleton.ROOT];
+    	
+    	ZZector dl = newPosition[ZZkeleton.ROOT];		// translation generale
+    	dl.mult(4);
     	dl.sub(skeleton.joints[ZZkeleton.ROOT]);
     	this.translate(dl);
+
+    	//movePart(ZZkeleton.TORSO, newPosition);		// rotation des sous membres
+    	//movePart(ZZkeleton.WAIST, newPosition);
+    	
+    	//movePart(ZZkeleton.NECK, newPosition);
+    	//movePart(ZZkeleton.HEAD, newPosition);
+    	
+    	movePart(ZZkeleton.SHOULDER_RIGHT, newPosition);
+    	movePart(ZZkeleton.ELBOW_RIGHT, newPosition);
+    	movePart(ZZkeleton.WRIST_RIGHT, newPosition);
+    	movePart(ZZkeleton.HAND_RIGHT, newPosition);
+    	movePart(ZZkeleton.THUMB_RIGHT, newPosition);
+    	movePart(ZZkeleton.INDEX_RIGHT, newPosition);
+    	
+    	movePart(ZZkeleton.SHOULDER_LEFT, newPosition);
+    	movePart(ZZkeleton.ELBOW_LEFT, newPosition);
+    	movePart(ZZkeleton.WRIST_LEFT, newPosition);
+    	movePart(ZZkeleton.HAND_LEFT, newPosition);
+    	movePart(ZZkeleton.THUMB_LEFT, newPosition);
+    	movePart(ZZkeleton.INDEX_LEFT, newPosition);
+
+    	movePart(ZZkeleton.HIP_RIGHT, newPosition);
+    	movePart(ZZkeleton.KNEE_RIGHT, newPosition);
+    	movePart(ZZkeleton.ANKLE_RIGHT, newPosition);
+    	//movePart(ZZkeleton.FOOT_RIGHT, newPosition);	// inutile
+
+    	movePart(ZZkeleton.HIP_LEFT, newPosition);
+    	movePart(ZZkeleton.KNEE_LEFT, newPosition);
+    	movePart(ZZkeleton.ANKLE_LEFT, newPosition);
+    	//movePart(ZZkeleton.FOOT_LEFT, newPosition);	// inutile
     }
     
+    private void movePart(int part, ZZoint [] mouv) {
+	    /***************************************************************
+	     * 
+	     *  algorithme secondaire d'animation du modele
+	     * 
+	     ***************************************************************/
+    	
+    	PVector v1,v2;														// declaration des variables
+    	float f1, f2, f3, f4;
+    	
+    	v1 = mouv[part].copy();												// calcul des vecteurs
+    	v1.sub(mouv[skeleton.joints[part].getParent()]);
+    	v2 = this.skeleton.joints[part].copy();
+    	v2.sub(this.skeleton.joints[skeleton.joints[part].getParent()]);
+
+    	f1 = PApplet.atan2(v1.y, v1.x);										// calcul des angles
+    	f2 = PApplet.atan2(v2.y, v2.x);
+    	f3 = f1 - f2;
+
+    	f1 = PApplet.atan2(v1.z, v1.x);
+    	f2 = PApplet.atan2(v2.z, v2.x);
+    	f4 = f1 - f2;
+    	
+    	rotatePart(part, f3, f4, 0);										// application des rotations
+    }
 }
