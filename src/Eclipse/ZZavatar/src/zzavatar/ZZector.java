@@ -4,6 +4,11 @@ import processing.core.*;
 
 class ZZector extends PVector {
     protected PVector origin;
+
+    public final static ZZector ORIGIN = new ZZector((float) 0, (float) 0, (float) 0);
+    public final static ZZector OX = new ZZector((float) 1, (float) 0, (float) 0);
+    public final static ZZector OY = new ZZector((float) 0, (float) 1, (float) 0);
+    public final static ZZector OZ = new ZZector((float) 0, (float) 0, (float) 1);
     
     public ZZector() {
     	this(0, 0, 0);
@@ -24,6 +29,10 @@ class ZZector extends PVector {
     
     public void reset() {
     	this.set(origin.array());
+    }
+    
+    public PVector get() {
+    	return this.copy();
     }
     
     public void rotate(float theta, float phi) {
@@ -68,9 +77,9 @@ class ZZector extends PVector {
 		 *
 		 ***************************************************************/
 		
-		this.sub(center);
+		this.sub(center.copy());
 		rotate(theta, phi, epsilon);
-		this.add(center);
+		this.add(center.copy());
     }
     
     public void rotateAround(PVector center, float theta, float phi) {

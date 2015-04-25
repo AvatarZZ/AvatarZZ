@@ -203,7 +203,7 @@ class ZZkeleton {
 	 				 father = tree[0] != -1 ? joints[tree[0]].get(father) : new float[] {0,0,0};
 	 				 coords[0] = coords[0] + father[0];
 	 				 coords[1] = coords[2] + father[1];
-	 				 coords[2] = -tmp + father[2];
+	 				 coords[2] = tmp + father[2];
 	 				
 	 				 if(level>0) {	// si l'on ne vient pas de remonter l'arborescence
 	 					 joints[tree[1]] = new ZZoint(coords, tree[0]);
@@ -226,6 +226,7 @@ class ZZkeleton {
 	 			 }
 	 			 index++;
 	 		 }
+	 		 this.rotateY(PApplet.PI);	// rotation pour correspondre au modele
 	 		 PApplet.println("Chargement du squelette : terminé");
 	 	 } else {
 	 		 PApplet.println("Chargement du squelette : erreur à l'ouverture du fichier " + filename);
