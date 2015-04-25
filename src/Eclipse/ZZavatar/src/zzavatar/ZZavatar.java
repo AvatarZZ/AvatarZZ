@@ -90,6 +90,18 @@ public class ZZavatar extends PApplet {
 					clone.move(kinect.getSkeleton(i));
 				}
 			}
+			
+			if(kinect.getVersion() == 1) { //kinect 1
+				// Ici on traite la kinect v1
+				// Tous les mouvements ne seront pas reconnus
+				
+				if(kinect.kinectV1.isTrackingSkeleton(0))
+				kinect.updateSkel_1();
+				
+			} else { //kinect 2
+				
+			}
+			
 		}
 	    
 	    // gestion de la camera

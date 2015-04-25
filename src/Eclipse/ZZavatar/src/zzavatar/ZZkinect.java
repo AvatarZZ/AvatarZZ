@@ -1,9 +1,12 @@
 package zzavatar;
 
+import java.util.Vector;
+
 import KinectPV2.KJoint;
 import KinectPV2.KinectPV2;
 import KinectPV2.Skeleton;
 import SimpleOpenNI.SimpleOpenNI;
+import SimpleOpenNI.SimpleOpenNIConstants;
 import processing.core.*;
 
 /********************************************
@@ -37,10 +40,11 @@ public class ZZkinect {
 				kinectV1 = null;
 			} else { //kinect reconnue
 				kinectV1.enableDepth();	//chargement de la profondeur
-				kinectV1.enableRGB();		//chargement de l'image couleur
+				kinectV1.enableRGB();	//chargement de l'image couleur
+				kinectV1.enableUser();	//autoriser le tracking du squelette des utilisateurs
 				
 				height = kinectV1.depthHeight();	//hauteur de la capture
-				width = kinectV1.depthWidth();	//largeur de la capture
+				width = kinectV1.depthWidth();		//largeur de la capture
 				
 				version = 1;	// actualisation de la version
 				
@@ -211,15 +215,45 @@ public class ZZkinect {
     	
 		String out = "";
 		
-		if (kinectV1 != null) {
-			out += "Kinect version 1 ouverte en " + width + " x " + height;
-		} else if (kinectV2 != null) {
-			out += "Kinect version 2 ouverte en " + width + " x " + height;
+		if (kinectV1 != null || kinectV2 != null) {
+			out += "Kinect version " + getVersion() + " ouverte en " + width + " x " + height;
 		} else {
 			out += "Kinect non initialisée";
 		}
 		
 		return out;
 	}
+
+	public int getVersion() {
+		/*****************************************************
+		 * 
+		 * Retourne la version de la kinect utilisee
+		 * 
+		 *****************************************************/
+		
+		return version;
+	}
+
+	public void updateSkel_1() {
+		/********************************************************
+		 * 
+		 * Mise a jour de l'avatar a partir de la kinect 1
+		 * 
+		 ********************************************************/
+		
+		//Vecteur contenant les membres a traiter
+		
+		
+		//Ajout des membres dans le vector
+		
+		//Traitement des angles uns par uns
+		for (int i = 0; i < membres.length; i++) {
+			SimpleOpenNIConstants cur = membres[i];
+			
+			angle = angleWith(cur);
+			
+		}
+		
+	}
 	
-}
+} //class
