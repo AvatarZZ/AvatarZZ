@@ -414,8 +414,8 @@ class ZZModel {
     	//movePart(ZZkeleton.TORSO, newPosition);		// rotation des sous membres
     	//movePart(ZZkeleton.WAIST, newPosition);
     	
-    	//movePart(ZZkeleton.NECK, newPosition);
-    	//movePart(ZZkeleton.HEAD, newPosition);
+    	movePart(ZZkeleton.NECK, newPosition);
+    	movePart(ZZkeleton.HEAD, newPosition);
     	
     	movePart(ZZkeleton.SHOULDER_RIGHT, newPosition);
     	movePart(ZZkeleton.ELBOW_RIGHT, newPosition);

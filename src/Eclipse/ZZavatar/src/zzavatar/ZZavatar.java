@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import KinectPV2.KJoint;
 import KinectPV2.KinectPV2;
+import SimpleOpenNI.SimpleOpenNI;
 import processing.core.*;
 
 

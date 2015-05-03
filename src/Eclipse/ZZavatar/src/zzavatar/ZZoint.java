@@ -43,7 +43,11 @@ class ZZoint extends ZZector {
     	this(o, p, null);
     }
     
-    public int getParent() {
+    public ZZoint(PVector jointPos) {
+		this(jointPos.x, jointPos.y, jointPos.z, -1, null);
+	}
+
+	public int getParent() {
     	/***************************************************************
     	 * 
     	 *  retourne le code valeur du joint père

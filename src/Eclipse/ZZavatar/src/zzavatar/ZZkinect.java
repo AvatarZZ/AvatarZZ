@@ -23,9 +23,11 @@ public class ZZkinect {
 	protected int width = 0;	// largeur de la capture
 	protected int version = 0;	// version de la Kinect utilisee
 	
-	protected PImage rgbImage;		//capture video normale
-	protected PImage depthImage;	//capture de profondeur
+	protected PImage rgbImage;		// capture video normale
+	protected PImage depthImage;	// capture de profondeur
+	protected Skeleton [] skeletonsV1;
 	protected Skeleton [] skeletonsV2;
+	protected Skeleton [] skeletonsV1_ColorMap;
 	protected Skeleton [] skeletonsV2_ColorMap;
 	
 	public ZZkinect(PApplet parent) {
@@ -44,7 +46,7 @@ public class ZZkinect {
 			} else { //kinect reconnue
 				kinectV1.enableDepth();	//chargement de la profondeur
 				kinectV1.enableRGB();	//chargement de l'image couleur
-				kinectV1.enableUser();	//autoriser le tracking du squelette des utilisateurs
+				kinectV1.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);	//autoriser le tracking du squelette des utilisateurs
 				
 				height = kinectV1.depthHeight();	//hauteur de la capture
 				width = kinectV1.depthWidth();		//largeur de la capture
@@ -126,11 +128,19 @@ public class ZZkinect {
 	private ZZoint[] getSkeleton_1(int numUser) {
    	 	/***************************************************************
    	 	 * 
-   	 	 *  permet de recuperer le squelette (version 2)
+   	 	 *  permet de recuperer le squelette (version 1)
    	 	 * 
    	 	 ***************************************************************/
 		
-		return null;
+		ZZoint[] retour = new ZZoint[17];
+		PVector jointPos = null;
+		
+		for (int i = 0; i < retour.length; i++) {
+			kinectV1.getJointPositionSkeleton(numUser, i, jointPos);
+			retour[i] = new ZZoint(jointPos);
+		}
+    	
+		return retour;
 	}
 
 	public void refresh() {
