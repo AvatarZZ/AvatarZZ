@@ -34,6 +34,7 @@ class ZZkeleton {
     public final static int INDEX_RIGHT    	= 23;
     public final static int THUMB_RIGHT    	= 24;
     
+    protected float[][] lastRotation;
     protected ZZoint[] joints;
     protected int jointsNumber;
     protected String name;
@@ -42,6 +43,14 @@ class ZZkeleton {
     	jointsNumber = 25;
     	joints = new ZZoint[jointsNumber];
     	name = "default";
+    	
+    	// creation et initialisation du tab de dernieres rotations
+    	lastRotation = new float[jointsNumber][3];
+    	for (int i = 0; i < lastRotation.length; i++) {
+			for (int j = 0; j < lastRotation[i].length; j++) {
+				lastRotation[i][j] = 0;
+			}
+		}
     }
     
     public ZZkeleton(String filename) {
@@ -233,6 +242,21 @@ class ZZkeleton {
 	 	 }
     }
      
+	protected void setLastRotation(int part, float theta, float phi, float epsilon) {
+		/***********************************************************************
+		 * 
+		 * Stocke les donnees de la derniere rotation de la partie concernee
+		 * 
+		 ***********************************************************************/
+		lastRotation[part][0] = theta;
+		lastRotation[part][1] = phi;
+		lastRotation[part][2] = epsilon;
+	}
+	
+	public float[] getLastRotation(int part) {
+		return lastRotation[part];
+	}
+    
     public ArrayList<Integer> getMember(int part) {
     	/***************************************************************
     	 * 
@@ -339,4 +363,5 @@ class ZZkeleton {
 			joints[i].mult(s);
 		}
     }
+
 }

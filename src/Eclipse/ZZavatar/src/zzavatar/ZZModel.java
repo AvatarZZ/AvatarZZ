@@ -20,11 +20,12 @@ class ZZModel {
 	protected PApplet app;
     protected PShape model;
     protected ZZkeleton skeleton;
-    protected ZZkeleton basis;
+    protected ZZkeleton basis  = new ZZkeleton(); // squelette de base du modele
     ArrayList<ZZertex> vertices;
     ArrayList<ZZector> vertiTexture;
     ArrayList<Integer>[] groups;
 	ArrayList<ZZMaterial> materiel = null;
+	
 	protected int idUser = 0; // determine le numero du joueur (6 max.)
 
     protected ZZModel(PApplet a) {
@@ -278,6 +279,8 @@ class ZZModel {
     		vertices.get(integer).rotateAround(center, theta, phi, epsilon);	// rotation autour du point center
     		vertices.get(integer).apply(model);									// modifie toutes les occurences
     	}
+    	
+    	skeleton.setLastRotation(part, theta, phi, epsilon);
     }
     
     public void rotatePart(int part, float theta, float phi) {
@@ -430,6 +433,8 @@ class ZZModel {
 	     * 
 	     ***************************************************************/
     	
+    	resetSkel();
+    	
     	ZZector dl = newPosition[ZZkeleton.ROOT];		// translation generale
     	dl.mult(4);
     	dl.sub(skeleton.joints[ZZkeleton.ROOT]);
@@ -437,8 +442,6 @@ class ZZModel {
 
     	//movePart(ZZkeleton.TORSO, newPosition);		// rotation des sous membres
     	//movePart(ZZkeleton.WAIST, newPosition);
-    	
-    	resetSkel();
     	
     	movePart(ZZkeleton.NECK, newPosition);
     	movePart(ZZkeleton.HEAD, newPosition);
@@ -474,16 +477,20 @@ class ZZModel {
 	     *  algorithme secondaire d'animation du modele
 	     * 
 	     ***************************************************************/
+    	double p = 0.1;	// seuil pour effectuer la rotation
     	
-    	PVector v1,v2;														// declaration des variables
+    	// declaration des variables
+    	PVector v1,v2;
     	float f1, f2, f3, f4;
     	
-    	v1 = mouv[part].copy();												// calcul des vecteurs
+    	// calcul des vecteurs
+    	v1 = mouv[part].copy();
     	v1.sub(mouv[skeleton.joints[part].getParent()]);
     	v2 = this.skeleton.joints[part].copy();
     	v2.sub(this.skeleton.joints[skeleton.joints[part].getParent()]);
 
-    	f1 = PApplet.atan2(v1.y, v1.x);										// calcul des angles
+    	// calcul des angles
+    	f1 = PApplet.atan2(v1.y, v1.x);
     	f2 = PApplet.atan2(v2.y, v2.x);
     	f3 = f1 - f2;
 
@@ -491,7 +498,10 @@ class ZZModel {
     	f2 = PApplet.atan2(v2.z, v2.x);
     	f4 = f1 - f2;
     	
-    	rotatePart(part, f3, f4, 0);										// application des rotations
+    	if (app.abs(app.abs(skeleton.getLastRotation(part)[0]) - app.abs(f3)) > p ||
+    		app.abs(app.abs(skeleton.getLastRotation(part)[1]) - app.abs(f4)) > p) {
+    		rotatePart(part, f3, f4, 0); // application des rotations
+    	}
     }
     
 } //class
