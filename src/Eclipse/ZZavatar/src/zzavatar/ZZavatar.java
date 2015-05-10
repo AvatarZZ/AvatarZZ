@@ -26,8 +26,8 @@ public class ZZavatar extends PApplet {
 	final int bleuclair=color(0,255,255);
 	final int violet=color(255,0,255);
 	
-	final int widthWindow = 1920;//1280;	//largeur de la fenetre principale
-	final int heightWindow = 1080;//960;	//hauteur de la fenetre principale
+	final int widthWindow = 1280;	//largeur de la fenetre principale
+	final int heightWindow = 720;	//hauteur de la fenetre principale
 	
 	int distanceCamXZ = 100; // variable distance à la caméra dans plan XZ
 	int distanceCamYZ = 100; // variable distance à la caméra dans plan YZ

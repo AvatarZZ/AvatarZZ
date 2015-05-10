@@ -46,19 +46,20 @@ public class ZZkinect {
 			} else { //kinect reconnue
 				kinectV1.enableDepth();	//chargement de la profondeur
 				kinectV1.enableRGB();	//chargement de l'image couleur
-				kinectV1.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);	//autoriser le tracking du squelette des utilisateurs
+				kinectV1.enableUser();	//autoriser le tracking du squelette des utilisateurs
 				
 				height = kinectV1.depthHeight();	//hauteur de la capture
 				width = kinectV1.depthWidth();		//largeur de la capture
 				
 				version = 1;	// actualisation de la version
+				app = parent;
 				
 				if ((width != 640) || (height != 480)) { //reconnaissance des parametres
 					PApplet.println("Erreur sur les dimension de capture kinect");
 					kinectV1 = null;
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception e) { //Si pas de kinect 1 on cherche une kinect 2
 			kinectV2 = new KinectPV2(parent);
 
 			kinectV2.enableColorImg(true);
@@ -263,34 +264,79 @@ public class ZZkinect {
 	public void drawSkeletons() {
    	 	/***************************************************************
    	 	 * 
-   	 	 *  affiche les squelettes
+   	 	 *  Affiche les squelettes selon la kinect en cours
    	 	 * 
    	 	 ***************************************************************/
-    	
-		for (int i = 0; i < skeletonsV2_ColorMap.length; i++) {
-	    	if (skeletonsV2_ColorMap[i].isTracked()) {
-	    		KJoint[] joints = skeletonsV2_ColorMap[i].getJoints();
-
-	    		int col  = getIndexColor(i);
+    	if(version == 1){ //Affichage kinect1
+    		for (int i = 0; i < kinectV1.getNumberOfUsers(); i++) {
+	    		//Change de couleur pour chaque squelette
+    			int col  = getIndexColor(i);
 	    		app.fill(col);
 	    		app.stroke(col);
-	    		drawBody(joints);
-	        
-	    		//draw different color for each hand state
-	    		drawHandState(joints[KinectPV2.JointType_HandRight]);
-	    		drawHandState(joints[KinectPV2.JointType_HandLeft]);
-	    	}
-	    }
+	    		
+	    		drawSkeleton_1(i);
+			}
+    	} else { //Affichage kienct2
+    		for (int i = 0; i < skeletonsV2_ColorMap.length; i++) {
+    	    	if (skeletonsV2_ColorMap[i].isTracked()) {
+    	    		KJoint[] joints = skeletonsV2_ColorMap[i].getJoints();
+
+    	    		int col  = getIndexColor(i);
+    	    		app.fill(col);
+    	    		app.stroke(col);
+    	    		drawSkeleton_2(joints);
+    	        
+    	    		//draw different color for each hand state
+    	    		drawHandState(joints[KinectPV2.JointType_HandRight]);
+    	    		drawHandState(joints[KinectPV2.JointType_HandLeft]);
+    	    	}
+    	    }
+    	}
 	}
 	
+	void drawSkeleton_1(int userId) {
+		/**********************************************************
+		 * 
+		 * 			Methode de kinect1
+		 * 		Affiche le squelette d'un user
+		 * 
+		 **********************************************************/
+		//Tete
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_HEAD, SimpleOpenNI.SKEL_NECK);
+		 
+		//Bras gauche
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_NECK, SimpleOpenNI.SKEL_LEFT_SHOULDER);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, SimpleOpenNI.SKEL_LEFT_ELBOW);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_ELBOW, SimpleOpenNI.SKEL_LEFT_HAND);
+		
+		//Bras droit
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_NECK, SimpleOpenNI.SKEL_RIGHT_SHOULDER);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, SimpleOpenNI.SKEL_RIGHT_ELBOW);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_ELBOW, SimpleOpenNI.SKEL_RIGHT_HAND);
+		
+		//Epaules
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, SimpleOpenNI.SKEL_TORSO);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, SimpleOpenNI.SKEL_TORSO);
+		
+		//Jambe gauche
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_TORSO, SimpleOpenNI.SKEL_LEFT_HIP);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_HIP, SimpleOpenNI.SKEL_LEFT_KNEE);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_KNEE, SimpleOpenNI.SKEL_LEFT_FOOT);
+		
+		//Jambe droite
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_TORSO, SimpleOpenNI.SKEL_RIGHT_HIP);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_HIP, SimpleOpenNI.SKEL_RIGHT_KNEE);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_KNEE, SimpleOpenNI.SKEL_RIGHT_FOOT);  
+	}
 	
-	private void drawBody(KJoint[] joints) {
+	private void drawSkeleton_2(KJoint[] joints) {
    	 	/***************************************************************
    	 	 * 
-   	 	 *  dessine les corps
+   	 	 * 				Methode kienct2
+   	 	 *  		Affiche le squelette
    	 	 * 
    	 	 ***************************************************************/
-    	
+		
 		drawBone(joints, KinectPV2.JointType_Head, KinectPV2.JointType_Neck);
 		drawBone(joints, KinectPV2.JointType_Neck, KinectPV2.JointType_SpineShoulder);
 		drawBone(joints, KinectPV2.JointType_SpineShoulder, KinectPV2.JointType_SpineMid);
