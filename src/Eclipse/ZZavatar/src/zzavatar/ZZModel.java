@@ -20,7 +20,7 @@ class ZZModel {
 	protected PApplet app;
     protected PShape model;
     protected ZZkeleton skeleton;
-    protected ZZkeleton basis  = new ZZkeleton(); // squelette de base du modele
+    protected ZZkeleton basis; // squelette de base du modele
     ArrayList<ZZertex> vertices;
     ArrayList<ZZector> vertiTexture;
     ArrayList<Integer>[] groups;
@@ -32,6 +32,7 @@ class ZZModel {
     	app = a;
     	model = app.createShape(PConstants.GROUP);
     	skeleton = new ZZkeleton();
+    	basis = new ZZkeleton();
     	vertices = new ArrayList<ZZertex>();
     	vertiTexture = new ArrayList<ZZector>();
     	groups = new ArrayList[25];
