@@ -276,7 +276,7 @@ public class ZZkinect {
 	    		
 	    		drawSkeleton_1(i);
 			}
-    	} else { //Affichage kienct2
+    	} else if (version == 2) { //Affichage kienct2
     		for (int i = 0; i < skeletonsV2_ColorMap.length; i++) {
     	    	if (skeletonsV2_ColorMap[i].isTracked()) {
     	    		KJoint[] joints = skeletonsV2_ColorMap[i].getJoints();
@@ -469,4 +469,6 @@ public class ZZkinect {
 
 		return col;
 	}
+
+	
 } //class

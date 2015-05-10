@@ -12,6 +12,7 @@ import java.util.Iterator;
 import javax.print.attribute.standard.JobOriginatingUserName;
 
 import KinectPV2.Skeleton;
+import SimpleOpenNI.SimpleOpenNI;
 
 import com.jogamp.opengl.util.texture.Texture;
 
@@ -19,6 +20,7 @@ class ZZModel {
 	protected PApplet app;
     protected PShape model;
     protected ZZkeleton skeleton;
+    protected ZZkeleton basis;
     ArrayList<ZZertex> vertices;
     ArrayList<ZZector> vertiTexture;
     ArrayList<Integer>[] groups;
@@ -144,7 +146,25 @@ class ZZModel {
         app.shape(model);
         app.popMatrix();
     }
+
+	public void initBasis() {
+		/******************************************
+		 * 
+		 * Enregistre le squelette de base
+		 * 
+		 ******************************************/
+		basis = skeleton;
+	}
     
+	public void resetSkel() {
+		/************************************************
+		 * 
+		 * Remet le modele dans sa position initiale
+		 * 
+		 ************************************************/
+		skeleton = basis;
+	}
+	
     public int getChildCount() {
     	/***************************************************************
     	 * 
@@ -368,6 +388,10 @@ class ZZModel {
     	return model.getVertexCount();
     }
     
+    public ZZkeleton getSkeleton() {
+		return skeleton;
+	}
+    
     public static ArrayList<ZZModel> loadModels(PApplet a, String filename) {
     	/***************************************************************
     	 * 
@@ -413,6 +437,8 @@ class ZZModel {
 
     	//movePart(ZZkeleton.TORSO, newPosition);		// rotation des sous membres
     	//movePart(ZZkeleton.WAIST, newPosition);
+    	
+    	resetSkel();
     	
     	movePart(ZZkeleton.NECK, newPosition);
     	movePart(ZZkeleton.HEAD, newPosition);
@@ -467,4 +493,5 @@ class ZZModel {
     	
     	rotatePart(part, f3, f4, 0);										// application des rotations
     }
-}
+    
+} //class

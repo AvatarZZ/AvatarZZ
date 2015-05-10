@@ -26,8 +26,8 @@ public class ZZavatar extends PApplet {
 	final int bleuclair=color(0,255,255);
 	final int violet=color(255,0,255);
 	
-	final int widthWindow = 1280;	//largeur de la fenetre principale
-	final int heightWindow = 720;	//hauteur de la fenetre principale
+	final int widthWindow = 1920;	//largeur de la fenetre principale
+	final int heightWindow = 1080;	//hauteur de la fenetre principale
 	
 	int distanceCamXZ = 100; // variable distance à la caméra dans plan XZ
 	int distanceCamYZ = 100; // variable distance à la caméra dans plan YZ
@@ -56,7 +56,7 @@ public class ZZavatar extends PApplet {
 	    
 	    // chargement des modeles a partir de la liste
 	    avatars = ZZModel.loadModels(this, "./data/avatars.bdd");
-
+	    
 	    // recuperation du premier clone pour affichage
 	    clone = avatars.get(0);
 
@@ -65,7 +65,8 @@ public class ZZavatar extends PApplet {
 	    	avatars.get(i).scale(64);
 	    	avatars.get(i).rotateY(PI);
 	    	avatars.get(i).rotateX(PI);
-		}	    
+	    	avatars.get(i).initBasis();
+	    }
 	}
 	  
 	public void draw() {
@@ -106,18 +107,6 @@ public class ZZavatar extends PApplet {
 					clone.move(kinect.getSkeleton(i));
 				}
 			}
-			
-			if(kinect.getVersion() == 1) { //kinect 1
-				// Ici on traite la kinect v1
-				// Tous les mouvements ne seront pas reconnus
-				
-				if(kinect.kinectV1.isTrackingSkeleton(0))
-				kinect.updateSkel_1();
-				
-			} else { //kinect 2
-				
-			}
-			
 		}
 	    
 	    // gestion de la camera
