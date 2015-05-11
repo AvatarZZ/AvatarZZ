@@ -294,7 +294,7 @@ public class ZZkinect {
     	}
 	}
 	
-	void drawSkeleton_1(int userId) {
+	private void drawSkeleton_1(int userId) {
 		/**********************************************************
 		 * 
 		 * 			Methode de kinect1
