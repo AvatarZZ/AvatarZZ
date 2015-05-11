@@ -92,19 +92,26 @@ public class ZZavatar extends PApplet {
 			image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
 			popMatrix();
 			
-			for (int i = 0; i < kinect.skeletonsV2.length; i++) {
-				if (kinect.skeletonsV2[i].isTracked()) {
-					
-					/***************** DEBUG du move ***************************
-					for (int j = 0; j < kinect.getSkeleton(i).length; j++) {
-						pushMatrix();
-						stroke(rouge);
-						translate(4*kinect.getSkeleton(i)[j].x, 4*kinect.getSkeleton(i)[j].y, 4*kinect.getSkeleton(i)[j].z);
-						shape(debugSphere);
-						popMatrix();
+			if(kinect.getVersion() == 2) {
+				for (int i = 0; i < kinect.skeletonsV2.length; i++) {
+					if (kinect.skeletonsV2[i].isTracked()) {
+						
+						/***************** DEBUG du move ***************************
+						for (int j = 0; j < kinect.getSkeleton(i).length; j++) {
+							pushMatrix();
+							stroke(rouge);
+							translate(4*kinect.getSkeleton(i)[j].x, 4*kinect.getSkeleton(i)[j].y, 4*kinect.getSkeleton(i)[j].z);
+							shape(debugSphere);
+							popMatrix();
+						}
+						***********************************************************/
+						clone.move_2(kinect.getSkeleton(i));
 					}
-					***********************************************************/
-					clone.move(kinect.getSkeleton(i));
+				}
+			} else if (kinect.getVersion() == 1) {
+				for (int i = 0; i < kinect.kinectV1.getNumberOfUsers(); i++) {
+					
+					clone.move_1(kinect.getSkeleton(i));
 				}
 			}
 		}
