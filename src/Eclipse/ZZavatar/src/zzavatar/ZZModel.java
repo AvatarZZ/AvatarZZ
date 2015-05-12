@@ -436,27 +436,27 @@ class ZZModel {
    	
     	resetSkel();
     	
-    	ZZector dl = newPosition[ZZkeleton.ROOT];		// translation generale
-    	dl.mult(4);
-    	dl.sub(skeleton.joints[ZZkeleton.ROOT]);
+    	/*ZZector dl = newPosition[ZZkeleton.TORSO];		// translation generale
+    	//dl.mult(4);
+    	dl.sub(skeleton.joints[ZZkeleton.TORSO]);
     	this.translate(dl);
+    	*/
+    	movePart_2(ZZkeleton.NECK, newPosition);
+    	movePart_2(ZZkeleton.HEAD, newPosition);
     	
-    	movePart_1(ZZkeleton.NECK, newPosition);
-    	movePart_1(ZZkeleton.HEAD, newPosition);
+    	movePart_2(ZZkeleton.SHOULDER_RIGHT, newPosition);
+    	movePart_2(ZZkeleton.ELBOW_RIGHT, newPosition);
+    	movePart_2(ZZkeleton.WRIST_RIGHT, newPosition);
     	
-    	movePart_1(ZZkeleton.SHOULDER_RIGHT, newPosition);
-    	movePart_1(ZZkeleton.ELBOW_RIGHT, newPosition);
-    	movePart_1(ZZkeleton.HAND_RIGHT, newPosition);
-    	
-    	movePart_1(ZZkeleton.SHOULDER_LEFT, newPosition);
-    	movePart_1(ZZkeleton.ELBOW_LEFT, newPosition);
-    	movePart_1(ZZkeleton.HAND_LEFT, newPosition);
+    	movePart_2(ZZkeleton.SHOULDER_LEFT, newPosition);
+    	movePart_2(ZZkeleton.ELBOW_LEFT, newPosition);
+    	movePart_2(ZZkeleton.WRIST_LEFT, newPosition);
 
-    	movePart_1(ZZkeleton.HIP_RIGHT, newPosition);
-    	movePart_1(ZZkeleton.KNEE_RIGHT, newPosition);
+    	movePart_2(ZZkeleton.KNEE_RIGHT, newPosition);
+    	movePart_2(ZZkeleton.ANKLE_RIGHT, newPosition);
 
-    	movePart_1(ZZkeleton.HIP_LEFT, newPosition);
-    	movePart_1(ZZkeleton.KNEE_LEFT, newPosition);
+    	movePart_2(ZZkeleton.KNEE_LEFT, newPosition);
+    	movePart_2(ZZkeleton.ANKLE_LEFT, newPosition);
     }
     
     public void move_2(ZZoint[] newPosition) {

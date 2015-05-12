@@ -5,8 +5,7 @@ import java.util.Vector;
 import KinectPV2.KJoint;
 import KinectPV2.KinectPV2;
 import KinectPV2.Skeleton;
-import SimpleOpenNI.SimpleOpenNI;
-import SimpleOpenNI.SimpleOpenNIConstants;
+import SimpleOpenNI.*;
 import processing.core.*;
 import processing.core.PApplet;
 
@@ -30,6 +29,8 @@ public class ZZkinect {
 	protected Skeleton [] skeletonsV1_ColorMap;
 	protected Skeleton [] skeletonsV2_ColorMap;
 	
+	private int[] refKinect1 = new int[25];
+	
 	public ZZkinect(PApplet parent) {
    	 	/***************************************************************
    	 	 * 
@@ -37,8 +38,36 @@ public class ZZkinect {
    	 	 * 
    	 	 ***************************************************************/
     	
+		
+		refKinect1[0] = -100;
+		refKinect1[1] = -101;
+		refKinect1[2] = 1;
+		refKinect1[3] = 0;
+		refKinect1[4] = 3;
+		refKinect1[5] = 4;
+		refKinect1[6] = 5;       // inversion main poignet
+		refKinect1[7] = -106;	// wrist left						// inversion main poignet
+		refKinect1[8] = 7;
+		refKinect1[9] = 8;
+		refKinect1[10] = 9;		// inversion main poignet
+		refKinect1[11] = -110;	// wrist right						// inversion main poignet
+		refKinect1[12] = 11;
+		refKinect1[13] = 12;
+		refKinect1[14] = 13;		// INVERSION pied cheville
+		refKinect1[15] = -114;	// ankle left						// INVERSION pied cheville
+		refKinect1[16] = 14;
+		refKinect1[17] = 15;
+		refKinect1[18] = 16;		// INVERSION pied cheville
+		refKinect1[19] = -118;	// ankle right						// INVERSION pied cheville
+		refKinect1[20] = 2;
+		refKinect1[21] = 6;
+		refKinect1[22] = -122;	// pouce gauche
+		refKinect1[23] = 10;
+		refKinect1[24] = -124;	// pouce droit
+		
+		
 		try {
-			// kinect = new SimpleOpenNI(parent); // ne marche pas sous eclipse
+			kinectV1 = new SimpleOpenNI(parent); // ne marche pas sous eclipse
 			
 			if(!kinectV1.isInit()){ //kinect reconnue ou pas
 				PApplet.println("Kinect non reconnue ou non presente");
@@ -133,12 +162,21 @@ public class ZZkinect {
    	 	 * 
    	 	 ***************************************************************/
 		
-		ZZoint[] retour = new ZZoint[17];
+		ZZoint[] retour = new ZZoint[25];//TODO mettre dans un tableau de 25 avec du null la ou on a pas le joion k1
 		PVector jointPos = null;
-		
-		for (int i = 0; i < retour.length; i++) {
-			kinectV1.getJointPositionSkeleton(numUser, i, jointPos);
-			retour[i] = new ZZoint(jointPos);
+		int realNum;
+		if(kinectV1.isTrackingSkeleton(numUser)) {
+			
+			for (int i = 0; i < retour.length; i++) {
+				realNum = refKinect1[i];
+				if (realNum>=0) {
+					kinectV1.getJointPositionSkeleton(numUser, realNum, jointPos);
+					PApplet.println(jointPos);
+					retour[i] = new ZZoint(jointPos);
+				} else {
+					retour[i] = null;
+				}
+			}
 		}
     	
 		return retour;

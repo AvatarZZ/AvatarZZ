@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import KinectPV2.KJoint;
 import KinectPV2.KinectPV2;
-import SimpleOpenNI.SimpleOpenNI;
+import SimpleOpenNI.*;
 import processing.core.*;
 
 
@@ -89,7 +89,7 @@ public class ZZavatar extends PApplet {
 			kinect.drawSkeletons();
 			
 			translate(0, 0, 50);
-			image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
+			//image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
 			popMatrix();
 			
 			if(kinect.getVersion() == 2) {
@@ -109,8 +109,9 @@ public class ZZavatar extends PApplet {
 					}
 				}
 			} else if (kinect.getVersion() == 1) {
+				println("coucou**********************************");
+				//kinect.drawSkeletons();
 				for (int i = 0; i < kinect.kinectV1.getNumberOfUsers(); i++) {
-					
 					clone.move_1(kinect.getSkeleton(i));
 				}
 			}
