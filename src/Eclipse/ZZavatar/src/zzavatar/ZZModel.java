@@ -117,7 +117,7 @@ class ZZModel {
             
 				} else if(file[i].contains("g ")) {		// lorsque l'on trouve un nouveau groupe
 					currentShape = app.createShape(PConstants.GROUP);
-					PApplet.println("Nouveau groupe : " + file[i].split(" ")[1]);
+					//PApplet.println("Nouveau groupe : " + file[i].split(" ")[1]);
 					currentShape.setName(file[i].split(" ")[1]);
 					model.addChild(currentShape);
 					counter[0] = skeleton.getTypeCode(currentShape.getName());

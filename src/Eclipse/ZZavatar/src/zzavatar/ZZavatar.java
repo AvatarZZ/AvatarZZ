@@ -109,10 +109,12 @@ public class ZZavatar extends PApplet {
 					}
 				}
 			} else if (kinect.getVersion() == 1) {
-				println("coucou**********************************");
-				//kinect.drawSkeletons();
-				for (int i = 0; i < kinect.kinectV1.getNumberOfUsers(); i++) {
-					clone.move_1(kinect.getSkeleton(i));
+				int[] userList = kinect.kinectV1.getUsers();
+				for(int i=0;i<userList.length;i++) {
+					if(kinect.kinectV1.isTrackingSkeleton(userList[i]))
+				    {
+				    	clone.move_1(kinect.getSkeleton(userList[i]));
+				    }
 				}
 			}
 		}
@@ -123,8 +125,7 @@ public class ZZavatar extends PApplet {
 	    // Afficher le clone
 	    clone.draw();
 	    
-	    // Afficher le centre de la scène
-	    shape(debugSphere);
+	    // lumiere dans la scene
 	    lights();			// ajout de lumiere
 	}
 	  
@@ -177,7 +178,7 @@ public class ZZavatar extends PApplet {
     	 *  affiche les joints du squelette
     	 * 
     	 ***************************************************************/
-    	
+    	kinect.drawSkeletons();
     	for (int i = 0; i < sk.joints.length; i++) {
 			pushMatrix();
 			stroke(rouge);
