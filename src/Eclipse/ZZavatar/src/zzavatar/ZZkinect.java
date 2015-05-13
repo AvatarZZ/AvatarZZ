@@ -37,37 +37,9 @@ public class ZZkinect {
    	 	 *  constructeur de ZZkinect
    	 	 * 
    	 	 ***************************************************************/
-    	
-		
-		refKinect1[0] = -100;
-		refKinect1[1] = -101;
-		refKinect1[2] = 1;
-		refKinect1[3] = 0;
-		refKinect1[4] = 3;
-		refKinect1[5] = 4;
-		refKinect1[6] = 5;       // inversion main poignet
-		refKinect1[7] = -106;	// wrist left						// inversion main poignet
-		refKinect1[8] = 7;
-		refKinect1[9] = 8;
-		refKinect1[10] = 9;		// inversion main poignet
-		refKinect1[11] = -110;	// wrist right						// inversion main poignet
-		refKinect1[12] = 11;
-		refKinect1[13] = 12;
-		refKinect1[14] = 13;		// INVERSION pied cheville
-		refKinect1[15] = -114;	// ankle left						// INVERSION pied cheville
-		refKinect1[16] = 14;
-		refKinect1[17] = 15;
-		refKinect1[18] = 16;		// INVERSION pied cheville
-		refKinect1[19] = -118;	// ankle right						// INVERSION pied cheville
-		refKinect1[20] = 2;
-		refKinect1[21] = 6;
-		refKinect1[22] = -122;	// pouce gauche
-		refKinect1[23] = 10;
-		refKinect1[24] = -124;	// pouce droit
-		
 		
 		try {
-			kinectV1 = new SimpleOpenNI(parent); // ne marche pas sous eclipse
+			kinectV1 = new SimpleOpenNI(parent); // marche sous eclipse
 			
 			if(!kinectV1.isInit()){ //kinect reconnue ou pas
 				PApplet.println("Kinect non reconnue ou non presente");
@@ -75,7 +47,7 @@ public class ZZkinect {
 			} else { //kinect reconnue
 				kinectV1.enableDepth();	//chargement de la profondeur
 				kinectV1.enableRGB();	//chargement de l'image couleur
-				kinectV1.enableUser();	//autoriser le tracking du squelette des utilisateurs
+				kinectV1.enableUser(parent);	//autoriser le tracking du squelette des utilisateurs
 				
 				height = kinectV1.depthHeight();	//hauteur de la capture
 				width = kinectV1.depthWidth();		//largeur de la capture
@@ -87,6 +59,32 @@ public class ZZkinect {
 					PApplet.println("Erreur sur les dimension de capture kinect");
 					kinectV1 = null;
 				}
+				//Matching du skeleton avec une kinect1
+				refKinect1[ZZkeleton.WAIST] = -100;
+				refKinect1[ZZkeleton.ROOT] = -101;
+				refKinect1[ZZkeleton.NECK] = SimpleOpenNI.SKEL_NECK;
+				refKinect1[ZZkeleton.HEAD] = SimpleOpenNI.SKEL_HEAD;
+				refKinect1[ZZkeleton.SHOULDER_LEFT] = SimpleOpenNI.SKEL_LEFT_SHOULDER;
+				refKinect1[ZZkeleton.ELBOW_LEFT] = SimpleOpenNI.SKEL_LEFT_ELBOW;
+				refKinect1[ZZkeleton.WRIST_LEFT] = SimpleOpenNI.SKEL_LEFT_HAND; // inversion main poignet
+				refKinect1[ZZkeleton.HAND_LEFT] = -100;       					// inversion avec wrist
+				refKinect1[ZZkeleton.SHOULDER_RIGHT] = SimpleOpenNI.SKEL_RIGHT_SHOULDER;	
+				refKinect1[ZZkeleton.ELBOW_RIGHT] = SimpleOpenNI.SKEL_RIGHT_ELBOW;
+				refKinect1[ZZkeleton.WRIST_RIGHT] = SimpleOpenNI.SKEL_RIGHT_HAND; // inversion main poignet
+				refKinect1[ZZkeleton.HAND_RIGHT] = -100;				    	  // inversion main poignet
+				refKinect1[ZZkeleton.HIP_LEFT] = SimpleOpenNI.SKEL_LEFT_HIP;	
+				refKinect1[ZZkeleton.KNEE_LEFT] = SimpleOpenNI.SKEL_LEFT_KNEE;
+				refKinect1[ZZkeleton.ANKLE_LEFT] = SimpleOpenNI.SKEL_LEFT_FOOT; // ankle left						// INVERSION pied cheville
+				refKinect1[ZZkeleton.FOOT_LEFT] = -100;							// INVERSION pied cheville
+				refKinect1[ZZkeleton.HIP_RIGHT] = SimpleOpenNI.SKEL_RIGHT_HIP;	
+				refKinect1[ZZkeleton.KNEE_RIGHT] = SimpleOpenNI.SKEL_RIGHT_KNEE;
+				refKinect1[ZZkeleton.ANKLE_RIGHT] = SimpleOpenNI.SKEL_RIGHT_FOOT; // ankle right						// INVERSION pied cheville
+				refKinect1[ZZkeleton.FOOT_RIGHT] = -100;		// INVERSION pied cheville
+				refKinect1[ZZkeleton.TORSO] = SimpleOpenNI.SKEL_TORSO;	
+				refKinect1[ZZkeleton.INDEX_LEFT] = SimpleOpenNI.SKEL_LEFT_FINGERTIP;
+				refKinect1[ZZkeleton.THUMB_LEFT] = -100;
+				refKinect1[ZZkeleton.INDEX_RIGHT] = SimpleOpenNI.SKEL_RIGHT_FINGERTIP;
+				refKinect1[ZZkeleton.THUMB_RIGHT] = -100;
 			}
 		} catch (Exception e) { //Si pas de kinect 1 on cherche une kinect 2
 			kinectV2 = new KinectPV2(parent);
@@ -163,7 +161,7 @@ public class ZZkinect {
    	 	 ***************************************************************/
 		
 		ZZoint[] retour = new ZZoint[25];//TODO mettre dans un tableau de 25 avec du null la ou on a pas le joion k1
-		PVector jointPos = null;
+		PVector jointPos = new PVector();
 		int realNum;
 		if(kinectV1.isTrackingSkeleton(numUser)) {
 			
@@ -171,8 +169,9 @@ public class ZZkinect {
 				realNum = refKinect1[i];
 				if (realNum>=0) {
 					kinectV1.getJointPositionSkeleton(numUser, realNum, jointPos);
-					PApplet.println(jointPos);
 					retour[i] = new ZZoint(jointPos);
+					retour[i].mult(-64);
+//					retour[i].x *= -1;
 				} else {
 					retour[i] = null;
 				}
@@ -223,7 +222,7 @@ public class ZZkinect {
     	
 		kinectV1.update();	// mise a jour de la kinect
 		
-		rgbImage = kinectV1.rgbImage();		// mise a jour de l'image couleur
+		rgbImage = kinectV1.userImage();//kinectV1.rgbImage();		// mise a jour de l'image couleur
 		depthImage = kinectV1.depthImage();	// mise a jour de la profondeur		
 	}
 	
@@ -508,5 +507,14 @@ public class ZZkinect {
 		return col;
 	}
 
+	public void onNewUser(int userId) {
+		app.println("onNewUser - userId: " + userId);
+	  
+		kinectV1.startTrackingSkeleton(userId);
+	}
+
+	public void onLostUser(int userId) {
+		app.println("onLostUser - userId: " + userId);
+	}
 	
 } //class

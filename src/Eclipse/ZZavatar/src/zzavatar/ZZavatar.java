@@ -2,8 +2,7 @@ package zzavatar;
 
 import java.util.ArrayList;
 
-import KinectPV2.KJoint;
-import KinectPV2.KinectPV2;
+import KinectPV2.*;
 import SimpleOpenNI.*;
 import processing.core.*;
 
@@ -26,8 +25,8 @@ public class ZZavatar extends PApplet {
 	final int bleuclair=color(0,255,255);
 	final int violet=color(255,0,255);
 	
-	final int widthWindow = 1920;	//largeur de la fenetre principale
-	final int heightWindow = 1080;	//hauteur de la fenetre principale
+	final int widthWindow = 1280;//1920;	//largeur de la fenetre principale
+	final int heightWindow = 800;//1080;	//hauteur de la fenetre principale
 	
 	int distanceCamXZ = 100; // variable distance à la caméra dans plan XZ
 	int distanceCamYZ = 100; // variable distance à la caméra dans plan YZ
@@ -86,7 +85,7 @@ public class ZZavatar extends PApplet {
 			translate(-kinect.width/2, -kinect.height/2, -800);
 			image(kinect.rgbImage, 0, 0);	// affiche l'image couleur en haut a gauche
 			
-			kinect.drawSkeletons();
+			//kinect.drawSkeletons();
 			
 			translate(0, 0, 50);
 			//image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
@@ -110,10 +109,14 @@ public class ZZavatar extends PApplet {
 				}
 			} else if (kinect.getVersion() == 1) {
 				int[] userList = kinect.kinectV1.getUsers();
+				println("On est dans le if");
 				for(int i=0;i<userList.length;i++) {
+					
+					kinect.kinectV1.startTrackingSkeleton(userList[i]);
+					
 					if(kinect.kinectV1.isTrackingSkeleton(userList[i]))
 				    {
-				    	clone.move_1(kinect.getSkeleton(userList[i]));
+						clone.move_1(kinect.getSkeleton(userList[i]));
 				    }
 				}
 			}
@@ -268,6 +271,8 @@ public class ZZavatar extends PApplet {
     	 ***************************************************************/
 	    
 	}
+	
+
 	
 	public static void main(String _args[]) {
     	/***************************************************************

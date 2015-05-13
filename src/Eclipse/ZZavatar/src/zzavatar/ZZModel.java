@@ -436,11 +436,13 @@ class ZZModel {
    	
     	resetSkel();
     	
-    	/*ZZector dl = newPosition[ZZkeleton.TORSO];		// translation generale
-    	//dl.mult(4);
+    	ZZector dl = newPosition[ZZkeleton.TORSO];		// translation generale
+    	PApplet.println(dl);
+    	dl.mult((float) 0.01);
+    	dl.z += 500;
     	dl.sub(skeleton.joints[ZZkeleton.TORSO]);
     	this.translate(dl);
-    	*/
+    	
     	movePart_2(ZZkeleton.NECK, newPosition);
     	movePart_2(ZZkeleton.HEAD, newPosition);
     	
@@ -511,7 +513,7 @@ class ZZModel {
 	     *  algorithme secondaire d'animation du modele
 	     * 
 	     ***************************************************************/
-    	double p = 0.1;	// seuil pour effectuer la rotation
+    	double p = 0.3;	// seuil pour effectuer la rotation
     	
     	// declaration des variables
     	PVector v1,v2;
