@@ -42,8 +42,7 @@ public class ZZavatar extends PApplet {
     	 ***************************************************************/
 
 	    frame.setTitle("ZZavatar");				// modification du titre de la frame
-	    size(widthWindow, heightWindow, P3D);	// ouverture de la fenetre en P3D
-	    sketchFullScreen();
+	    size(1280, 760, P3D);	// ouverture de la fenetre en P3D
 	    //frameRate(25);						// limitation du rafraichissement
 	    
 	    // options de debug
@@ -91,33 +90,11 @@ public class ZZavatar extends PApplet {
 			//image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
 			popMatrix();
 			
-			if(kinect.getVersion() == 2) {
-				for (int i = 0; i < kinect.skeletonsV2.length; i++) {
-					if (kinect.skeletonsV2[i].isTracked()) {
-						
-						/***************** DEBUG du move ***************************
-						for (int j = 0; j < kinect.getSkeleton(i).length; j++) {
-							pushMatrix();
-							stroke(rouge);
-							translate(4*kinect.getSkeleton(i)[j].x, 4*kinect.getSkeleton(i)[j].y, 4*kinect.getSkeleton(i)[j].z);
-							shape(debugSphere);
-							popMatrix();
-						}
-						***********************************************************/
-						clone.move_2(kinect.getSkeleton(i));
-					}
-				}
-			} else if (kinect.getVersion() == 1) {
-				int[] userList = kinect.kinectV1.getUsers();
-				println("On est dans le if");
-				for(int i=0;i<userList.length;i++) {
-					
-					kinect.kinectV1.startTrackingSkeleton(userList[i]);
-					
-					if(kinect.kinectV1.isTrackingSkeleton(userList[i]))
-				    {
-						clone.move_1(kinect.getSkeleton(userList[i]));
-				    }
+			if(kinect.available()) {
+				int [] usersDetected = kinect.getUsers();
+				
+				for (int i = 0; i < usersDetected.length; i++) {
+					clone.move_2(kinect.getSkeleton(usersDetected[i]));
 				}
 			}
 		}

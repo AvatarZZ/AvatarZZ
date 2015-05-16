@@ -1,5 +1,6 @@
 package zzavatar;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import KinectPV2.KJoint;
@@ -7,7 +8,6 @@ import KinectPV2.KinectPV2;
 import KinectPV2.Skeleton;
 import SimpleOpenNI.*;
 import processing.core.*;
-import processing.core.PApplet;
 
 /********************************************
  * 
@@ -21,15 +21,15 @@ public class ZZkinect {
 	protected int height = 0;	// hauteur de la capture
 	protected int width = 0;	// largeur de la capture
 	protected int version = 0;	// version de la Kinect utilisee
+	private static final int SKELETON_SIZE = 25;
 	
 	protected PImage rgbImage;		// capture video normale
 	protected PImage depthImage;	// capture de profondeur
-	protected Skeleton [] skeletonsV1;
-	protected Skeleton [] skeletonsV2;
+	private Skeleton [] skeletonsV2;
 	protected Skeleton [] skeletonsV1_ColorMap;
 	protected Skeleton [] skeletonsV2_ColorMap;
 	
-	private int[] refKinect1 = new int[25];
+	private int[] refKinect1 = new int[SKELETON_SIZE];
 	
 	public ZZkinect(PApplet parent) {
    	 	/***************************************************************
@@ -171,7 +171,6 @@ public class ZZkinect {
 					kinectV1.getJointPositionSkeleton(numUser, realNum, jointPos);
 					retour[i] = new ZZoint(jointPos);
 					retour[i].mult(-64);
-//					retour[i].x *= -1;
 				} else {
 					retour[i] = null;
 				}
@@ -181,6 +180,57 @@ public class ZZkinect {
 		return retour;
 	}
 
+	public boolean isTrackingSkeleton(int skelNum) {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  permet de savoir si le squelette skelNum est traque
+   	 	 * 
+   	 	 ***************************************************************/
+    
+		boolean retour = false;
+		
+		if (version==1) {
+			retour = this.kinectV1.isTrackingSkeleton(skelNum);
+		} else if (version==2) {
+			retour = this.skeletonsV2[skelNum].isTracked();
+		}
+		
+		return retour;
+	}
+	
+	public int[] getUsers() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *	renvoie la liste des utilisateurs actifs
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		int [] retour = null;
+		
+		if (version==1) {
+			retour = this.kinectV1.getUsers();
+			for (int i = 0; i < retour.length; i++) {
+				if(!this.isTrackingSkeleton(retour[i])) {
+					this.kinectV1.startTrackingSkeleton(retour[i]);
+				}
+			}
+		} else if (version==2) {
+			ArrayList<Integer> tmp = new ArrayList<Integer>();
+			
+			for (int i = 0; i < skeletonsV2.length; i++) {
+				if(this.isTrackingSkeleton(i))
+			    {
+					tmp.add(i);
+			    }
+			}
+			retour = new int[tmp.size()];
+			for (int i = 0; i < tmp.size(); i++)
+				retour[i] = tmp.get(i);
+		}
+		
+		return retour;
+	}
+	
 	public void refresh() {
    	 	/***************************************************************
    	 	 * 
@@ -286,16 +336,6 @@ public class ZZkinect {
 		 *****************************************************/
 		
 		return version;
-	}
-
-	public void updateSkel_1() {
-		/********************************************************
-		 * 
-		 * Mise a jour de l'avatar a partir de la kinect 1
-		 * 
-		 ********************************************************/
-		
-		
 	}
 
 	public void drawSkeletons() {
@@ -505,16 +545,6 @@ public class ZZkinect {
 		    col = app.color(255, 0, 255);
 
 		return col;
-	}
-
-	public void onNewUser(int userId) {
-		app.println("onNewUser - userId: " + userId);
-	  
-		kinectV1.startTrackingSkeleton(userId);
-	}
-
-	public void onLostUser(int userId) {
-		app.println("onLostUser - userId: " + userId);
 	}
 	
 } //class
