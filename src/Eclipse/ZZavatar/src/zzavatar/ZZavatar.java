@@ -8,7 +8,7 @@ import processing.core.*;
 
 
 public class ZZavatar extends PApplet {
-
+	// Relatif au modele
 	protected ZZModel clone;
 	protected ArrayList<ZZModel> avatars;
 	protected boolean debug;
@@ -41,9 +41,9 @@ public class ZZavatar extends PApplet {
     	 * 
     	 ***************************************************************/
 
-	    frame.setTitle("ZZavatar");				// modification du titre de la frame
-	    size(1280, 760, P3D);	// ouverture de la fenetre en P3D
-	    //frameRate(25);						// limitation du rafraichissement
+	    frame.setTitle("ZZavatar");	// modification du titre de la frame
+	    size(1280, 760, P3D); // ouverture de la fenetre en P3D
+	    //frameRate(25); // limitation du rafraichissement
 	    
 	    // options de debug
 	    debug = false;	
@@ -63,16 +63,16 @@ public class ZZavatar extends PApplet {
 	    	avatars.get(i).scale(64);
 	    	avatars.get(i).rotateY(PI);
 	    	avatars.get(i).rotateX(PI);
-	    	avatars.get(i).initBasis();
+	    	avatars.get(i).initBasis(); // a changer
 	    }
 	}
 	  
 	public void draw() {
-    	/***************************************************************
-    	 * 
-    	 *  fonction draw() standard
-    	 * 
-    	 ***************************************************************/
+		/***************************************************************
+		 * 
+		 *  fonction draw() standard
+		 * 
+		 ***************************************************************/
     	
 	    background(100);	// efface l'ecran
 	    
@@ -94,19 +94,16 @@ public class ZZavatar extends PApplet {
 				int [] usersDetected = kinect.getUsers();
 				
 				for (int i = 0; i < usersDetected.length; i++) {
-					clone.move_2(kinect.getSkeleton(usersDetected[i]));
+					clone.move(kinect.getSkeleton(usersDetected[i]));
 				}
 			}
 		}
 	    
-	    // gestion de la camera
-	    vision();
+	    vision(); // gestion de la camera
 	    
-	    // Afficher le clone
-	    clone.draw();
+	    clone.draw(); // Afficher le clone
 	    
-	    // lumiere dans la scene
-	    lights();			// ajout de lumiere
+	    lights(); // ajout de lumiere
 	}
 	  
 	public void vision() { // comportement "special"
@@ -249,7 +246,14 @@ public class ZZavatar extends PApplet {
 	    
 	}
 	
-
+	public int getKinectVersion(){
+		/*******************************************************
+		 * 
+		 * Retourne la version de la kienct courament utilisee
+		 * 
+		 *******************************************************/
+		return kinect.getVersion();
+	}
 	
 	public static void main(String _args[]) {
     	/***************************************************************

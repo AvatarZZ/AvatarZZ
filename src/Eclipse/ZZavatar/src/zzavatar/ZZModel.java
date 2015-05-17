@@ -427,6 +427,19 @@ class ZZModel {
     	return retour;
     }
     
+    public void move(ZZoint[] newPosition){
+    	/***************************************************
+    	 * 
+    	 * Annimation du modele en fonction de la kinect
+    	 * 
+    	 ***************************************************/
+    	if (((ZZavatar) app).getKinectVersion() == 1) { //kinect 1
+			move_1(newPosition);
+		} else if (((ZZavatar) app).getKinectVersion() == 2) { //kinect 2
+			move_2(newPosition);
+		}
+    }
+    
     public void move_1(ZZoint[] newPosition){
     	/*******************************************************
     	 * 
