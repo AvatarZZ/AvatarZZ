@@ -16,26 +16,27 @@ import SimpleOpenNI.SimpleOpenNI;
 
 import com.jogamp.opengl.util.texture.Texture;
 
-class ZZModel {
+class ZZModel implements Cloneable{
 	protected PApplet app;
     protected PShape model;
     protected ZZkeleton skeleton;
-    protected ZZkeleton basis; // squelette de base du modele
+    protected ZZoint[] sBasis; 		// Joints de base du modele
     ArrayList<ZZertex> vertices;
+    ArrayList<ZZertex> vBasis; // Vertex de base
     ArrayList<ZZector> vertiTexture;
     ArrayList<Integer>[] groups;
 	ArrayList<ZZMaterial> materiel = null;
 	
-	protected int idUser = 0; // determine le numero du joueur (6 max.)
+	protected int idUser = 0; 		// Determine le numero du joueur (6 max.)
 
     protected ZZModel(PApplet a) {
     	app = a;
     	model = app.createShape(PConstants.GROUP);
     	skeleton = new ZZkeleton();
-    	basis = new ZZkeleton();
     	vertices = new ArrayList<ZZertex>();
     	vertiTexture = new ArrayList<ZZector>();
     	groups = new ArrayList[25];
+    	
     }
 
     protected ZZModel(PApplet a, String filename) {
@@ -148,24 +149,6 @@ class ZZModel {
         app.shape(model);
         app.popMatrix();
     }
-
-	public void initBasis() {
-		/******************************************
-		 * 
-		 * Enregistre le squelette de base
-		 * 
-		 ******************************************/
-		basis = skeleton;
-	}
-    
-	public void resetSkel() {
-		/************************************************
-		 * 
-		 * Remet le modele dans sa position initiale
-		 * 
-		 ************************************************/
-		skeleton = basis;
-	}
 	
     public int getChildCount() {
     	/***************************************************************
@@ -447,7 +430,7 @@ class ZZModel {
     	 * 
     	 *******************************************************/
    	
-    	resetSkel();
+    	reset();
     	
     	ZZector dl = newPosition[ZZkeleton.TORSO];		// translation generale
     	PApplet.println(dl);
@@ -482,7 +465,7 @@ class ZZModel {
 	     * 
 	     ***************************************************************/
     	
-    	resetSkel();
+    	reset();
     	
     	ZZector dl = newPosition[ZZkeleton.ROOT];		// translation generale
     	dl.mult(4);
@@ -552,5 +535,39 @@ class ZZModel {
     		rotatePart(part, f3, f4, 0); // application des rotations
     	}
     }
+
+
+	public void initBasis() {
+		/******************************************
+		 * 
+		 * Enregistre le modele de base
+		 * 
+		 ******************************************/
+		PApplet.println("On set le modele de base");
+		
+		sBasis = skeleton.getZZoints(); // Sauvegarde du squelette
+		
+		// Copie des vertices
+		vBasis = new ArrayList<ZZertex>(vertices.size());
+		vBasis = (ArrayList<ZZertex>) vertices.clone(); //ca marche
+		
+		PApplet.println("\n********************\nCe qu'on a\n");
+		PApplet.println(vertices);
+		PApplet.println("\n********************\nLa copie\n");
+		PApplet.println(vBasis);
+		
+	}
+
+	public void reset() {
+		/****************************************************
+		 * 
+		 * Remet le modele dans son etat de base
+		 * 
+		 ****************************************************/
+    	PApplet.println("On reset le modele");
+    	
+		skeleton.setZZoints(sBasis); // Reset du squelette
+		vertices = (ArrayList<ZZertex>) vBasis.clone();
+	}
 
 } //class

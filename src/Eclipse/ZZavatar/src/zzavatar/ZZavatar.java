@@ -63,8 +63,12 @@ public class ZZavatar extends PApplet {
 	    	avatars.get(i).scale(64);
 	    	avatars.get(i).rotateY(PI);
 	    	avatars.get(i).rotateX(PI);
-	    	avatars.get(i).initBasis(); // a changer
+	    	avatars.get(i).initBasis();
 	    }
+	    
+	    clone.rotatePart(ZZkeleton.ELBOW_RIGHT, PI, PI/2);
+	    
+	    clone.reset(); //le bras est revenu a sa place
 	}
 	  
 	public void draw() {

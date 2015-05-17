@@ -364,4 +364,23 @@ class ZZkeleton {
 		}
     }
 
+    public ZZoint[] getZZoints(){
+    	//Retourne une copie du tableau de joints
+    	
+    	ZZoint[] copie = new ZZoint[jointsNumber];
+    	
+    	//Copie manuelle de l'element
+    	for (int i = 0; i < copie.length; i++) {
+			copie[i] = joints[i];
+		}
+    	
+    	return copie;
+    }
+    
+    public void setZZoints(ZZoint[] copie){
+    	//Recopie du tableau de joints copie 
+    	for (int i = 0; i < copie.length; i++) {
+			joints[i] = copie[i];
+		}
+    }
 }
