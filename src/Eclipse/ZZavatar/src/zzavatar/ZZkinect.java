@@ -234,17 +234,22 @@ public class ZZkinect {
 	public void refresh() {
    	 	/***************************************************************
    	 	 * 
-   	 	 *  permet de mettre a jour les champs de ZZkinect
+   	 	 *  Met a jour les champs en fonction de la kinect
    	 	 * 
    	 	 ***************************************************************/
     	
 		if (version==1) {
-			refresh_1();
+			kinectV1.update();	// mise a jour de la kinect
+			rgbImage = kinectV1.userImage();//kinectV1.rgbImage();		// mise a jour de l'image couleur
+			depthImage = kinectV1.depthImage();	// mise a jour de la profondeur
 		} else if (version==2) {
-			refresh_2();
+			skeletonsV2 = kinectV2.getSkeleton3d();	// mise a jour des squelettes
+			skeletonsV2_ColorMap = kinectV2.getSkeletonColorMap();	// mise a jour des squelettes
+			rgbImage = kinectV2.getColorImage();	// mise a jour de l'image couleur
+			depthImage = kinectV2.getDepthImage();	// mise a jour de la profondeur
 		}
 	}
-	
+
 	public boolean available() {
    	 	/***************************************************************
    	 	 * 
@@ -255,59 +260,13 @@ public class ZZkinect {
 		boolean retour = false;
 		
 		if (version==1) {
-			retour = available_1();
+			retour = (kinectV1 != null);
 		} else if (version==2) {
-			retour = available_2();
+			retour = (kinectV2 != null);
 		}
 		
 		return retour;
 	}
-	
-	private void refresh_1() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  refresh pour Kinect V1
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-		kinectV1.update();	// mise a jour de la kinect
-		
-		rgbImage = kinectV1.userImage();//kinectV1.rgbImage();		// mise a jour de l'image couleur
-		depthImage = kinectV1.depthImage();	// mise a jour de la profondeur		
-	}
-	
-	private boolean available_1() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  available pour Kinect V1
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-        return kinectV1 != null;
-    }
-	
-	private void refresh_2() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  refresh pour Kinect V2
-   	 	 * 
-   	 	 ***************************************************************/
-
-		skeletonsV2 = kinectV2.getSkeleton3d();	// mise a jour des squelettes
-		skeletonsV2_ColorMap = kinectV2.getSkeletonColorMap();	// mise a jour des squelettes
-		rgbImage = kinectV2.getColorImage();	// mise a jour de l'image couleur
-		depthImage = kinectV2.getDepthImage();	// mise a jour de la profondeur
-	}
-	
-	private boolean available_2() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  available pour Kinect V2
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-        return kinectV2 != null;
-    }
 	
 	@Override
 	public String toString() {
@@ -320,7 +279,7 @@ public class ZZkinect {
 		String out = "";
 		
 		if (kinectV1 != null || kinectV2 != null) {
-			out += "Kinect version " + getVersion() + " ouverte en " + width + " x " + height;
+			out += "Kinect version " + version + " ouverte en " + width + " x " + height;
 		} else {
 			out += "Kinect non initialisée";
 		}

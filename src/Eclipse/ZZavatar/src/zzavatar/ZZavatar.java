@@ -249,7 +249,7 @@ public class ZZavatar extends PApplet {
 	public int getKinectVersion(){
 		/*******************************************************
 		 * 
-		 * Retourne la version de la kienct courament utilisee
+		 * Retourne la version de la kinect courament utilisee
 		 * 
 		 *******************************************************/
 		return kinect.getVersion();
