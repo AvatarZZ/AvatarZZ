@@ -14,7 +14,8 @@ public class ZZavatar extends PApplet {
 	protected boolean debug;
 	protected ZZkinect kinect;
 	protected PShape debugSphere;
-
+	final int NBCAPT = 5;	// nombre de captures pour moyennage
+	
 	// declaration des variables de couleur utiles
 	final int jaune=color(255,255,0);
 	final int vert=color(0,255,0);
@@ -27,7 +28,7 @@ public class ZZavatar extends PApplet {
 	
 	final int widthWindow = 1280;//1920;	//largeur de la fenetre principale
 	final int heightWindow = 800;//1080;	//hauteur de la fenetre principale
-	
+
 	int distanceCamXZ = 100; // variable distance à la caméra dans plan XZ
 	int distanceCamYZ = 100; // variable distance à la caméra dans plan YZ
 

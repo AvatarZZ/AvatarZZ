@@ -174,7 +174,6 @@ public class ZZkinect {
 				} else {
 					retour[i] = null;
 				}
-				PApplet.println(retour[i]);
 			}
 		//}
     	
