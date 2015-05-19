@@ -160,10 +160,10 @@ public class ZZkinect {
    	 	 * 
    	 	 ***************************************************************/
 		
-		ZZoint[] retour = new ZZoint[25];//TODO mettre dans un tableau de 25 avec du null la ou on a pas le joion k1
+		ZZoint[] retour = new ZZoint[25];
 		PVector jointPos = new PVector();
 		int realNum;
-		if(kinectV1.isTrackingSkeleton(numUser)) {
+		//if(kinectV1.isTrackingSkeleton(numUser)) {
 			
 			for (int i = 0; i < retour.length; i++) {
 				realNum = refKinect1[i];
@@ -174,8 +174,9 @@ public class ZZkinect {
 				} else {
 					retour[i] = null;
 				}
+				PApplet.println(retour[i]);
 			}
-		}
+		//}
     	
 		return retour;
 	}
@@ -213,6 +214,7 @@ public class ZZkinect {
 				if(!this.isTrackingSkeleton(retour[i])) {
 					this.kinectV1.startTrackingSkeleton(retour[i]);
 				}
+				refresh_1();
 			}
 		} else if (version==2) {
 			ArrayList<Integer> tmp = new ArrayList<Integer>();
