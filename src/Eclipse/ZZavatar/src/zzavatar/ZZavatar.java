@@ -94,7 +94,6 @@ public class ZZavatar extends PApplet {
 				int [] usersDetected = kinect.getUsers();
 				
 				for (int i = 0; i < usersDetected.length; i++) {
-					println("i =" + i + " nb users = " + usersDetected.length + " user = " + usersDetected[i]);
 					clone.move_1(kinect.getSkeleton(usersDetected[i]));
 				}
 			}

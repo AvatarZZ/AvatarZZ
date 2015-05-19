@@ -437,7 +437,6 @@ class ZZModel {
     	resetSkel();
     	
     	ZZector dl = newPosition[ZZkeleton.TORSO];		// translation generale
-    	PApplet.println(dl);
     	dl.mult((float) 0.01);
     	dl.z += 500;
     	dl.sub(skeleton.joints[ZZkeleton.TORSO]);
