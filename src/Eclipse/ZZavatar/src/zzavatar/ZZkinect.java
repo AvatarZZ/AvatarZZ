@@ -14,96 +14,10 @@ import processing.core.*;
  * Classe de gestion de la kinect
  *
  ********************************************/
-public class ZZkinect {
-	protected SimpleOpenNI kinectV1;
-	protected KinectPV2 kinectV2;
-	protected PApplet app;
-	protected int height = 0;	// hauteur de la capture
-	protected int width = 0;	// largeur de la capture
-	protected int version = 0;	// version de la Kinect utilisee
-	private static final int SKELETON_SIZE = 25;
+public interface ZZkinect {
+	static final int SKELETON_SIZE = 25;		// nombre de joints dans un squelette
 	
-	protected PImage rgbImage;		// capture video normale
-	protected PImage depthImage;	// capture de profondeur
-	private Skeleton [] skeletonsV2;
-	protected Skeleton [] skeletonsV1_ColorMap;
-	protected Skeleton [] skeletonsV2_ColorMap;
-	
-	private int[] refKinect1 = new int[SKELETON_SIZE];
-	
-	public ZZkinect(PApplet parent) {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  constructeur de ZZkinect
-   	 	 * 
-   	 	 ***************************************************************/
-		
-		try {
-			kinectV1 = new SimpleOpenNI(parent); // marche sous eclipse
-			
-			if(!kinectV1.isInit()){ //kinect reconnue ou pas
-				PApplet.println("Kinect non reconnue ou non presente");
-				kinectV1 = null;
-			} else { //kinect reconnue
-				kinectV1.enableDepth();	//chargement de la profondeur
-				kinectV1.enableRGB();	//chargement de l'image couleur
-				kinectV1.enableUser(parent);	//autoriser le tracking du squelette des utilisateurs
-				
-				height = kinectV1.depthHeight();	//hauteur de la capture
-				width = kinectV1.depthWidth();		//largeur de la capture
-				
-				version = 1;	// actualisation de la version
-				app = parent;
-				
-				if ((width != 640) || (height != 480)) { //reconnaissance des parametres
-					PApplet.println("Erreur sur les dimension de capture kinect");
-					kinectV1 = null;
-				}
-				//Matching du skeleton avec une kinect1
-				refKinect1[ZZkeleton.WAIST] = -100;
-				refKinect1[ZZkeleton.ROOT] = -101;
-				refKinect1[ZZkeleton.NECK] = SimpleOpenNI.SKEL_NECK;
-				refKinect1[ZZkeleton.HEAD] = SimpleOpenNI.SKEL_HEAD;
-				refKinect1[ZZkeleton.SHOULDER_LEFT] = SimpleOpenNI.SKEL_LEFT_SHOULDER;
-				refKinect1[ZZkeleton.ELBOW_LEFT] = SimpleOpenNI.SKEL_LEFT_ELBOW;
-				refKinect1[ZZkeleton.WRIST_LEFT] = SimpleOpenNI.SKEL_LEFT_HAND; // inversion main poignet
-				refKinect1[ZZkeleton.HAND_LEFT] = -100;       					// inversion avec wrist
-				refKinect1[ZZkeleton.SHOULDER_RIGHT] = SimpleOpenNI.SKEL_RIGHT_SHOULDER;	
-				refKinect1[ZZkeleton.ELBOW_RIGHT] = SimpleOpenNI.SKEL_RIGHT_ELBOW;
-				refKinect1[ZZkeleton.WRIST_RIGHT] = SimpleOpenNI.SKEL_RIGHT_HAND; // inversion main poignet
-				refKinect1[ZZkeleton.HAND_RIGHT] = -100;				    	  // inversion main poignet
-				refKinect1[ZZkeleton.HIP_LEFT] = SimpleOpenNI.SKEL_LEFT_HIP;	
-				refKinect1[ZZkeleton.KNEE_LEFT] = SimpleOpenNI.SKEL_LEFT_KNEE;
-				refKinect1[ZZkeleton.ANKLE_LEFT] = SimpleOpenNI.SKEL_LEFT_FOOT; // ankle left						// INVERSION pied cheville
-				refKinect1[ZZkeleton.FOOT_LEFT] = -100;							// INVERSION pied cheville
-				refKinect1[ZZkeleton.HIP_RIGHT] = SimpleOpenNI.SKEL_RIGHT_HIP;	
-				refKinect1[ZZkeleton.KNEE_RIGHT] = SimpleOpenNI.SKEL_RIGHT_KNEE;
-				refKinect1[ZZkeleton.ANKLE_RIGHT] = SimpleOpenNI.SKEL_RIGHT_FOOT; // ankle right						// INVERSION pied cheville
-				refKinect1[ZZkeleton.FOOT_RIGHT] = -100;		// INVERSION pied cheville
-				refKinect1[ZZkeleton.TORSO] = SimpleOpenNI.SKEL_TORSO;	
-				refKinect1[ZZkeleton.INDEX_LEFT] = SimpleOpenNI.SKEL_LEFT_FINGERTIP;
-				refKinect1[ZZkeleton.THUMB_LEFT] = -100;
-				refKinect1[ZZkeleton.INDEX_RIGHT] = SimpleOpenNI.SKEL_RIGHT_FINGERTIP;
-				refKinect1[ZZkeleton.THUMB_RIGHT] = -100;
-			}
-		} catch (Exception e) { //Si pas de kinect 1 on cherche une kinect 2
-			kinectV2 = new KinectPV2(parent);
-
-			kinectV2.enableColorImg(true);
-			kinectV2.enableDepthImg(true);
-			kinectV2.enableSkeleton(true);
-			kinectV2.enableBodyTrackImg(true);
-			kinectV2.enableSkeleton3dMap(true);
-			kinectV2.enableSkeletonColorMap(true);
-			kinectV2.init();
-			height = kinectV2.HEIGHTColor;
-			width = kinectV2.WIDTHColor;
-			app = parent;
-			version = 2;	// actualisation de la version
-		}
-	}
-	
-	public ZZoint[] getSkeleton() {
+	public default ZZoint[] getSkeleton() {
    	 	/***************************************************************
    	 	 * 
    	 	 *  permet de recuperer le squelette d'un certain utilisateur
@@ -113,205 +27,18 @@ public class ZZkinect {
 		return getSkeleton(0);
 	}
 	
-	public ZZoint[] getSkeleton(int numUser) {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  permet de recuperer le squelette d'un certain utilisateur
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-		ZZoint[] retour = null;
-		
-		if (version==1) {
-			retour = getSkeleton_1(numUser);
-		} else if (version==2) {
-			retour = getSkeleton_2(numUser);
-		}
-		
-		return retour;
-	}
-	
-	private ZZoint[] getSkeleton_2(int numUser) {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  permet de recuperer le squelette (version 2)
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-		ZZoint[] retour = new ZZoint[25];
-    	KJoint[] k = skeletonsV2[numUser].getJoints();
-		
-		for (int i = 0; i < retour.length; i++) {
-			retour[i] = new ZZoint(k[i]);
-			retour[i].mult(-64);	// necessaire sinon mouvements de trop faible amplitude
-			/*retour[i].y *= -1;		// correction d'orientation
-			retour[i].z *= -1;		// correction d'orientation
-			retour[i].x *= -1;		// effet non miroir*/
-			//retour[i].z += 400;		// correction de proximité
-		}
-    	
-		return retour;
-	}
+	public ZZoint[] getSkeleton(int numUser);		// permet de récupérer le squelette
 
-	private ZZoint[] getSkeleton_1(int numUser) {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  permet de recuperer le squelette (version 1)
-   	 	 * 
-   	 	 ***************************************************************/
-		
-		ZZoint[] retour = new ZZoint[25];
-		PVector jointPos = new PVector();
-		int realNum;
-		//if(kinectV1.isTrackingSkeleton(numUser)) {
-			
-			for (int i = 0; i < retour.length; i++) {
-				realNum = refKinect1[i];
-				if (realNum>=0) {
-					kinectV1.getJointPositionSkeleton(numUser, realNum, jointPos);
-					retour[i] = new ZZoint(jointPos);
-					retour[i].mult(-64);
-				} else {
-					retour[i] = null;
-				}
-			}
-		//}
-    	
-		return retour;
-	}
+	public boolean isTrackingSkeleton(int skelNum); // permet de savoir si le squelette skelNum est traque
+	
+	public int[] getUsers();			// renvoie la liste des utilisateurs actifs
 
-	public boolean isTrackingSkeleton(int skelNum) {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  permet de savoir si le squelette skelNum est traque
-   	 	 * 
-   	 	 ***************************************************************/
-    
-		boolean retour = false;
-		
-		if (version==1) {
-			retour = this.kinectV1.isTrackingSkeleton(skelNum);
-		} else if (version==2) {
-			retour = this.skeletonsV2[skelNum].isTracked();
-		}
-		
-		return retour;
-	}
-	
-	public int[] getUsers() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *	renvoie la liste des utilisateurs actifs
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-		int [] retour = null;
-		
-		if (version==1) {
-			retour = this.kinectV1.getUsers();
-			for (int i = 0; i < retour.length; i++) {
-				if(!this.isTrackingSkeleton(retour[i])) {
-					this.kinectV1.startTrackingSkeleton(retour[i]);
-				}
-				refresh_1();
-			}
-		} else if (version==2) {
-			ArrayList<Integer> tmp = new ArrayList<Integer>();
-			
-			for (int i = 0; i < skeletonsV2.length; i++) {
-				if(this.isTrackingSkeleton(i))
-			    {
-					tmp.add(i);
-			    }
-			}
-			retour = new int[tmp.size()];
-			for (int i = 0; i < tmp.size(); i++)
-				retour[i] = tmp.get(i);
-		}
-		
-		return retour;
-	}
-	
-	public void refresh() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  permet de mettre a jour les champs de ZZkinect
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-		if (version==1) {
-			refresh_1();
-		} else if (version==2) {
-			refresh_2();
-		}
-	}
-	
-	public boolean available() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  permet de savoir si la kinect est disponible
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-		boolean retour = false;
-		
-		if (version==1) {
-			retour = available_1();
-		} else if (version==2) {
-			retour = available_2();
-		}
-		
-		return retour;
-	}
-	
-	private void refresh_1() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  refresh pour Kinect V1
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-		kinectV1.update();	// mise a jour de la kinect
-		
-		rgbImage = kinectV1.userImage();//kinectV1.rgbImage();		// mise a jour de l'image couleur
-		depthImage = kinectV1.depthImage();	// mise a jour de la profondeur		
-	}
-	
-	private boolean available_1() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  available pour Kinect V1
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-        return kinectV1 != null;
-    }
-	
-	private void refresh_2() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  refresh pour Kinect V2
-   	 	 * 
-   	 	 ***************************************************************/
+	public void refresh();				// permet de mettre a jour les champs de ZZkinect
 
-		skeletonsV2 = kinectV2.getSkeleton3d();	// mise a jour des squelettes
-		skeletonsV2_ColorMap = kinectV2.getSkeletonColorMap();	// mise a jour des squelettes
-		rgbImage = kinectV2.getColorImage();	// mise a jour de l'image couleur
-		depthImage = kinectV2.getDepthImage();	// mise a jour de la profondeur
-	}
-	
-	private boolean available_2() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  available pour Kinect V2
-   	 	 * 
-   	 	 ***************************************************************/
-    	
-        return kinectV2 != null;
-    }
+	public boolean available(); 		// permet de savoir si la kinect est disponible
 	
 	@Override
-	public String toString() {
+	public default String toString() {
    	 	/***************************************************************
    	 	 * 
    	 	 *  toString permettant l'obtention d'informations sur la Kinect
@@ -320,8 +47,8 @@ public class ZZkinect {
     	
 		String out = "";
 		
-		if (kinectV1 != null || kinectV2 != null) {
-			out += "Kinect version " + getVersion() + " ouverte en " + width + " x " + height;
+		if (getVersion()!=0) {
+			out += "Kinect version " + getVersion() + " ouverte en " + getWidth() + " x " + getHeight();
 		} else {
 			out += "Kinect non initialisée";
 		}
@@ -329,15 +56,11 @@ public class ZZkinect {
 		return out;
 	}
 
-	public int getVersion() {
-		/*****************************************************
-		 * 
-		 * Retourne la version de la kinect utilisee
-		 * 
-		 *****************************************************/
-		
-		return version;
-	}
+	public int getWidth();
+
+	public int getHeight();
+
+	public int getVersion();	// Retourne la version de la kinect utilisee
 
 	public void drawSkeletons() {
    	 	/***************************************************************
@@ -524,7 +247,7 @@ public class ZZkinect {
 		}
 	}
 		
-	private int getIndexColor(int index) {
+	default int getIndexColor(int index) {
    	 	/***************************************************************
    	 	 * 
    	 	 *  couleurs des squelettes des joueurs
