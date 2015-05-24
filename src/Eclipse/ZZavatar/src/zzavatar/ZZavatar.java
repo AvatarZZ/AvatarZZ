@@ -1,20 +1,23 @@
 package zzavatar;
 
 import java.util.ArrayList;
-
-import KinectPV2.*;
-import SimpleOpenNI.*;
 import processing.core.*;
 
 
 public class ZZavatar extends PApplet {
-
+	/***************************************************************
+	 * 
+	 *  Classe principal contenant le main
+	 * 
+	 ***************************************************************/
+	
 	protected ZZModel clone;
 	protected ArrayList<ZZModel> avatars;
 	protected boolean debug;
 	protected ZZkinect kinect;
 	protected PShape debugSphere;
-	final int NBCAPT = 5;	// nombre de captures pour moyennage
+	protected ZZoptimiseur better;
+	final int NBCAPT = 3;	// nombre de captures pour moyennage
 	
 	// declaration des variables de couleur utiles
 	final int jaune=color(255,255,0);
@@ -52,6 +55,9 @@ public class ZZavatar extends PApplet {
 	    
 	    // initialisation de la kinect
 	    kinect = new ZZkinectV1(this);
+	    if(!kinect.available()) {
+	    	kinect = new ZZkinectV2(this);
+	    }
 	    
 	    // chargement des modeles a partir de la liste
 	    avatars = ZZModel.loadModels(this, "./data/avatars.bdd");
@@ -66,6 +72,9 @@ public class ZZavatar extends PApplet {
 	    	avatars.get(i).rotateX(PI);
 	    	avatars.get(i).initBasis();
 	    }
+	    
+	    // initiallisation de l'optimiseur
+	    better = new ZZoptimiseur(NBCAPT, clone.getSkeleton().getJoints());
 	}
 	  
 	public void draw() {
@@ -94,9 +103,13 @@ public class ZZavatar extends PApplet {
 			if(kinect.available()) {
 				int [] usersDetected = kinect.getUsers();
 				
-				for (int i = 0; i < usersDetected.length; i++) {
-					clone.move_1(kinect.getSkeleton(usersDetected[i]));
+				if (usersDetected.length > 0) {		// si il y a un utilisateur
+					better.addEch(kinect.getSkeleton(usersDetected[0]));	// on ajoute les données du premier joueur detecte
 				}
+			}
+			
+			if (better.dataAvailable()) {		// si on a des donnees optimisees disponibles
+				clone.move(better.getOptimizedValue());	// on fait bouger l'avatar
 			}
 		}
 	    
@@ -160,10 +173,11 @@ public class ZZavatar extends PApplet {
     	 * 
     	 ***************************************************************/
     	kinect.drawSkeletons();
-    	for (int i = 0; i < sk.joints.length; i++) {
+    	ZZoint[] jts = sk.getJoints();
+    	for (int i = 0; i < jts.length; i++) {
 			pushMatrix();
 			stroke(rouge);
-			translate(sk.joints[i].x, sk.joints[i].y, sk.joints[i].z);
+			translate(jts[i].x, jts[i].y, jts[i].z);
 			shape(debugSphere);
 			popMatrix();
 		}

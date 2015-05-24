@@ -59,11 +59,11 @@ class ZZkinectV2 implements ZZkinect {
 		
 		for (int i = 0; i < retour.length; i++) {
 			retour[i] = new ZZoint(k[i]);
-			retour[i].mult(-64);	// necessaire sinon mouvements de trop faible amplitude
+			retour[i].mult(-256);	// necessaire sinon mouvements de trop faible amplitude
 			/*retour[i].y *= -1;		// correction d'orientation
 			retour[i].z *= -1;		// correction d'orientation
 			retour[i].x *= -1;		// effet non miroir*/
-			//retour[i].z += 400;		// correction de proximité
+			retour[i].z += 500;		// correction de proximité
 		}
     	
 		return retour;

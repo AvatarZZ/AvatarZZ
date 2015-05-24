@@ -1,12 +1,8 @@
 package zzavatar;
 
-import java.util.ArrayList;
-
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
-import KinectPV2.KJoint;
-import KinectPV2.Skeleton;
 import SimpleOpenNI.SimpleOpenNI;
 
 class ZZkinectV1 implements ZZkinect {
@@ -18,7 +14,6 @@ class ZZkinectV1 implements ZZkinect {
 	
 	protected PImage rgbImage;		// capture video normale
 	protected PImage depthImage;	// capture de profondeur
-	protected Skeleton [] skeletonsV1_ColorMap;
 	
 	private int[] refKinect1 = new int[SKELETON_SIZE];
 	
@@ -96,7 +91,8 @@ class ZZkinectV1 implements ZZkinect {
 				if (realNum>=0) {
 					kinectV1.getJointPositionSkeleton(numUser, realNum, jointPos);
 					retour[i] = new ZZoint(jointPos);
-					retour[i].mult(-64);
+					retour[i].mult(-1);
+					retour[i].z += 1500;		// correction de proximité
 				} else {
 					retour[i] = null;
 				}

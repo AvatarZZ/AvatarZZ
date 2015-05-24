@@ -1,12 +1,5 @@
 package zzavatar;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
-import KinectPV2.KJoint;
-import KinectPV2.KinectPV2;
-import KinectPV2.Skeleton;
-import SimpleOpenNI.*;
 import processing.core.*;
 
 /********************************************

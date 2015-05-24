@@ -35,7 +35,7 @@ class ZZkeleton {
     public final static int THUMB_RIGHT    	= 24;
     
     protected float[][] lastRotation;
-    protected ZZoint[] joints;
+    private ZZoint[] joints;
     protected int jointsNumber;
     protected String name;
     
@@ -269,7 +269,7 @@ class ZZkeleton {
     	pile.add(part);
        
     	while (!(pile.isEmpty())) {
-    		Integer[] tmp = joints[pile.get(0)].getChildren();
+    		int[] tmp = joints[pile.get(0)].getChildren();
     		if (tmp != null) {
     			for (int i = 0; i < tmp.length; i++) {
     				pile.add(tmp[i]);
@@ -363,5 +363,25 @@ class ZZkeleton {
 			joints[i].mult(s);
 		}
     }
+
+	public ZZoint[] getJoints() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  permet de recuperer le tableau de ZZoint
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		return joints;
+	}
+
+	public ZZoint getJoint(int num) {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  permet de recuperer un ZZoint dans le tableau de ZZoint
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		return joints[num];
+	}
 
 }

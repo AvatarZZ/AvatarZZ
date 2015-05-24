@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import processing.core.PApplet;
 import processing.core.PImage;
-import sun.security.krb5.internal.APRep;
 
 public class ZZMaterial {
     /***************************************************************

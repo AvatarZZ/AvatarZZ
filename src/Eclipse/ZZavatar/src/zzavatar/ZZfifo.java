@@ -76,5 +76,3 @@ public class ZZfifo<E> {
 		return list.size();
 	}
 }
-
-//Copyright (c) 2003-2009, Jodd Team (jodd.org). All Rights Reserved.
