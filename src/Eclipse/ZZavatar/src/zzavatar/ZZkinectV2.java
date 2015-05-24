@@ -141,52 +141,220 @@ class ZZkinectV2 implements ZZkinect {
 	}
 	@Override
 	public void drawSkeletons() {
-		// TODO Auto-generated method stub
-		
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  Affiche les squelettes selon la kinect en cours
+   	 	 * 
+   	 	 ***************************************************************/
+
+		for (int i = 0; i < skeletonsV2_ColorMap.length; i++) {
+	    	if (skeletonsV2_ColorMap[i].isTracked()) {
+
+	    		int col  = getIndexColor(i);
+	    		app.fill(col);
+	    		app.stroke(col);
+	    		drawSkeleton(i);
+	    	}
+	    }
 	}
+	
 	@Override
-	public void drawSkeleton_1(int userId) {
-		// TODO Auto-generated method stub
+	public void drawSkeleton(int userId) {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *	Affiche le squelette
+   	 	 * 
+   	 	 ***************************************************************/
 		
-	}
-	@Override
-	public void drawSkeleton_2(KJoint[] joints) {
-		// TODO Auto-generated method stub
+		KJoint[] joints = skeletonsV2_ColorMap[userId].getJoints();
 		
-	}
-	@Override
-	public void drawJoint(KJoint[] joints, int jointType) {
-		// TODO Auto-generated method stub
+		drawBone(joints, KinectPV2.JointType_Head, KinectPV2.JointType_Neck);
+		drawBone(joints, KinectPV2.JointType_Neck, KinectPV2.JointType_SpineShoulder);
+		drawBone(joints, KinectPV2.JointType_SpineShoulder, KinectPV2.JointType_SpineMid);
+		drawBone(joints, KinectPV2.JointType_SpineMid, KinectPV2.JointType_SpineBase);
+		drawBone(joints, KinectPV2.JointType_SpineShoulder, KinectPV2.JointType_ShoulderRight);
+		drawBone(joints, KinectPV2.JointType_SpineShoulder, KinectPV2.JointType_ShoulderLeft);
+		drawBone(joints, KinectPV2.JointType_SpineBase, KinectPV2.JointType_HipRight);
+		drawBone(joints, KinectPV2.JointType_SpineBase, KinectPV2.JointType_HipLeft);
+
+		// Right Arm    
+		drawBone(joints, KinectPV2.JointType_ShoulderRight, KinectPV2.JointType_ElbowRight);
+		drawBone(joints, KinectPV2.JointType_ElbowRight, KinectPV2.JointType_WristRight);
+		drawBone(joints, KinectPV2.JointType_WristRight, KinectPV2.JointType_HandRight);
+		drawBone(joints, KinectPV2.JointType_HandRight, KinectPV2.JointType_HandTipRight);
+		drawBone(joints, KinectPV2.JointType_WristRight, KinectPV2.JointType_ThumbRight);
+
+		// Left Arm
+		drawBone(joints, KinectPV2.JointType_ShoulderLeft, KinectPV2.JointType_ElbowLeft);
+		drawBone(joints, KinectPV2.JointType_ElbowLeft, KinectPV2.JointType_WristLeft);
+		drawBone(joints, KinectPV2.JointType_WristLeft, KinectPV2.JointType_HandLeft);
+		drawBone(joints, KinectPV2.JointType_HandLeft, KinectPV2.JointType_HandTipLeft);
+		drawBone(joints, KinectPV2.JointType_WristLeft, KinectPV2.JointType_ThumbLeft);
+
+		// Right Leg
+		drawBone(joints, KinectPV2.JointType_HipRight, KinectPV2.JointType_KneeRight);
+		drawBone(joints, KinectPV2.JointType_KneeRight, KinectPV2.JointType_AnkleRight);
+		drawBone(joints, KinectPV2.JointType_AnkleRight, KinectPV2.JointType_FootRight);
+
+		// Left Leg
+		drawBone(joints, KinectPV2.JointType_HipLeft, KinectPV2.JointType_KneeLeft);
+		drawBone(joints, KinectPV2.JointType_KneeLeft, KinectPV2.JointType_AnkleLeft);
+		drawBone(joints, KinectPV2.JointType_AnkleLeft, KinectPV2.JointType_FootLeft);
+
+		drawJoint(joints, KinectPV2.JointType_HandTipLeft);
+		drawJoint(joints, KinectPV2.JointType_HandTipRight);
+		drawJoint(joints, KinectPV2.JointType_FootLeft);
+		drawJoint(joints, KinectPV2.JointType_FootRight);
+
+		drawJoint(joints, KinectPV2.JointType_ThumbLeft);
+		drawJoint(joints, KinectPV2.JointType_ThumbRight);
+
+		drawJoint(joints, KinectPV2.JointType_Head);
 		
+		//draw different color for each hand state
+		drawHandState(joints[KinectPV2.JointType_HandRight]);
+		drawHandState(joints[KinectPV2.JointType_HandLeft]);
 	}
-	@Override
-	public void drawBone(KJoint[] joints, int jointType1, int jointType2) {
-		// TODO Auto-generated method stub
-		
+
+	private void drawJoint(KJoint[] joints, int jointType) {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  affiche les joints
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		app.pushMatrix();
+		app.translate(joints[jointType].getX(), joints[jointType].getY(), joints[jointType].getZ());
+		app.ellipse(0, 0, 25, 25);
+		app.popMatrix();
 	}
-	@Override
-	public void drawHandState(KJoint joint) {
-		// TODO Auto-generated method stub
-		
+
+	private void drawBone(KJoint[] joints, int jointType1, int jointType2) {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  affiche les os
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		app.pushMatrix();
+		app.translate(joints[jointType1].getX(), joints[jointType1].getY(), joints[jointType1].getZ());
+		app.ellipse(0, 0, 25, 25);
+		app.popMatrix();
+		app.line(joints[jointType1].getX(), joints[jointType1].getY(), joints[jointType1].getZ(), joints[jointType2].getX(), joints[jointType2].getY(), joints[jointType2].getZ());
 	}
-	@Override
-	public void handState(int handState) {
-		// TODO Auto-generated method stub
-		
+
+	private void drawHandState(KJoint joint) {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  affiche l'etat des mains
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		app.noStroke();
+		handState(joint.getState());
+		app.pushMatrix();
+		app.translate(joint.getX(), joint.getY(), joint.getZ());
+		app.ellipse(0, 0, 70, 70);
+		app.popMatrix();
 	}
+
+	private void handState(int handState) {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  couleurs des differents etats
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		switch(handState) {
+			case KinectPV2.HandState_Open:
+				app.fill(0, 255, 0);
+				break;
+			case KinectPV2.HandState_Closed:
+				app.fill(255, 0, 0);
+				break;
+			case KinectPV2.HandState_Lasso:
+				app.fill(0, 0, 255);
+				break;
+			case KinectPV2.HandState_NotTracked:
+				app.fill(255, 255, 255);
+				break;
+		}
+	}
+	
 	@Override
 	public int getIndexColor(int index) {
-		// TODO Auto-generated method stub
-		return 0;
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  couleurs des squelettes des joueurs
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		int col = app.color(255);
+		if (index == 0)
+			col = app.color(255, 0, 0);
+		if (index == 1)
+		    col = app.color(0, 255, 0);
+		if (index == 2)
+		    col = app.color(0, 0, 255);
+		if (index == 3)
+		    col = app.color(255, 255, 0);
+		if (index == 4)
+		    col = app.color(0, 255, 255);
+		if (index == 5)
+		    col = app.color(255, 0, 255);
+
+		return col;
+	}
+	
+	@Override
+	public String toString() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  toString permettant l'obtention d'informations sur la Kinect
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		String out = "";
+		
+		if (getVersion()!=0) {
+			out += "Kinect version " + getVersion() + " ouverte en " + getWidth() + " x " + getHeight();
+		} else {
+			out += "Kinect non initialisée";
+		}
+		
+		return out;
 	}
 
 	@Override
 	public int getWidth() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  renvoie la largeur de la capture Kinect
+   	 	 * 
+   	 	 ***************************************************************/
+    	
 		return width;
 	}
 
 	@Override
 	public int getHeight() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  renvoie la hauteur de la capture Kinect
+   	 	 * 
+   	 	 ***************************************************************/
+    	
 		return height;
+	}
+
+	@Override
+	public PImage getRGBImage() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  renvoie l'image couleur de la Kinect
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		return this.rgbImage;
 	}
 }

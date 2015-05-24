@@ -176,50 +176,99 @@ class ZZkinectV1 implements ZZkinect {
 
 	@Override
 	public void drawSkeletons() {
-		// TODO Auto-generated method stub
-		
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  Affiche les squelettes selon la kinect en cours
+   	 	 * 
+   	 	 ***************************************************************/
+
+		for (int i = 0; i < kinectV1.getNumberOfUsers(); i++) {
+    		//Change de couleur pour chaque squelette
+			int col  = getIndexColor(i);
+    		app.fill(col);
+    		app.stroke(col);
+    		
+    		drawSkeleton(i);
+		}
 	}
 
 	@Override
-	public void drawSkeleton_1(int userId) {
-		// TODO Auto-generated method stub
+	public void drawSkeleton(int userId) {
+		/**********************************************************
+		 *
+		 *	Affiche le squelette d'un user
+		 * 
+		 **********************************************************/
+		//Tete
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_HEAD, SimpleOpenNI.SKEL_NECK);
+		 
+		//Bras gauche
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_NECK, SimpleOpenNI.SKEL_LEFT_SHOULDER);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, SimpleOpenNI.SKEL_LEFT_ELBOW);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_ELBOW, SimpleOpenNI.SKEL_LEFT_HAND);
 		
-	}
-
-	@Override
-	public void drawSkeleton_2(KJoint[] joints) {
-		// TODO Auto-generated method stub
+		//Bras droit
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_NECK, SimpleOpenNI.SKEL_RIGHT_SHOULDER);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, SimpleOpenNI.SKEL_RIGHT_ELBOW);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_ELBOW, SimpleOpenNI.SKEL_RIGHT_HAND);
 		
-	}
-
-	@Override
-	public void drawJoint(KJoint[] joints, int jointType) {
-		// TODO Auto-generated method stub
+		//Epaules
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, SimpleOpenNI.SKEL_TORSO);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, SimpleOpenNI.SKEL_TORSO);
 		
-	}
-
-	@Override
-	public void drawBone(KJoint[] joints, int jointType1, int jointType2) {
-		// TODO Auto-generated method stub
+		//Jambe gauche
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_TORSO, SimpleOpenNI.SKEL_LEFT_HIP);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_HIP, SimpleOpenNI.SKEL_LEFT_KNEE);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_KNEE, SimpleOpenNI.SKEL_LEFT_FOOT);
 		
-	}
-
-	@Override
-	public void drawHandState(KJoint joint) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void handState(int handState) {
-		// TODO Auto-generated method stub
-		
+		//Jambe droite
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_TORSO, SimpleOpenNI.SKEL_RIGHT_HIP);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_HIP, SimpleOpenNI.SKEL_RIGHT_KNEE);
+		kinectV1.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_KNEE, SimpleOpenNI.SKEL_RIGHT_FOOT);  
 	}
 
 	@Override
 	public int getIndexColor(int index) {
-		// TODO Auto-generated method stub
-		return 0;
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  couleurs des squelettes des joueurs
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		int col = app.color(255);
+		if (index == 0)
+			col = app.color(255, 0, 0);
+		if (index == 1)
+		    col = app.color(0, 255, 0);
+		if (index == 2)
+		    col = app.color(0, 0, 255);
+		if (index == 3)
+		    col = app.color(255, 255, 0);
+		if (index == 4)
+		    col = app.color(0, 255, 255);
+		if (index == 5)
+		    col = app.color(255, 0, 255);
+
+		return col;
+	}
+	
+	@Override
+	public String toString() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  toString permettant l'obtention d'informations sur la Kinect
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		String out = "";
+		
+		if (getVersion()!=0) {
+			out += "Kinect version " + getVersion() + " ouverte en " + getWidth() + " x " + getHeight();
+		} else {
+			out += "Kinect non initialisée";
+		}
+		
+		return out;
 	}
 
 	@Override
@@ -230,5 +279,16 @@ class ZZkinectV1 implements ZZkinect {
 	@Override
 	public int getHeight() {
 		return height;
+	}
+
+	@Override
+	public PImage getRGBImage() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  renvoie l'image couleur de la Kinect
+   	 	 * 
+   	 	 ***************************************************************/
+    	
+		return this.rgbImage;
 	}
 }

@@ -13,7 +13,7 @@ public class ZZoptimiseur {
    	 	 * 
    	 	 ***************************************************************/
     	
-		positionsOptimisees = new SimpleQueue<ZZoint[]>();
+		positionsOptimisees = new ZZfifo<ZZoint[]>();
 		nbEch = qtEch;
 		cptEch = 0;
 		depart = initial;
@@ -26,7 +26,7 @@ public class ZZoptimiseur {
    	 	 * 
    	 	 ***************************************************************/
     	
-		positionsOptimisees = new SimpleQueue<ZZoint[]>();
+		positionsOptimisees = new ZZfifo<ZZoint[]>();
 		nbEch = qtEch;
 		cptEch = 0;
 		depart = initial;
@@ -40,7 +40,7 @@ public class ZZoptimiseur {
    	 	 ***************************************************************/
     	
 		if (cptEch!=0) {
-			ZZoint.add(ech, arrivee);		// TODO
+//			ZZoint.add(ech, arrivee);		// TODO
 		} else {
 			arrivee = ech;
 		}
@@ -49,9 +49,9 @@ public class ZZoptimiseur {
 		
 		if (cptEch==nbEch) {	// si on a tous les echantillons
 			cptEch = 0;
-			arrivee = ZZoint.div(arrivee, nbEch);		// TODO
+//			arrivee = ZZoint.div(arrivee, nbEch);		// TODO
 			for (int i = 1; i <= nbEch; i++) {
-				positionsOptimisees.put(ZZoint.lerp(depart, arrivee, i/nbEch));	// interpolation des bonnes positions	TODO
+//				positionsOptimisees.put(ZZoint.lerp(depart, arrivee, i/nbEch));	// interpolation des bonnes positions	TODO
 			}
 			depart = arrivee;	// verifier la copie TODO
 		}

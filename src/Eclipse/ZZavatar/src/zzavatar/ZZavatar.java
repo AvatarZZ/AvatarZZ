@@ -51,7 +51,7 @@ public class ZZavatar extends PApplet {
 	    debugSphere = createShape(SPHERE, 8);
 	    
 	    // initialisation de la kinect
-	    kinect = new ZZkinect(this);
+	    kinect = new ZZkinectV1(this);
 	    
 	    // chargement des modeles a partir de la liste
 	    avatars = ZZModel.loadModels(this, "./data/avatars.bdd");
@@ -82,8 +82,8 @@ public class ZZavatar extends PApplet {
 	    if (kinect.available()) { 	// si la kinect est presente
 			kinect.refresh();		// mise a jour de la kinect
 			pushMatrix();
-			translate(-kinect.width/2, -kinect.height/2, -800);
-			image(kinect.rgbImage, 0, 0);	// affiche l'image couleur en haut a gauche
+			translate(-kinect.getWidth()/2, -kinect.getHeight()/2, -800);
+			image(kinect.getRGBImage(), 0, 0);	// affiche l'image couleur en haut a gauche
 			
 			//kinect.drawSkeletons();
 			
