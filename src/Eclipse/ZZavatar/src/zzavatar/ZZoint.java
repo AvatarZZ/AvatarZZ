@@ -10,8 +10,9 @@ class ZZoint extends ZZector {
     protected ArrayList<Integer> children;
     protected int state;
 	protected int type;
+	protected PMatrix3D orientation;
     
-    public ZZoint(float o0, float o1, float o2, int p, int[] c) {
+    public ZZoint(float o0, float o1, float o2, int p, int[] c, PMatrix3D mat) {
     	super(o0, o1, o2);
     	origin = new PVector(o0, o1, o2);
     	parent = p;
@@ -21,8 +22,16 @@ class ZZoint extends ZZector {
 				children.add(c[i]);
 			}
     	}
+    	if (mat != null) {
+    		orientation = mat.get();
+    	} else {
+    		orientation = new PMatrix3D();
+    	}
     }
     
+    public ZZoint(float o0, float o1, float o2, int p, int[] c) {
+    	this(o0, o1, o2, p, c, null);
+    }
     public ZZoint(float[] o, int p, int[] c) {
     	this(o[0], o[1], o[2], p, c);
     }
@@ -131,6 +140,17 @@ class ZZoint extends ZZector {
 		}
     }
     
+    public void avg(ZZoint b) {
+    	/***************************************************************
+    	 * 
+ 	     *	fait la moyenne avec un autre ZZoint
+ 	     * 
+ 	     ***************************************************************/
+    	
+    	add(b);
+    	div(2);
+    }
+    
     public static ZZoint[] lerp(ZZoint[] a, ZZoint[] b, float amt) {
     	/***************************************************************
     	 * 
@@ -158,7 +178,7 @@ class ZZoint extends ZZector {
  	     * 
  	     ***************************************************************/
     	
-    	return new ZZoint(x, y, z, parent, getChildren());
+    	return new ZZoint(x, y, z, parent, getChildren(), orientation);
     }
     
     @Override

@@ -15,9 +15,12 @@ public class ZZavatar extends PApplet {
 	protected ArrayList<ZZModel> avatars;
 	protected boolean debug;
 	protected ZZkinect kinect;
+	protected PShape surprise;
 	protected PShape debugSphere;
 	protected ZZoptimiseur better;
 	final int NBCAPT = 3;	// nombre de captures pour moyennage
+	boolean test1 = false;
+	boolean test2 = false;
 	
 	// declaration des variables de couleur utiles
 	final int jaune=color(255,255,0);
@@ -47,7 +50,7 @@ public class ZZavatar extends PApplet {
 
 	    frame.setTitle("ZZavatar");				// modification du titre de la frame
 	    size(1280, 760, P3D);	// ouverture de la fenetre en P3D
-	    //frameRate(25);						// limitation du rafraichissement
+	    frameRate(30);						// limitation du rafraichissement
 	    
 	    // options de debug
 	    debug = false;	
@@ -61,6 +64,7 @@ public class ZZavatar extends PApplet {
 	    
 	    // chargement des modeles a partir de la liste
 	    avatars = ZZModel.loadModels(this, "./data/avatars.bdd");
+	    surprise = loadShape("./data/lightsaber.obj");
 	    
 	    // recuperation du premier clone pour affichage
 	    clone = avatars.get(0);
@@ -72,6 +76,8 @@ public class ZZavatar extends PApplet {
 	    	avatars.get(i).rotateX(PI);
 	    	avatars.get(i).initBasis();
 	    }
+	    surprise.rotateX(HALF_PI);
+	    surprise.scale((float) 1.5);
 	    
 	    // initiallisation de l'optimiseur
 	    better = new ZZoptimiseur(NBCAPT, clone.getSkeleton().getJoints());
@@ -92,7 +98,7 @@ public class ZZavatar extends PApplet {
 			kinect.refresh();		// mise a jour de la kinect
 			pushMatrix();
 			translate(-kinect.getWidth()/2, -kinect.getHeight()/2, -800);
-			image(kinect.getRGBImage(), 0, 0);	// affiche l'image couleur en haut a gauche
+			//image(kinect.getRGBImage(), 0, 0);	// affiche l'image couleur en haut a gauche
 			
 			//kinect.drawSkeletons();
 			
@@ -100,11 +106,14 @@ public class ZZavatar extends PApplet {
 			//image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
 			popMatrix();
 			
+			pushMatrix();
 			if(kinect.available()) {
 				int [] usersDetected = kinect.getUsers();
 				
 				if (usersDetected.length > 0) {		// si il y a un utilisateur
 					better.addEch(kinect.getSkeleton(usersDetected[0]));	// on ajoute les données du premier joueur detecte
+					printMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
+					applyMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
 				}
 			}
 			
@@ -118,10 +127,28 @@ public class ZZavatar extends PApplet {
 	    
 	    // Afficher le clone
 	    clone.draw();
+	    popMatrix();
+	    if(kinect.getJoinedHands() != null)
+	    	test2 = true;
+	    
+	    if(test1 && test2) {
+	    	ZZoint tmp = clone.getSkeleton().getJoint(ZZkeleton.HAND_RIGHT);
+	    	surprise.resetMatrix();
+	    	surprise.translate(tmp.x, tmp.y, tmp.z);
+
+	    	shape(surprise);
+	    }
 	    
 	    // lumiere dans la scene
 	    lights();			// ajout de lumiere
 	}
+	  public void printMatrix(PMatrix3D m) {
+		  String a = m.m00 + " " + m.m01 + " " + m.m02 + " " + m.m03 + "\n"
+				 + m.m10 + " " + m.m11 + " " + m.m12 + " " + m.m13 + "\n"
+				 + m.m20 + " " + m.m21 + " " + m.m22 + " " + m.m23 + "\n"
+				 + m.m30 + " " + m.m31 + " " + m.m32 + " " + m.m33 + "\n";
+		  println(a);
+	  }
 	  
 	public void vision() { // comportement "special"
     	/***************************************************************
@@ -199,6 +226,10 @@ public class ZZavatar extends PApplet {
 	    	  	suiv = suiv >= avatars.size() ? 0 : suiv;
 	    	  	clone = avatars.get(suiv);
 	            break;
+	    	case ' ' :
+	    		test1 = !test1;
+	    		test2 = false;
+	    		break;
 	    	case '8' : 
 	    	  	angleCamXZ=angleCamXZ+5;
 	            break;

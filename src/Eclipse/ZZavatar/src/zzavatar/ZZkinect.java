@@ -45,5 +45,7 @@ public interface ZZkinect {
 	public int getIndexColor(int index);	// couleurs des squelettes des joueurs
 
 	public PImage getRGBImage();	// retourne l'image couleur de la kinect active
+
+	public ZZoint getJoinedHands();	// retourne la position des deux mains jointes sinon null
 	
 } //class

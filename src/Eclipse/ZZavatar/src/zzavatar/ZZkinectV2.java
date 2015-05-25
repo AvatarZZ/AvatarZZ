@@ -357,4 +357,10 @@ class ZZkinectV2 implements ZZkinect {
     	
 		return this.rgbImage;
 	}
+
+	@Override
+	public ZZoint getJoinedHands() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

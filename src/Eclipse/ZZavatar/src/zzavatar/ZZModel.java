@@ -434,14 +434,17 @@ class ZZModel {
     	 * 
     	 *******************************************************/
    	
-    	resetSkel();
+    	//resetSkel();
     	
-    	ZZector dl = newPosition[ZZkeleton.TORSO];				/****************************/
-    	dl.sub(skeleton.getJoint(ZZkeleton.TORSO));				//	translation generale	//
-    	dl.z += 700;											//							//
+    	ZZector dl = newPosition[ZZkeleton.ROOT];				/****************************/
+    	dl.sub(skeleton.getJoint(ZZkeleton.ROOT));				//	translation generale	//
+    	dl.z += 400;											//							//
     	this.translate(dl);										/****************************/
     	
-    	movePart(ZZkeleton.NECK, newPosition);
+    	//movePart(ZZkeleton.TORSO, newPosition);		// rotation des sous membres
+    	//movePart(ZZkeleton.WAIST, newPosition);
+    	
+    	//movePart(ZZkeleton.NECK, newPosition);
     	movePart(ZZkeleton.HEAD, newPosition);
     	
     	//movePart(ZZkeleton.SHOULDER_RIGHT, newPosition);

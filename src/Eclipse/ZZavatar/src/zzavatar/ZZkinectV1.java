@@ -16,6 +16,7 @@ class ZZkinectV1 implements ZZkinect {
 	protected PImage depthImage;	// capture de profondeur
 	
 	private int[] refKinect1 = new int[SKELETON_SIZE];
+	private ZZoint joinedHands = null;
 	
 	public ZZkinectV1(PApplet parent) {
    	 	/***************************************************************
@@ -36,6 +37,7 @@ class ZZkinectV1 implements ZZkinect {
 			
 			height = kinectV1.depthHeight();	//hauteur de la capture
 			width = kinectV1.depthWidth();		//largeur de la capture
+			joinedHands = new ZZoint(0, 0, 0, -1, null);	// details des mains jointes
 			
 			version = 1;	// actualisation de la version
 			app = parent;
@@ -91,13 +93,30 @@ class ZZkinectV1 implements ZZkinect {
 				if (realNum>=0) {
 					kinectV1.getJointPositionSkeleton(numUser, realNum, jointPos);
 					retour[i] = new ZZoint(jointPos);
-					retour[i].mult(-1);
-					retour[i].z += 1500;		// correction de proximité
+					retour[i].mult((float) -0.5);
+					retour[i].z += 500;		// correction de proximité
+					kinectV1.getJointOrientationSkeleton(numUser, realNum, retour[i].orientation);
 				} else {
 					retour[i] = null;
 				}
 			}
 			
+			// calcul du bassin waist
+			retour[ZZkeleton.WAIST] = retour[ZZkeleton.HIP_LEFT].copy();
+			retour[ZZkeleton.WAIST].avg(retour[ZZkeleton.HIP_RIGHT]);
+			
+			// calcul de la racine root
+			retour[ZZkeleton.ROOT] = retour[ZZkeleton.WAIST].copy();
+			retour[ZZkeleton.ROOT].avg(retour[ZZkeleton.TORSO]);
+			
+			// copie des poignets dans les mains
+			retour[ZZkeleton.HAND_RIGHT] = retour[ZZkeleton.WRIST_RIGHT];
+			retour[ZZkeleton.HAND_LEFT] = retour[ZZkeleton.WRIST_LEFT];
+			
+			// mise a jour des infos mains
+			joinedHands.set(retour[ZZkeleton.HAND_RIGHT]);
+			joinedHands.sub(retour[ZZkeleton.HAND_LEFT]);
+			joinedHands.state = joinedHands.mag() < 50 ? 1 : 0;
 		//}
     	
 		return retour;
@@ -163,11 +182,22 @@ class ZZkinectV1 implements ZZkinect {
 	public int getVersion() {
 		/*****************************************************
 		 * 
-		 * Retourne la version de la kinect utilisee
+		 *	Retourne la version de la kinect utilisee
 		 * 
 		 *****************************************************/
 		
 		return version;
+	}
+
+	@Override
+	public ZZoint getJoinedHands() {
+		/*****************************************************
+		 * 
+		 * Retourne la version de la kinect utilisee
+		 * 
+		 *****************************************************/
+		
+		return (joinedHands.state != 0 ? joinedHands.copy() : null);
 	}
 
 	@Override
