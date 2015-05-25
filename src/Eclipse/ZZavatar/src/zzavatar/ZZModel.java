@@ -20,7 +20,9 @@ class ZZModel {
 	protected PApplet app;
     protected PShape model;
     protected ZZkeleton skeleton;
-    protected ZZkeleton basis; // squelette de base du modele
+    private ZZkeleton basisSkel; // squelette de base du modele
+    private PShape basisMod; // modele de base du modele
+    private ArrayList<ZZertex> basisVert; 
     ArrayList<ZZertex> vertices;
     ArrayList<ZZector> vertiTexture;
     ArrayList<Integer>[] groups;
@@ -32,10 +34,14 @@ class ZZModel {
     	app = a;
     	model = app.createShape(PConstants.GROUP);
     	skeleton = new ZZkeleton();
-    	basis = new ZZkeleton();
     	vertices = new ArrayList<ZZertex>();
     	vertiTexture = new ArrayList<ZZector>();
     	groups = new ArrayList[25];
+    	
+    	// sauvegarde de la base
+    	basisSkel = new ZZkeleton();
+    	basisMod = new PShape();
+    	basisVert = new ArrayList<ZZertex>();
     }
 
     protected ZZModel(PApplet a, String filename) {
@@ -155,16 +161,24 @@ class ZZModel {
 		 * Enregistre le squelette de base
 		 * 
 		 ******************************************/
-		basis = skeleton;
+		
+		basisSkel = skeleton.copy();
+		for (int i = 0; i < vertices.size(); i++) {			
+			basisVert.add(new ZZertex(vertices.get(i).x, vertices.get(i).y, vertices.get(i).z));			
+		}
 	}
     
-	public void resetSkel() {
+	public void resetToBasis() {
 		/************************************************
 		 * 
 		 * Remet le modele dans sa position initiale
 		 * 
 		 ************************************************/
-		skeleton = basis;
+		
+		skeleton = basisSkel.copy();
+		for (int i = 0; i < vertices.size(); i++) {
+			vertices.get(i).set(basisVert.get(i));			
+		}
 	}
 	
     public int getChildCount() {
@@ -434,7 +448,7 @@ class ZZModel {
     	 * 
     	 *******************************************************/
    	
-    	//resetSkel();
+    	resetToBasis();
     	
     	ZZector dl = newPosition[ZZkeleton.ROOT];				/****************************/
     	dl.sub(skeleton.getJoint(ZZkeleton.ROOT));				//	translation generale	//

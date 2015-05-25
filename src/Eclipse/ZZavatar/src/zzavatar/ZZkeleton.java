@@ -384,4 +384,17 @@ class ZZkeleton {
 		return joints[num];
 	}
 
+	public ZZkeleton copy() {
+		ZZkeleton skl = new ZZkeleton();
+		
+		for (int i = 0; i < joints.length; i++) {
+			skl.joints[i] = joints[i].copy();			
+		}
+		
+	    skl.jointsNumber = jointsNumber;
+	    skl.name = name;
+	    
+		return skl;
+	}
+
 }

@@ -94,6 +94,7 @@ public class ZZavatar extends PApplet {
 	    
 	    if(debug) {debugTools();} 	// outils de debug
 	    
+	    pushMatrix();
 	    if (kinect.available()) { 	// si la kinect est presente
 			kinect.refresh();		// mise a jour de la kinect
 			pushMatrix();
@@ -106,14 +107,13 @@ public class ZZavatar extends PApplet {
 			//image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
 			popMatrix();
 			
-			pushMatrix();
 			if(kinect.available()) {
 				int [] usersDetected = kinect.getUsers();
 				
 				if (usersDetected.length > 0) {		// si il y a un utilisateur
 					better.addEch(kinect.getSkeleton(usersDetected[0]));	// on ajoute les données du premier joueur detecte
-					printMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
-					applyMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
+					//printMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
+					//applyMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
 				}
 			}
 			
