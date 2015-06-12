@@ -11,16 +11,17 @@ public class ZZavatar extends PApplet {
 	 * 
 	 ***************************************************************/
 	
-	protected ZZModel clone;
-	protected ArrayList<ZZModel> avatars;
-	protected boolean debug;
-	protected ZZkinect kinect;
-	protected PShape surprise;
-	protected PShape debugSphere;
-	protected ZZoptimiseur better;
-	final int NBCAPT = 3;	// nombre de captures pour moyennage
-	boolean test1 = false;
-	boolean test2 = false;
+	protected ZZModel clone;				// modele courant
+	protected ArrayList<ZZModel> avatars;	// modeles
+	protected ZZkinect kinect;				// capteur kinect
+	protected ZZbackground fond;			// fond de scene
+	protected ZZoptimiseur better;			// optimisation
+	final int NBCAPT = 3;					// nombre de captures pour moyennage
+	protected boolean debug;				// activation du mode debug
+	protected PShape debugSphere;			// spheres de debugage
+	protected PShape surprise;				// sabre laser
+	boolean test1 = false;					// booleen pour la surprise
+	boolean test2 = false;					// idem
 	
 	// declaration des variables de couleur utiles
 	final int jaune=color(255,255,0);
@@ -35,12 +36,10 @@ public class ZZavatar extends PApplet {
 	final int widthWindow = 1280;//1920;	//largeur de la fenetre principale
 	final int heightWindow = 800;//1080;	//hauteur de la fenetre principale
 
-	int distanceCamXZ = 100; // variable distance à la caméra dans plan XZ
-	int distanceCamYZ = 100; // variable distance à la caméra dans plan YZ
-
-	int angleCamXZ = 270; // angle dans le plan XZ de la visée de la caméra avec l'axe des X dans le plan XZ
-	int angleCamYZ = 90; // angle avec axe YZ de la visée de la caméra dans le plan YZ
-
+	float cameraX = 0;
+	float cameraY = 0;
+	float cameraZ = 200;
+	
 	public void setup() {
     	/***************************************************************
     	 * 
@@ -48,9 +47,9 @@ public class ZZavatar extends PApplet {
     	 * 
     	 ***************************************************************/
 
-	    frame.setTitle("ZZavatar");				// modification du titre de la frame
-	    size(1280, 760, P3D);	// ouverture de la fenetre en P3D
-	    frameRate(30);						// limitation du rafraichissement
+	    frame.setTitle("ZZavatar");		// modification du titre de la frame
+	    size(1280, 760, P3D);			// ouverture de la fenetre en P3D
+	    frameRate(30);					// limitation du rafraichissement
 	    
 	    // options de debug
 	    debug = false;	
@@ -61,6 +60,9 @@ public class ZZavatar extends PApplet {
 	    if(!kinect.available()) {
 	    	kinect = new ZZkinectV2(this);
 	    }
+	    
+	    // chargement des fonds
+	    fond = new ZZbackground(this);
 	    
 	    // chargement des modeles a partir de la liste
 	    avatars = ZZModel.loadModels(this, "./data/avatars.bdd");
@@ -91,29 +93,23 @@ public class ZZavatar extends PApplet {
     	 ***************************************************************/
     	
 	    background(100);	// efface l'ecran
+	    fond.draw(); 		// affiche le background
 	    
 	    if(debug) {debugTools();} 	// outils de debug
 	    
 	    pushMatrix();
 	    if (kinect.available()) { 	// si la kinect est presente
 			kinect.refresh();		// mise a jour de la kinect
+			
 			pushMatrix();
 			translate(-kinect.getWidth()/2, -kinect.getHeight()/2, -800);
-			//image(kinect.getRGBImage(), 0, 0);	// affiche l'image couleur en haut a gauche
-			
-			//kinect.drawSkeletons();
-			
-			translate(0, 0, 50);
-			//image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
 			popMatrix();
 			
 			if(kinect.available()) {
 				int [] usersDetected = kinect.getUsers();
 				
 				if (usersDetected.length > 0) {		// si il y a un utilisateur
-					better.addEch(kinect.getSkeleton(usersDetected[0]));	// on ajoute les données du premier joueur detecte
-					//printMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
-					//applyMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
+					better.addEch(kinect.getSkeleton(usersDetected[0]));	// on ajoute les donnees du premier joueur detecte
 				}
 			}
 			
@@ -121,13 +117,14 @@ public class ZZavatar extends PApplet {
 				clone.move(better.getOptimizedValue());	// on fait bouger l'avatar
 			}
 		}
+	    	    
+	    // Afficher le clone
+	    clone.draw();
+	    popMatrix();
 	    
 	    // gestion de la camera
 	    vision();
 	    
-	    // Afficher le clone
-	    clone.draw();
-	    popMatrix();
 	    if(kinect.getJoinedHands() != null)
 	    	test2 = true;
 	    
@@ -140,26 +137,18 @@ public class ZZavatar extends PApplet {
 	    }
 	    
 	    // lumiere dans la scene
-	    lights();			// ajout de lumiere
+	    ambientLight(cameraX, cameraY, cameraZ) ;			// ajout de lumiere
 	}
-	  public void printMatrix(PMatrix3D m) {
-		  String a = m.m00 + " " + m.m01 + " " + m.m02 + " " + m.m03 + "\n"
-				 + m.m10 + " " + m.m11 + " " + m.m12 + " " + m.m13 + "\n"
-				 + m.m20 + " " + m.m21 + " " + m.m22 + " " + m.m23 + "\n"
-				 + m.m30 + " " + m.m31 + " " + m.m32 + " " + m.m33 + "\n";
-		  println(a);
-	  }
 	  
 	public void vision() { // comportement "special"
     	/***************************************************************
     	 * 
-    	 *  gere la camera
+    	 *  gere la camera (vision orientee vers le personnage)
     	 * 
     	 ***************************************************************/
     	
-	    // Modifie la camera afin de voir convenablement le modele
-		camera(0, 0, 200, 0, 0, 0, 0, 1, 0);
-		//camera(distanceCamXZ*cos(radians(angleCamXZ)), distanceCamYZ*sin(radians(angleCamYZ)), ((height/2)/tan((float) (PI*30 / 180))), 0, 0, 0, 0, 1, 0);
+		camera(cameraX, cameraY, cameraZ+clone.getPosition().z+200,
+				clone.getPosition().x, clone.getPosition().y, clone.getPosition().z, 0, 1, 0);
 	}
 	  
 	public void debugTools() {
@@ -199,6 +188,7 @@ public class ZZavatar extends PApplet {
     	 *  affiche les joints du squelette
     	 * 
     	 ***************************************************************/
+    	
     	kinect.drawSkeletons();
     	ZZoint[] jts = sk.getJoints();
     	for (int i = 0; i < jts.length; i++) {
@@ -226,76 +216,52 @@ public class ZZavatar extends PApplet {
 	    	  	suiv = suiv >= avatars.size() ? 0 : suiv;
 	    	  	clone = avatars.get(suiv);
 	            break;
+	    	case 'f' :	// changer de fond
+	    	  	fond.next();
+	            break;
+	    	case 'g' :	// active/desactive le fond
+	    	  	fond.activate();
+	            break;
 	    	case ' ' :
 	    		test1 = !test1;
 	    		test2 = false;
 	    		break;
-	    	case '8' : 
-	    	  	angleCamXZ=angleCamXZ+5;
+	    	case '4' :
+	    	  	cameraX-=5;
 	            break;
-	    	case '2' : 
-		        angleCamXZ=angleCamXZ-5;
+	    	case '6' :
+		        cameraX+=5;
+		        break;
+	    	case '2' :
+	    	  	cameraY+=5;
+	            break;
+	    	case '8' :
+		        cameraY-=5;
 		        break;
 	    	case '+' : 
-	    	  	distanceCamXZ=distanceCamXZ-5;
+	    	  	cameraZ-=5;
 		        break;
-	    	case '-' : 
-	    	  	distanceCamXZ=distanceCamXZ+5;
+	    	case '-' :
+	    	  	cameraZ+=5;
 		        break;
 	    	case CODED :
     	  		if (keyCode == UP) { 			// si touche Haut appuyée
-    	  			angleCamYZ=angleCamYZ+5;
+    	  			cameraY-=5;
                 } else if (keyCode == DOWN) {	// si touche BAS appuyée
-                	angleCamYZ=angleCamYZ-5;
+                	cameraY+=5;
                 } else if (keyCode == LEFT) {	// si touche GAUCHE appuyée
-                	angleCamXZ=angleCamXZ+5;
+                	cameraX-=5;
                 } else if (keyCode == RIGHT) {	// si touche DROITE appuyée
-                	angleCamXZ=angleCamXZ-5;
+                	cameraX+=5;
                 }
     	  		break;
+	    	case '5' :
+	    	  	cameraX=0;
+	    	  	cameraY=0;
+	    	  	cameraZ=200;
+		        break;
 	    }
 	}
-	  
-	public void mousePressed()  {
-    	/***************************************************************
-    	 * 
-    	 *  methode mousePressed() standard
-    	 * 
-    	 ***************************************************************/
-	    
-	    
-	}
-
-	public void mouseReleased() {
-    	/***************************************************************
-    	 * 
-    	 *  methode mouseReleased() standard
-    	 * 
-    	 ***************************************************************/
-	    
-	  
-	}
-
-	public void mouseDragged() {
-    	/***************************************************************
-    	 * 
-    	 *  methode mouseDragged() standard
-    	 * 
-    	 ***************************************************************/
-	    
-	    
-	}
-
-	public void mouseMoved() {
-    	/***************************************************************
-    	 * 
-    	 *  methode mouseMouved() standard
-    	 * 
-    	 ***************************************************************/
-	    
-	}
-	
-
 	
 	public static void main(String _args[]) {
     	/***************************************************************

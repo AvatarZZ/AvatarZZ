@@ -123,7 +123,6 @@ class ZZModel {
             
 				} else if(file[i].contains("g ")) {		// lorsque l'on trouve un nouveau groupe
 					currentShape = app.createShape(PConstants.GROUP);
-					//PApplet.println("Nouveau groupe : " + file[i].split(" ")[1]);
 					currentShape.setName(file[i].split(" ")[1]);
 					model.addChild(currentShape);
 					counter[0] = skeleton.getTypeCode(currentShape.getName());
@@ -133,9 +132,6 @@ class ZZModel {
 					currentMat = ZZMaterial.textureByName(materiel, file[i].split(" ")[1]);
 				}
 			}
-			// squelette au format sk
-			//skeleton.load("./data/skeleton.sk");		// rajouter le cas où quand le squelette n'est pas trouvé on utilise le squelette de base
-			// squelette au format bvh
 			skeleton.loadBVH(filename.replace("obj", "bvh"));
 			PApplet.println("Chargement du modèle : terminé");
 		} else {
@@ -156,11 +152,11 @@ class ZZModel {
     }
 
 	public void initBasis() {
-		/******************************************
-		 * 
-		 * Enregistre le squelette de base
-		 * 
-		 ******************************************/
+    	/***************************************************************
+    	 * 
+		 *	Enregistre le squelette de base
+    	 * 
+    	 ***************************************************************/
 		
 		basisSkel = skeleton.copy();
 		for (int i = 0; i < vertices.size(); i++) {			
@@ -169,11 +165,11 @@ class ZZModel {
 	}
     
 	public void resetToBasis() {
-		/************************************************
-		 * 
-		 * Remet le modele dans sa position initiale
-		 * 
-		 ************************************************/
+    	/***************************************************************
+    	 * 
+		 *	Remet le modele dans sa position initiale
+    	 * 
+    	 ***************************************************************/
 		
 		skeleton = basisSkel.copy();
 		for (int i = 0; i < vertices.size(); i++) {
@@ -194,7 +190,7 @@ class ZZModel {
     public void scale2(float s) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
-    	 *	change la taille du modèle
+    	 *	change la taille du modele
     	 * 
     	 ***************************************************************/
 
@@ -441,6 +437,26 @@ class ZZModel {
     	return retour;
     }
     
+    public ZZector getPosition() {
+    	/***************************************************************
+    	 * 
+    	 *  permet d'obtenir la position du modele
+    	 * 
+    	 ***************************************************************/
+    		
+    	return skeleton.getJoint(ZZkeleton.ROOT);
+    }
+    
+    public float getHeight() {
+    	/***************************************************************
+    	 * 
+    	 *  permet d'obtenir la hauteur du modele
+    	 * 
+    	 ***************************************************************/
+    		
+    	return model.height;
+    }
+    
     public void move(ZZoint[] newPosition){
     	/*******************************************************
     	 * 
@@ -451,7 +467,8 @@ class ZZModel {
     	resetToBasis();
     	
     	ZZector dl = newPosition[ZZkeleton.ROOT];				/****************************/
-    	dl.sub(skeleton.getJoint(ZZkeleton.ROOT));				//	translation generale	//
+    	dl.sub(skeleton.getJoint(ZZkeleton.ROOT));				//							//
+    	dl.div(8);												//	translation generale	//
     	dl.z += 400;											//							//
     	this.translate(dl);										/****************************/
     	
@@ -475,53 +492,6 @@ class ZZModel {
     	movePart(ZZkeleton.KNEE_LEFT, newPosition);
     	movePart(ZZkeleton.ANKLE_LEFT, newPosition);
     }
-    
- /*   
-    public void move_2(ZZoint[] newPosition) {
-	    /***************************************************************
-	     * 
-	     *  algorithme principal d'animation du modele
-	     *  pour kinect 2
-	     * 
-	     ***************************************************************
-    	
-    	resetSkel();
-    	
-    	ZZector dl = newPosition[ZZkeleton.ROOT];		// translation generale
-    	dl.sub(skeleton.joints[ZZkeleton.ROOT]);
-    	this.translate(dl);
-
-    	//movePart(ZZkeleton.TORSO, newPosition);		// rotation des sous membres
-    	//movePart(ZZkeleton.WAIST, newPosition);
-    	
-    	movePart_2(ZZkeleton.NECK, newPosition);
-    	movePart_2(ZZkeleton.HEAD, newPosition);
-    	
-    	movePart_2(ZZkeleton.SHOULDER_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.ELBOW_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.WRIST_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.HAND_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.THUMB_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.INDEX_RIGHT, newPosition);
-    	
-    	movePart_2(ZZkeleton.SHOULDER_LEFT, newPosition);
-    	movePart_2(ZZkeleton.ELBOW_LEFT, newPosition);
-    	movePart_2(ZZkeleton.WRIST_LEFT, newPosition);
-    	movePart_2(ZZkeleton.HAND_LEFT, newPosition);
-    	movePart_2(ZZkeleton.THUMB_LEFT, newPosition);
-    	movePart_2(ZZkeleton.INDEX_LEFT, newPosition);
-
-    	movePart_2(ZZkeleton.HIP_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.KNEE_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.ANKLE_RIGHT, newPosition);
-    	//movePart_2(ZZkeleton.FOOT_RIGHT, newPosition);	// inutile
-
-    	movePart_2(ZZkeleton.HIP_LEFT, newPosition);
-    	movePart_2(ZZkeleton.KNEE_LEFT, newPosition);
-    	movePart_2(ZZkeleton.ANKLE_LEFT, newPosition);
-    	//movePart_2(ZZkeleton.FOOT_LEFT, newPosition);	// inutile
-    }
-    */
     
     private void movePart(int part, ZZoint [] mouv) {
 	    /***************************************************************
@@ -555,4 +525,4 @@ class ZZModel {
     		rotatePart(part, f3, f4, 0); // application des rotations
     	}
     }
-} //class
+}
