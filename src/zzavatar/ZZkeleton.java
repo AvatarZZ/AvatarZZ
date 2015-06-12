@@ -245,7 +245,7 @@ class ZZkeleton {
 	protected void setLastRotation(int part, float theta, float phi, float epsilon) {
 		/***********************************************************************
 		 * 
-		 * Stocke les donnees de la derniere rotation de la partie concernee
+		 *	Stocke les donnees de la derniere rotation de la partie concernee
 		 * 
 		 ***********************************************************************/
 		lastRotation[part][0] = theta;

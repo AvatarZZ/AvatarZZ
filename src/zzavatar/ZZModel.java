@@ -152,11 +152,11 @@ class ZZModel {
     }
 
 	public void initBasis() {
-		/******************************************
-		 * 
-		 * Enregistre le squelette de base
-		 * 
-		 ******************************************/
+    	/***************************************************************
+    	 * 
+		 *	Enregistre le squelette de base
+    	 * 
+    	 ***************************************************************/
 		
 		basisSkel = skeleton.copy();
 		for (int i = 0; i < vertices.size(); i++) {			
@@ -165,11 +165,11 @@ class ZZModel {
 	}
     
 	public void resetToBasis() {
-		/************************************************
-		 * 
-		 * Remet le modele dans sa position initiale
-		 * 
-		 ************************************************/
+    	/***************************************************************
+    	 * 
+		 *	Remet le modele dans sa position initiale
+    	 * 
+    	 ***************************************************************/
 		
 		skeleton = basisSkel.copy();
 		for (int i = 0; i < vertices.size(); i++) {
@@ -190,7 +190,7 @@ class ZZModel {
     public void scale2(float s) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
-    	 *	change la taille du modèle
+    	 *	change la taille du modele
     	 * 
     	 ***************************************************************/
 
@@ -467,7 +467,8 @@ class ZZModel {
     	resetToBasis();
     	
     	ZZector dl = newPosition[ZZkeleton.ROOT];				/****************************/
-    	dl.sub(skeleton.getJoint(ZZkeleton.ROOT));				//	translation generale	//
+    	dl.sub(skeleton.getJoint(ZZkeleton.ROOT));				//							//
+    	dl.div(8);												//	translation generale	//
     	dl.z += 400;											//							//
     	this.translate(dl);										/****************************/
     	

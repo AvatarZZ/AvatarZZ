@@ -100,23 +100,16 @@ public class ZZavatar extends PApplet {
 	    pushMatrix();
 	    if (kinect.available()) { 	// si la kinect est presente
 			kinect.refresh();		// mise a jour de la kinect
+			
 			pushMatrix();
 			translate(-kinect.getWidth()/2, -kinect.getHeight()/2, -800);
-			//image(kinect.getRGBImage(), 0, 0);	// affiche l'image couleur en haut a gauche
-			
-			//kinect.drawSkeletons();
-			
-			translate(0, 0, 50);
-			//image(kinect.kinectV2.getBodyTrackImage(), 0, 0);	// affiche la profondeur en haut a droite
 			popMatrix();
 			
 			if(kinect.available()) {
 				int [] usersDetected = kinect.getUsers();
 				
 				if (usersDetected.length > 0) {		// si il y a un utilisateur
-					better.addEch(kinect.getSkeleton(usersDetected[0]));	// on ajoute les données du premier joueur detecte
-					//printMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
-					//applyMatrix(kinect.getSkeleton(usersDetected[0])[ZZkeleton.ROOT].orientation);
+					better.addEch(kinect.getSkeleton(usersDetected[0]));	// on ajoute les donnees du premier joueur detecte
 				}
 			}
 			
@@ -146,22 +139,14 @@ public class ZZavatar extends PApplet {
 	    // lumiere dans la scene
 	    ambientLight(cameraX, cameraY, cameraZ) ;			// ajout de lumiere
 	}
-	  public void printMatrix(PMatrix3D m) {
-		  String a = m.m00 + " " + m.m01 + " " + m.m02 + " " + m.m03 + "\n"
-				 + m.m10 + " " + m.m11 + " " + m.m12 + " " + m.m13 + "\n"
-				 + m.m20 + " " + m.m21 + " " + m.m22 + " " + m.m23 + "\n"
-				 + m.m30 + " " + m.m31 + " " + m.m32 + " " + m.m33 + "\n";
-		  println(a);
-	  }
 	  
 	public void vision() { // comportement "special"
     	/***************************************************************
     	 * 
-    	 *  gere la camera
+    	 *  gere la camera (vision orientee vers le personnage)
     	 * 
     	 ***************************************************************/
     	
-	    // Modifie la camera afin de voir convenablement le modele
 		camera(cameraX, cameraY, cameraZ+clone.getPosition().z+200,
 				clone.getPosition().x, clone.getPosition().y, clone.getPosition().z, 0, 1, 0);
 	}
@@ -276,45 +261,6 @@ public class ZZavatar extends PApplet {
 	    	  	cameraZ=200;
 		        break;
 	    }
-	}
-	  
-	public void mousePressed()  {
-    	/***************************************************************
-    	 * 
-    	 *  methode mousePressed() standard
-    	 * 
-    	 ***************************************************************/
-	    
-	    
-	}
-
-	public void mouseReleased() {
-    	/***************************************************************
-    	 * 
-    	 *  methode mouseReleased() standard
-    	 * 
-    	 ***************************************************************/
-	    
-	  
-	}
-
-	public void mouseDragged() {
-    	/***************************************************************
-    	 * 
-    	 *  methode mouseDragged() standard
-    	 * 
-    	 ***************************************************************/
-	    
-	    
-	}
-
-	public void mouseMoved() {
-    	/***************************************************************
-    	 * 
-    	 *  methode mouseMouved() standard
-    	 * 
-    	 ***************************************************************/
-	    
 	}
 	
 	public static void main(String _args[]) {
