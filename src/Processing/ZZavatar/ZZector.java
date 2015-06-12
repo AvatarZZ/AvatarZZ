@@ -1,27 +1,38 @@
+package zzavatar;
+
 import processing.core.*;
 
 class ZZector extends PVector {
     protected PVector origin;
+
+    public final static ZZector ORIGIN = new ZZector((float) 0, (float) 0, (float) 0);
+    public final static ZZector OX = new ZZector((float) 1, (float) 0, (float) 0);
+    public final static ZZector OY = new ZZector((float) 0, (float) 1, (float) 0);
+    public final static ZZector OZ = new ZZector((float) 0, (float) 0, (float) 1);
     
     public ZZector() {
-      this(0, 0, 0);
+    	this(0, 0, 0);
     }
 
     public ZZector(float x, float y) {
-      this(x, y, 0);
+    	this(x, y, 0);
     }
     
     public ZZector(float x, float y, float z) {
-      super(x, y, z);
-      origin = new PVector(x, y, z);
+    	super(x, y, z);
+    	origin = new PVector(x, y, z);
     }
     
     public ZZector(PVector v) {
-      this(v.x, v.y, v.z);
+    	this(v.x, v.y, v.z);
     }
     
     public void reset() {
-      this.set(origin.array());
+    	this.set(origin.array());
+    }
+    
+    public PVector get() {
+    	return this.copy();
     }
     
     public void rotate(float theta, float phi) {
@@ -61,14 +72,14 @@ class ZZector extends PVector {
 
     public void rotateAround(PVector center, float theta, float phi, float epsilon) {
 		/***************************************************************
-		 * 
+		 *
 		 *  rotation autour d'un point dans un espace 3D
-		 * 
+		 *
 		 ***************************************************************/
 		
-		this.sub(center);
+		this.sub(center.copy());
 		rotate(theta, phi, epsilon);
-		this.add(center);
+		this.add(center.copy());
     }
     
     public void rotateAround(PVector center, float theta, float phi) {
@@ -78,18 +89,16 @@ class ZZector extends PVector {
 		 * 
 		 ***************************************************************/
 		
-		this.sub(center);
-		rotate(theta, phi);
-		this.add(center);
+		rotateAround(center, theta, phi, 0);
     }
     
     public void rotateAround(PVector center, float theta) {
-      /***************************************************************
-       * 
-       *  rotation autour d'un point dans un espace 3D
-       * 
-       ***************************************************************/
+    	/***************************************************************
+    	 * 
+    	 *  rotation autour d'un point dans un espace 3D
+    	 * 
+    	 ***************************************************************/
       
-      rotateAround(center, theta, 0);
+    	rotateAround(center, theta, 0);
     }
 }

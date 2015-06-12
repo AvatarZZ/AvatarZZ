@@ -1,3 +1,5 @@
+package zzavatar;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -5,7 +7,6 @@ import java.util.ArrayList;
 
 import processing.core.PApplet;
 import processing.core.PImage;
-import sun.security.krb5.internal.APRep;
 
 public class ZZMaterial {
     /***************************************************************
@@ -23,11 +24,12 @@ public class ZZMaterial {
 	protected PImage texture;
 	
 	public ZZMaterial() {
-	/***************************************************************
-	 * 
-	 *  constructeur basique
-	 * 
-	 ***************************************************************/
+		/***************************************************************
+		 * 
+		 *	constructeur basique
+		 * 
+		 ***************************************************************/
+		
 		name = new String();
 		map_Kd = new String();
 		Kd = new float[3];
@@ -35,19 +37,25 @@ public class ZZMaterial {
 		Ks = new float[3];
 	}
 	
-	public static ArrayList<ZZMaterial> loadMaterials(PApplet a, String filename) {
-	/***************************************************************
-	 * 
-	 *  permet le chargement des matï¿½riaux d'un fichier .mtl
-	 * 
-	 ***************************************************************/
+	public static ArrayList<ZZMaterial> loadMaterials(String filename) {
+		/***************************************************************
+		 * 
+		 *  permet le chargement des materiaux d'un fichier .mtl
+		 * 
+		 ***************************************************************/
 		
 		InputStream file = null;
 		String [] lines = null;
 		ArrayList<ZZMaterial> retour = null;
 		int nbOfMaterials = -1;
 		
-		lines = a.loadStrings(filename);
+		try {
+			file = new FileInputStream(filename);
+		} catch (FileNotFoundException e) {
+			PApplet.println("Chargement de la texture : le fichier " + filename + " n'existe pas.");
+		}
+		
+		lines = PApplet.loadStrings(file);
 		retour = new ArrayList<ZZMaterial>();
 		
 		if(lines != null) {
@@ -82,7 +90,7 @@ public class ZZMaterial {
 					}
 				}
 			}
-			PApplet.println("Chargement des textures : terminï¿½");
+			PApplet.println("Chargement des textures : terminé");
 		} else {
 			PApplet.println("Chargement de la texture : erreur lors du chargement de fichier " + filename);
 		}
@@ -92,7 +100,7 @@ public class ZZMaterial {
 	public static ZZMaterial textureByName(ArrayList<ZZMaterial> l, String n) {
 		/***************************************************************
 		 * 
-		 *  retourne le materiel ayant le nom recherchï¿½ dans une liste
+		 *  retourne le materiel ayant le nom recherché dans une liste
 		 * 
 		 ***************************************************************/
 		
@@ -111,11 +119,11 @@ public class ZZMaterial {
 	
 	@Override
 	public String toString() {
-	/***************************************************************
-	 * 
-	 *  retourne le nom de la texture
-	 * 
-	 ***************************************************************/
+		/***************************************************************
+		 * 
+		 *  retourne le nom de la texture
+		 * 
+		 ***************************************************************/
 		
 		return name;
 	}

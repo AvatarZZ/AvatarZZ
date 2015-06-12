@@ -1,68 +1,51 @@
-import SimpleOpenNI.*;
-import processing.core.PApplet;
-import processing.core.PImage;
+package zzavatar;
+
+import processing.core.*;
 
 /********************************************
  * 
  * Classe de gestion de la kinect
  *
  ********************************************/
-public class ZZkinect {
-	protected SimpleOpenNI kinect;
-	protected int height;	//hauteur de la capture
-	protected int width;	//largeur de la capture
+public interface ZZkinect {
+	static final int SKELETON_SIZE = 25;		// nombre de joints dans un squelette
 	
-	protected PImage rgbImage;		//capture video normale
-	protected PImage depthImage;	//capture de profondeur
-	
-	public ZZkinect(PApplet parent) {
-		try {
-			kinect = new SimpleOpenNI(parent);
-			
-			if(!kinect.isInit()){ //kinect reconnue ou pas
-				PApplet.println("Kinect non reconnue ou non prï¿½sente");
-				kinect = null;
-			} else { //kinect reconnue
-				kinect.enableDepth();	//chargement de la profondeur
-				kinect.enableRGB();		//chargement de l'image couleur
-				
-				height = kinect.depthHeight();	//hauteur de la capture
-				width = kinect.depthWidth();	//largeur de la capture
-				
-				if ((width != 640) || (height != 480)) { //reconnaissance des parametres
-					PApplet.println("Erreur sur les dimension de capture kinect");
-					kinect = null;
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+	public default ZZoint[] getSkeleton() {
+   	 	/***************************************************************
+   	 	 * 
+   	 	 *  permet de recuperer le squelette d'un certain utilisateur
+   	 	 * 
+   	 	 ***************************************************************/
+    
+		return getSkeleton(0);
 	}
 	
-	public void refresh(){
-		kinect.update();	//mise a jour de la kinect
-		
-		rgbImage = kinect.rgbImage();		//mise a jour de l'image couleur
-		depthImage = kinect.depthImage();	//mise a jour de la profondeur
-			
-	}
+	public ZZoint[] getSkeleton(int numUser);		// permet de récupérer le squelette
 
-
-        public boolean available(){
-            return kinect != null;
-        }
+	public boolean isTrackingSkeleton(int skelNum); // permet de savoir si le squelette skelNum est traque
 	
-	@Override
-	public String toString() {
-		String out = "";
+	public int[] getUsers();			// renvoie la liste des utilisateurs actifs
+
+	public void refresh();				// permet de mettre a jour les champs de ZZkinect
+
+	public boolean available(); 		// permet de savoir si la kinect est disponible
+	
+	public String toString();	// toString permettant l'obtention d'informations sur la Kinect
+   	 	
+	public int getWidth();
+
+	public int getHeight();
+
+	public int getVersion();	// Retourne la version de la kinect utilisee
+
+	public void drawSkeletons();// Affiche les squelettes selon la kinect en cours
+   	 	
+	public void drawSkeleton(int userId);	// Affiche le squelette d'un user
 		
-		if (kinect != null) {
-			out += "Kinect ouverte en " + width + " x " + height; 
-		} else {
-			out += "Kinect non initialisee";
-		}
-		
-		return out;
-	}
+	public int getIndexColor(int index);	// couleurs des squelettes des joueurs
+
+	public PImage getRGBImage();	// retourne l'image couleur de la kinect active
+
+	public ZZoint getJoinedHands();	// retourne la position des deux mains jointes sinon null
 	
 } //class

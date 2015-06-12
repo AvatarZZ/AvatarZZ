@@ -5,34 +5,34 @@ newmtl trx_body
 	d 1
 	illum 2
 	Kd 0.489412 0.458039 0.404706
-	Ks 0.5 0.5 0.5
+	Ks 0.0 0.0 0.0
 	Ka 0.0 0.0 0.0
-	map_Kd .\Imp_inf_trooper.png
+	map_Kd .\rex.png
 
 newmtl trx_eye
 	Ns 96
 	d 1
 	illum 2
 	Kd 0.8 0.790588 0.752941
-	Ks 0.5 0.5 0.5
+	Ks 0.0 0.0 0.0
 	Ka 0.0 0.0 0.0
-	map_Kd .\Imp_inf_trooper.png
+	map_Kd .\rex.png
 
 newmtl trx_iris
 	Ns 96
 	d 1
 	illum 2
 	Kd 0.696471 0.687059 0.677647
-	Ks 0.5 0.5 0.5
+	Ks 0.0 0.0 0.0
 	Ka 0.0 0.0 0.0
-	map_Kd .\Imp_inf_trooper.png
+	map_Kd .\rex.png
 
 newmtl trx_teeth
 	Ns 96
 	d 1
 	illum 2
 	Kd 0.715294 0.665098 0.57098
-	Ks 0.5 0.5 0.5
+	Ks 0.0 0.0 0.0
 	Ka 0.0 0.0 0.0
-	map_Kd .\Imp_inf_trooper.png
+	map_Kd .\rex.png
 
