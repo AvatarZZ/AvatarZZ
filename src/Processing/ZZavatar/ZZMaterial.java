@@ -1,5 +1,3 @@
-package zzavatar;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -37,7 +35,7 @@ public class ZZMaterial {
 		Ks = new float[3];
 	}
 	
-	public static ArrayList<ZZMaterial> loadMaterials(String filename) {
+	public static ArrayList<ZZMaterial> loadMaterials(PApplet a, String filename) {
 		/***************************************************************
 		 * 
 		 *  permet le chargement des materiaux d'un fichier .mtl
@@ -49,13 +47,7 @@ public class ZZMaterial {
 		ArrayList<ZZMaterial> retour = null;
 		int nbOfMaterials = -1;
 		
-		try {
-			file = new FileInputStream(filename);
-		} catch (FileNotFoundException e) {
-			PApplet.println("Chargement de la texture : le fichier " + filename + " n'existe pas.");
-		}
-		
-		lines = PApplet.loadStrings(file);
+		lines = a.loadStrings(filename);
 		retour = new ArrayList<ZZMaterial>();
 		
 		if(lines != null) {
@@ -90,7 +82,7 @@ public class ZZMaterial {
 					}
 				}
 			}
-			PApplet.println("Chargement des textures : terminé");
+			PApplet.println("Chargement des textures : termine");
 		} else {
 			PApplet.println("Chargement de la texture : erreur lors du chargement de fichier " + filename);
 		}
@@ -100,7 +92,7 @@ public class ZZMaterial {
 	public static ZZMaterial textureByName(ArrayList<ZZMaterial> l, String n) {
 		/***************************************************************
 		 * 
-		 *  retourne le materiel ayant le nom recherché dans une liste
+		 *  retourne le materiel ayant le nom recherchï¿½ dans une liste
 		 * 
 		 ***************************************************************/
 		

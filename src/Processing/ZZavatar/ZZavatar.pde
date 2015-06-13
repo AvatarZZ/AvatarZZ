@@ -1,3 +1,5 @@
+import SimpleOpenNI.*;
+import KinectPV2.*;
 import java.util.ArrayList;
 	
 	protected ZZModel clone;				// modele courant
@@ -153,7 +155,7 @@ import java.util.ArrayList;
 	    // box(width, height, depth);
 	    box(200, 5, 200);
 	    
-	    // affiche le repère Ox,Oy,Oz
+	    // affiche le repï¿½re Ox,Oy,Oz
 	    
 	    //---- Ox
 	    stroke(rouge);
@@ -234,13 +236,13 @@ import java.util.ArrayList;
 	    	  	cameraZ+=5;
 		        break;
 	    	case CODED :
-    	  		if (keyCode == UP) { 			// si touche Haut appuyée
+    	  		if (keyCode == UP) { 			// si touche Haut appuyï¿½e
     	  			cameraY-=5;
-                } else if (keyCode == DOWN) {	// si touche BAS appuyée
+                } else if (keyCode == DOWN) {	// si touche BAS appuyï¿½e
                 	cameraY+=5;
-                } else if (keyCode == LEFT) {	// si touche GAUCHE appuyée
+                } else if (keyCode == LEFT) {	// si touche GAUCHE appuyï¿½e
                 	cameraX-=5;
-                } else if (keyCode == RIGHT) {	// si touche DROITE appuyée
+                } else if (keyCode == RIGHT) {	// si touche DROITE appuyï¿½e
                 	cameraX+=5;
                 }
     	  		break;

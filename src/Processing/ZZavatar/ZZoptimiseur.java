@@ -1,5 +1,3 @@
-package zzavatar;
-
 import processing.core.PApplet;
 
 public class ZZoptimiseur {
@@ -11,7 +9,7 @@ public class ZZoptimiseur {
 	public ZZoptimiseur(int qtEch, ZZoint[] initial) {
    	 	/***************************************************************
    	 	 * 
-   	 	 *  constructeur par défaut
+   	 	 *  constructeur par dï¿½faut
    	 	 * 
    	 	 ***************************************************************/
     	
@@ -43,7 +41,7 @@ public class ZZoptimiseur {
     	
 		if (cptEch!=0) {							//****************************************
 			arrivee = ZZoint.add(ech, arrivee);		//
-		} else {									//	on somme toutes les données entrantes
+		} else {									//	on somme toutes les donnï¿½es entrantes
 			arrivee = ech;							//
 		}											//****************************************
 

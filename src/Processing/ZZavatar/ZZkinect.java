@@ -1,6 +1,6 @@
-package zzavatar;
-
-import processing.core.*;
+import SimpleOpenNI.*;
+import processing.core.PImage;
+import processing.core.PApplet;
 
 /********************************************
  * 
@@ -10,17 +10,9 @@ import processing.core.*;
 public interface ZZkinect {
 	static final int SKELETON_SIZE = 25;		// nombre de joints dans un squelette
 	
-	public default ZZoint[] getSkeleton() {
-   	 	/***************************************************************
-   	 	 * 
-   	 	 *  permet de recuperer le squelette d'un certain utilisateur
-   	 	 * 
-   	 	 ***************************************************************/
-    
-		return getSkeleton(0);
-	}
+	public ZZoint[] getSkeleton();
 	
-	public ZZoint[] getSkeleton(int numUser);		// permet de récupérer le squelette
+	public ZZoint[] getSkeleton(int numUser);		// permet de rï¿½cupï¿½rer le squelette
 
 	public boolean isTrackingSkeleton(int skelNum); // permet de savoir si le squelette skelNum est traque
 	

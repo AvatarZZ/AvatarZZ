@@ -1,5 +1,3 @@
-package zzavatar;
-
 import processing.core.*;
 
 class ZZector extends PVector {
@@ -31,14 +29,14 @@ class ZZector extends PVector {
     	this.set(origin.array());
     }
     
-    public PVector get() {
-    	return this.copy();
+    public PVector get() {  // changement special pour version P5
+    	return new PVector(x,y,z);
     }
     
     public void rotate(float theta, float phi) {
 		/***************************************************************
 		 * 
-    	 *	Rotation de vector selon 2 angles
+      	         *  Rotation de vector selon 2 angles
 		 * 
 		 ***************************************************************/
     	
@@ -48,7 +46,7 @@ class ZZector extends PVector {
     public void rotate(float theta, float phi, float epsilon) {
 		/***************************************************************
 		 * 
-    	 *	Rotation de vector selon 3 angles
+        	 *  Rotation de vector selon 3 angles
 		 * 
 		 ***************************************************************/
     	
@@ -77,9 +75,9 @@ class ZZector extends PVector {
 		 *
 		 ***************************************************************/
 		
-		this.sub(center.copy());
+		this.sub(center.get());
 		rotate(theta, phi, epsilon);
-		this.add(center.copy());
+		this.add(center.get());
     }
     
     public void rotateAround(PVector center, float theta, float phi) {

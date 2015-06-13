@@ -1,5 +1,3 @@
-package zzavatar;
-
 import processing.core.*;
 
 import java.io.FileInputStream;
@@ -17,7 +15,7 @@ import SimpleOpenNI.SimpleOpenNI;
 import com.jogamp.opengl.util.texture.Texture;
 
 class ZZModel {
-	protected PApplet app;
+    protected PApplet app;
     protected PShape model;
     protected ZZkeleton skeleton;
     private ZZkeleton basisSkel; // squelette de base du modele
@@ -26,9 +24,9 @@ class ZZModel {
     ArrayList<ZZertex> vertices;
     ArrayList<ZZector> vertiTexture;
     ArrayList<Integer>[] groups;
-	ArrayList<ZZMaterial> materiel = null;
+    ArrayList<ZZMaterial> materiel = null;
 	
-	protected int idUser = 0; // determine le numero du joueur (6 max.)
+    protected int idUser = 0; // determine le numero du joueur (6 max.)
 
     protected ZZModel(PApplet a) {
     	app = a;
@@ -52,12 +50,12 @@ class ZZModel {
     public void load(String filename) {
     	/***************************************************************
     	 * 
-    	 *	permet le chargement correct d'un .obj en gérant les groupes
+    	 *	permet le chargement correct d'un .obj en gerant les groupes
     	 * 
     	 ***************************************************************/
     	
 		String[] file;
-		PShape currentShape = model;	// permet de déterminer à quel partie on ajoute les faces
+		PShape currentShape = model;	// permet de determiner a quel partie on ajoute les faces
 		ZZMaterial currentMat = null;
 		int [] counter = new int[3];	
 		InputStream fichier = null;		// pour ouvrir le fichier
@@ -68,18 +66,13 @@ class ZZModel {
 			groups[i] = new ArrayList<Integer>();
 		}
 		
-		// vérification du type de fichier
+		// vï¿½rification du type de fichier
 		if(!(filename.contains(".obj"))) {
-			PApplet.println("Chargement du modèle : attention, il se peut que " + filename + " soit incompatible");
+			PApplet.println("Chargement du modele : attention, il se peut que " + filename + " soit incompatible");
 		}
 
 		// ouverture du fichier
-		try {
-			fichier = new FileInputStream(filename);
-		} catch (FileNotFoundException e) {
-			PApplet.println("Chargement du modèle : le fichier " + filename + " n'existe pas.");
-		}
-		file = PApplet.loadStrings(fichier);
+		file = app.loadStrings(filename);
       
 		if(file != null) {
 			for(int i = 0 ; i < file.length; i++) {
@@ -90,7 +83,7 @@ class ZZModel {
 					float[] line = PApplet.parseFloat(file[i].substring(3).split(" "));
 					vertiTexture.add(new ZZector(line[0], 1-line[1]));	// attention inversion de opengl
 				} else if(file[i].contains("mtllib ")) {	// chargement des textures
-					materiel = ZZMaterial.loadMaterials("./data/"+file[i].split(" ")[1]);
+					materiel = ZZMaterial.loadMaterials(app, "./data/"+file[i].split(" ")[1]);
 					for (int j = 0; j < materiel.size(); j++) {
 						materiel.get(j).texture = app.loadImage(materiel.get(j).map_Kd);
 					}
@@ -132,10 +125,10 @@ class ZZModel {
 					currentMat = ZZMaterial.textureByName(materiel, file[i].split(" ")[1]);
 				}
 			}
-			skeleton.loadBVH(filename.replace("obj", "bvh"));
-			PApplet.println("Chargement du modèle : terminé");
+			skeleton.loadBVH(app, filename.replace("obj", "bvh"));
+			PApplet.println("Chargement du modele : termine");
 		} else {
-			PApplet.println("Chargement du modèle : erreur à l'ouverture du fichier " + filename);
+			PApplet.println("Chargement du modele : erreur a l'ouverture du fichier " + filename);
 		}
    	}
     
@@ -167,7 +160,7 @@ class ZZModel {
 	public void resetToBasis() {
     	/***************************************************************
     	 * 
-		 *	Remet le modele dans sa position initiale
+         *	Remet le modele dans sa position initiale
     	 * 
     	 ***************************************************************/
 		
@@ -201,7 +194,7 @@ class ZZModel {
     public void scale(float s) {
     	/***************************************************************
     	 * 
-    	 *	change la taille du modèle
+    	 *	change la taille du modï¿½le
     	 * 
     	 ***************************************************************/
 
@@ -216,7 +209,7 @@ class ZZModel {
     public void rotateX2(float angle) {	// deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
-    	 *	rotation du modèle autour de l'axe X
+    	 *	rotation du modï¿½le autour de l'axe X
     	 * 
     	 ***************************************************************/
       
@@ -228,7 +221,7 @@ class ZZModel {
     public void rotateX(float angle) {
     	/***************************************************************
     	 * 
-    	 *	rotation du modèle autour de l'axe X
+    	 *	rotation du modï¿½le autour de l'axe X
     	 * 
     	 ***************************************************************/
     	
@@ -238,7 +231,7 @@ class ZZModel {
     public void rotateY(float angle) {
     	/***************************************************************
     	 * 
-    	 *	rotation du modèle autour de l'axe Y
+    	 *	rotation du modï¿½le autour de l'axe Y
     	 * 
     	 ***************************************************************/
     	
@@ -248,7 +241,7 @@ class ZZModel {
     public void rotateZ(float angle) {
     	/***************************************************************
     	 * 
-    	 *	rotation du modèle autour de l'axe Z
+    	 *	rotation du modï¿½le autour de l'axe Z
     	 * 
     	 ***************************************************************/
     	
@@ -258,14 +251,14 @@ class ZZModel {
     public void rotateAround(PVector center, float theta, float phi, float epsilon) {
     	/***************************************************************
     	 * 
-    	 *	rotation du modèle autour d'un point
+    	 *	rotation du modï¿½le autour d'un point
     	 * 
     	 ***************************************************************/
     	
     	for (int i = 0; i < vertices.size(); i++) {
     		vertices.get(i).rotateAround(center, theta, phi, epsilon);
     		vertices.get(i).apply(model);
-		}
+	}
     	
     	skeleton.rotateAround(center, theta, phi, epsilon);
     }
@@ -273,7 +266,7 @@ class ZZModel {
     public void rotatePart(int part, float theta, float phi, float epsilon) {
     	/***************************************************************
     	 * 
-    	 *  fait tourner toute une partie du modèle
+    	 *  fait tourner toute une partie du modï¿½le
     	 * 
     	 ***************************************************************/
       
@@ -297,7 +290,7 @@ class ZZModel {
     public void rotatePart(int part, float theta, float phi) {
 	    /***************************************************************
 	     * 
-	     *  fait tourner toute une partie du modèle
+	     *  fait tourner toute une partie du modï¿½le
 	     * 
 	     ***************************************************************/
       
@@ -317,7 +310,7 @@ class ZZModel {
     public void rotateY2(float angle) { // deprecated : ne modifie pas les vertices mais joue sur la matrice 
     	/***************************************************************
     	 * 
-    	 *  rotation du modèle autour de l'axe Y
+    	 *  rotation du modï¿½le autour de l'axe Y
     	 * 
     	 ***************************************************************/
       
@@ -328,7 +321,7 @@ class ZZModel {
     public void rotateZ2(float angle) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
-    	 *	rotation du modèle autour de l'axe Z
+    	 *	rotation du modï¿½le autour de l'axe Z
     	 * 
     	 ***************************************************************/
       
@@ -339,7 +332,7 @@ class ZZModel {
     public void translate2(float x, float y, float z) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
-    	 *	translation du modèle
+    	 *	translation du modï¿½le
     	 * 
     	 ***************************************************************/
 
@@ -350,7 +343,7 @@ class ZZModel {
     public void translate(float x, float y, float z) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
-    	 *	translation du modèle
+    	 *	translation du modï¿½le
     	 * 
     	 ***************************************************************/
 
@@ -365,7 +358,7 @@ class ZZModel {
     public void translate(PVector zz) {
     	/***************************************************************
     	 * 
-    	 *	translation du modèle
+    	 *	translation du modï¿½le
     	 * 
     	 ***************************************************************/
 
@@ -375,7 +368,7 @@ class ZZModel {
     public PShape getChild(String target) {
     	/***************************************************************
     	 * 
-    	 *	retourne le sous groupe target du modèle
+    	 *	retourne le sous groupe target du modï¿½le
     	 * 
     	 ***************************************************************/
       
@@ -385,7 +378,7 @@ class ZZModel {
     public PShape[] getChildren() {
     	/***************************************************************
     	 * 
-    	 *	retourne le sous groupe target du modèle
+    	 *	retourne le sous groupe target du modï¿½le
     	 * 
     	 ***************************************************************/
       
@@ -395,7 +388,7 @@ class ZZModel {
     public int getVertexCount() {
     	/***************************************************************
     	 * 
-    	 *	retourne le sous groupe target du modèle
+    	 *	retourne le sous groupe target du modï¿½le
     	 * 
     	 ***************************************************************/
       
@@ -409,7 +402,7 @@ class ZZModel {
     public static ArrayList<ZZModel> loadModels(PApplet a, String filename) {
     	/***************************************************************
     	 * 
-    	 *  permet le chargement de plusieurs modèles à partir d'un fichier
+    	 *  permet le chargement de plusieurs modeles a partir d'un fichier
     	 * 
     	 ***************************************************************/
     		
@@ -417,22 +410,16 @@ class ZZModel {
     	String [] lines = null;
     	ArrayList<ZZModel> retour = null;
     	
-    	try {
-    		file = new FileInputStream(filename);
-    	} catch (FileNotFoundException e) {
-    		PApplet.println("Chargement de la base de données : le fichier " + filename + " n'existe pas.");
-    	}
-    	
-    	lines = PApplet.loadStrings(file);
+    	lines = a.loadStrings(filename);
     	retour = new ArrayList<ZZModel>();
     	
     	if(lines != null) {
     		for (int i = 0; i < lines.length; i++) {
     			retour.add(new ZZModel(a, "./data/"+lines[i]+".obj"));
     		}
-    		PApplet.println("Chargement de la base de données : terminé");
+    		PApplet.println("Chargement de la base de donnees : termine");
     	} else {
-    		PApplet.println("Chargement de la base de données : erreur lors du chargement de fichier " + filename);
+    		PApplet.println("Chargement de la base de donnees : erreur lors du chargement de fichier " + filename);
     	}
     	return retour;
     }

@@ -1,5 +1,3 @@
-package zzavatar;
-
 import java.util.ArrayList;
 
 import processing.core.PApplet;
@@ -63,11 +61,22 @@ class ZZkinectV2 implements ZZkinect {
 			/*retour[i].y *= -1;		// correction d'orientation
 			retour[i].z *= -1;		// correction d'orientation
 			retour[i].x *= -1;		// effet non miroir*/
-			retour[i].z += 500;		// correction de proximité
+			retour[i].z += 500;		// correction de proximitï¿½
 		}
     	
 		return retour;
 	}
+
+        @Override
+        public ZZoint[] getSkeleton() {
+                /***************************************************************
+                 * 
+                 *  permet de recuperer le squelette d'un certain utilisateur
+                 * 
+                 ***************************************************************/
+    
+                return getSkeleton(0);
+        }
 
 	@Override
 	public boolean isTrackingSkeleton(int skelNum) {
@@ -291,7 +300,7 @@ class ZZkinectV2 implements ZZkinect {
     	
 		int col = app.color(255);
 		if (index == 0)
-			col = app.color(255, 0, 0);
+		    col = app.color(255, 0, 0);
 		if (index == 1)
 		    col = app.color(0, 255, 0);
 		if (index == 2)
@@ -319,7 +328,7 @@ class ZZkinectV2 implements ZZkinect {
 		if (getVersion()!=0) {
 			out += "Kinect version " + getVersion() + " ouverte en " + getWidth() + " x " + getHeight();
 		} else {
-			out += "Kinect non initialisée";
+			out += "Kinect non initialisï¿½e";
 		}
 		
 		return out;

@@ -1,5 +1,3 @@
-package zzavatar;
-
 import java.util.ArrayList;
 
 import KinectPV2.KJoint;
@@ -59,7 +57,7 @@ class ZZoint extends ZZector {
 	public int getParent() {
     	/***************************************************************
     	 * 
-    	 *  retourne le code valeur du joint père
+    	 *  retourne le code valeur du joint pï¿½re
     	 * 
     	 ***************************************************************/
     	
@@ -170,13 +168,12 @@ class ZZoint extends ZZector {
         return c;
     }
     
-    @Override
     public ZZoint copy() {
     	/***************************************************************
     	 * 
- 	     *	fonction de copy du ZZoint
- 	     * 
- 	     ***************************************************************/
+ 	 *  fonction de copy du ZZoint
+ 	 * 
+ 	 ***************************************************************/
     	
     	return new ZZoint(x, y, z, parent, getChildren(), orientation);
     }

@@ -1,5 +1,3 @@
-package zzavatar;
-
 import processing.core.*;
 import java.util.ArrayList;
 

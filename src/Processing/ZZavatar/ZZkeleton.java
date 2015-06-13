@@ -1,7 +1,5 @@
-package zzavatar;
-
-import processing.core.*;
-
+import processing.core.PApplet;
+import processing.core.PVector;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -116,7 +114,7 @@ class ZZkeleton {
     public void load(String filename) {
     	/***************************************************************
    	 	 * 
-   	 	 *	charge le squelette à partir d'un fichier .sk
+   	 	 *	charge le squelette ï¿½ partir d'un fichier .sk
    	 	 * 
    	 	 ***************************************************************/
      
@@ -131,7 +129,7 @@ class ZZkeleton {
 		try {
 			fichier = new FileInputStream(filename);
 		} catch (FileNotFoundException e) {
-			PApplet.println("Chargement du modèle : le fichier " + filename + " n'existe pas.");
+			PApplet.println("Chargement du modï¿½le : le fichier " + filename + " n'existe pas.");
 		}
 		file = PApplet.loadStrings(fichier);
      
@@ -150,16 +148,16 @@ class ZZkeleton {
 	 			}
 	 			index++;
 	 		}
-	 		PApplet.println("Chargement du squelette : terminé");
+	 		PApplet.println("Chargement du squelette : termine");
 	 	} else {
-	 		PApplet.println("Chargement du squelette : erreur à l'ouverture du fichier " + filename);
+	 		PApplet.println("Chargement du squelette : erreur a l'ouverture du fichier " + filename);
 	 	}
     }
    
-    public void loadBVH(String filename) {
+    public void loadBVH(PApplet a, String filename) {
     	/***************************************************************
    	 	 * 
-   	 	 *	charge le squelette à partir d'un fichier .bvh
+   	 	 *	charge le squelette ï¿½ partir d'un fichier .bvh
    	 	 * 
    	 	 ***************************************************************/
      
@@ -174,12 +172,7 @@ class ZZkeleton {
 	 	 }
      
 	 	 // ouverture du fichier
-	 	 try {
-	 		 fichier = new FileInputStream(filename);
-	 	 } catch (FileNotFoundException e) {
-	 		 PApplet.println("Chargement du modèle : le fichier " + filename + " n'existe pas.");
-	 	 }
-	 	 file = PApplet.loadStrings(fichier);
+	 	 file = a.loadStrings(filename);
      
 	 	 if(file != null) {
 	 		 int index = 0;
@@ -219,7 +212,7 @@ class ZZkeleton {
 	 					 if(tree[0]!=-1) {
 	 						 joints[tree[0]].addChild(tree[1]);
 	 					 }
-	 				 } else if(coords[0] == father[0] && coords[1] == father[1] && coords[2] == father[2]) { // on se trouve à la racine
+	 				 } else if(coords[0] == father[0] && coords[1] == father[1] && coords[2] == father[2]) { // on se trouve ï¿½ la racine
 	 					 tree[1] = tree[0];
 	 					 tree[0] = joints[tree[0]].getParent();
 	 				 }
@@ -236,9 +229,9 @@ class ZZkeleton {
 	 			 index++;
 	 		 }
 	 		 this.rotateY(PApplet.PI);	// rotation pour correspondre au modele
-	 		 PApplet.println("Chargement du squelette : terminé");
+	 		 PApplet.println("Chargement du squelette : terminï¿½");
 	 	 } else {
-	 		 PApplet.println("Chargement du squelette : erreur à l'ouverture du fichier " + filename);
+	 		 PApplet.println("Chargement du squelette : erreur ï¿½ l'ouverture du fichier " + filename);
 	 	 }
     }
      
@@ -285,7 +278,7 @@ class ZZkeleton {
     public String toString() {
    	 	/***************************************************************
    	 	 * 
-   	 	 *  toString permettant l'affichage des données du squelette
+   	 	 *  toString permettant l'affichage des donnï¿½es du squelette
    	 	 * 
    	 	 ***************************************************************/
     	

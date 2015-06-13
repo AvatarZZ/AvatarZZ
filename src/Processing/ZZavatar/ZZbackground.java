@@ -1,5 +1,3 @@
-package zzavatar;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -24,7 +22,7 @@ class ZZbackground {
     	 ***************************************************************/
 		
 		app = a;
-		images = new ArrayList<>();
+		images = new ArrayList<PImage>();
 		loadBackgrounds(list);
 		index = images.isEmpty() ? -1 : 0;
 		if (0==index)
@@ -48,24 +46,17 @@ class ZZbackground {
     	 * 
     	 ***************************************************************/
     		
-    	InputStream file = null;
     	String [] lines = null;
     	
-    	try {
-    		file = new FileInputStream(filename);
-    	} catch (FileNotFoundException e) {
-    		PApplet.println("Chargement de la base de données : le fichier " + filename + " n'existe pas.");
-    	}
-    	
-    	lines = PApplet.loadStrings(file);
+    	lines = app.loadStrings(filename);
     	
     	if(lines != null) {
     		for (int i = 0; i < lines.length; i++) {
     			images.add(app.loadImage("./data/"+lines[i]));
     		}
-    		PApplet.println("Chargement de la base de données : terminé");
+    		PApplet.println("Chargement de la base de donnees : termine");
     	} else {
-    		PApplet.println("Chargement de la base de données : erreur lors du chargement de fichier " + filename);
+    		PApplet.println("Chargement de la base de donnees : erreur lors du chargement de fichier " + filename);
     	}
 	}
 	

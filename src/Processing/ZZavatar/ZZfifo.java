@@ -1,5 +1,3 @@
-package zzavatar;
-
 import java.util.LinkedList;
 
 

@@ -1,9 +1,5 @@
-package zzavatar;
-
-import processing.core.PApplet;
-import processing.core.PImage;
-import processing.core.PVector;
-import SimpleOpenNI.SimpleOpenNI;
+import SimpleOpenNI.*;
+import processing.core.*;
 
 class ZZkinectV1 implements ZZkinect {
 	protected SimpleOpenNI kinectV1;
@@ -94,7 +90,7 @@ class ZZkinectV1 implements ZZkinect {
 					kinectV1.getJointPositionSkeleton(numUser, realNum, jointPos);
 					retour[i] = new ZZoint(jointPos);
 					retour[i].mult((float) -0.5);
-					retour[i].z += 500;		// correction de proximité
+					retour[i].z += 500;		// correction de proximitï¿½
 					kinectV1.getJointOrientationSkeleton(numUser, realNum, retour[i].orientation);
 				} else {
 					retour[i] = null;
@@ -121,6 +117,17 @@ class ZZkinectV1 implements ZZkinect {
     	
 		return retour;
 	}
+
+        @Override
+        public ZZoint[] getSkeleton() {
+                /***************************************************************
+                 * 
+                 *  permet de recuperer le squelette d'un certain utilisateur
+                 * 
+                 ***************************************************************/
+    
+                return getSkeleton(0);
+        }
 	
 	@Override
 	public boolean isTrackingSkeleton(int skelNum) {
@@ -291,7 +298,7 @@ class ZZkinectV1 implements ZZkinect {
 		if (getVersion()!=0) {
 			out += "Kinect version " + getVersion() + " ouverte en " + getWidth() + " x " + getHeight();
 		} else {
-			out += "Kinect non initialisée";
+			out += "Kinect non initialisï¿½e";
 		}
 		
 		return out;
