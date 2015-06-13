@@ -20,7 +20,9 @@ class ZZModel {
 	protected PApplet app;
     protected PShape model;
     protected ZZkeleton skeleton;
-    protected ZZkeleton basis; // squelette de base du modele
+    private ZZkeleton basisSkel; // squelette de base du modele
+    private PShape basisMod; // modele de base du modele
+    private ArrayList<ZZertex> basisVert; 
     ArrayList<ZZertex> vertices;
     ArrayList<ZZector> vertiTexture;
     ArrayList<Integer>[] groups;
@@ -32,10 +34,14 @@ class ZZModel {
     	app = a;
     	model = app.createShape(PConstants.GROUP);
     	skeleton = new ZZkeleton();
-    	basis = new ZZkeleton();
     	vertices = new ArrayList<ZZertex>();
     	vertiTexture = new ArrayList<ZZector>();
     	groups = new ArrayList[25];
+    	
+    	// sauvegarde de la base
+    	basisSkel = new ZZkeleton();
+    	basisMod = new PShape();
+    	basisVert = new ArrayList<ZZertex>();
     }
 
     protected ZZModel(PApplet a, String filename) {
@@ -117,7 +123,6 @@ class ZZModel {
             
 				} else if(file[i].contains("g ")) {		// lorsque l'on trouve un nouveau groupe
 					currentShape = app.createShape(PConstants.GROUP);
-					//PApplet.println("Nouveau groupe : " + file[i].split(" ")[1]);
 					currentShape.setName(file[i].split(" ")[1]);
 					model.addChild(currentShape);
 					counter[0] = skeleton.getTypeCode(currentShape.getName());
@@ -127,9 +132,6 @@ class ZZModel {
 					currentMat = ZZMaterial.textureByName(materiel, file[i].split(" ")[1]);
 				}
 			}
-			// squelette au format sk
-			//skeleton.load("./data/skeleton.sk");		// rajouter le cas où quand le squelette n'est pas trouvé on utilise le squelette de base
-			// squelette au format bvh
 			skeleton.loadBVH(filename.replace("obj", "bvh"));
 			PApplet.println("Chargement du modèle : terminé");
 		} else {
@@ -150,21 +152,29 @@ class ZZModel {
     }
 
 	public void initBasis() {
-		/******************************************
-		 * 
-		 * Enregistre le squelette de base
-		 * 
-		 ******************************************/
-		basis = skeleton;
+    	/***************************************************************
+    	 * 
+		 *	Enregistre le squelette de base
+    	 * 
+    	 ***************************************************************/
+		
+		basisSkel = skeleton.copy();
+		for (int i = 0; i < vertices.size(); i++) {			
+			basisVert.add(new ZZertex(vertices.get(i).x, vertices.get(i).y, vertices.get(i).z));			
+		}
 	}
     
-	public void resetSkel() {
-		/************************************************
-		 * 
-		 * Remet le modele dans sa position initiale
-		 * 
-		 ************************************************/
-		skeleton = basis;
+	public void resetToBasis() {
+    	/***************************************************************
+    	 * 
+		 *	Remet le modele dans sa position initiale
+    	 * 
+    	 ***************************************************************/
+		
+		skeleton = basisSkel.copy();
+		for (int i = 0; i < vertices.size(); i++) {
+			vertices.get(i).set(basisVert.get(i));			
+		}
 	}
 	
     public int getChildCount() {
@@ -180,7 +190,7 @@ class ZZModel {
     public void scale2(float s) { // deprecated : ne modifie pas les vertices mais joue sur la matrice
     	/***************************************************************
     	 * 
-    	 *	change la taille du modèle
+    	 *	change la taille du modele
     	 * 
     	 ***************************************************************/
 
@@ -269,11 +279,11 @@ class ZZModel {
       
     	ArrayList<Integer> jts = partWithChildren(part);
     	HashSet<Integer> vtcs = new HashSet<Integer>();
-    	PVector center = skeleton.joints[skeleton.joints[part].getParent()];
+    	PVector center = skeleton.getJoint(skeleton.getJoint(part).getParent());
       
     	for (int i = 0; i < jts.size(); i++) {
     		vtcs.addAll(groups[jts.get(i)]);
-    		skeleton.joints[jts.get(i)].rotateAround(center, theta, phi);	// mise a jour du squelette
+    		skeleton.getJoint(jts.get(i)).rotateAround(center, theta, phi);	// mise a jour du squelette
     	}
     	for (Iterator iterator = vtcs.iterator(); iterator.hasNext();) {
     		Integer integer = (Integer) iterator.next();
@@ -427,87 +437,63 @@ class ZZModel {
     	return retour;
     }
     
-    public void move_1(ZZoint[] newPosition){
+    public ZZector getPosition() {
+    	/***************************************************************
+    	 * 
+    	 *  permet d'obtenir la position du modele
+    	 * 
+    	 ***************************************************************/
+    		
+    	return skeleton.getJoint(ZZkeleton.ROOT);
+    }
+    
+    public float getHeight() {
+    	/***************************************************************
+    	 * 
+    	 *  permet d'obtenir la hauteur du modele
+    	 * 
+    	 ***************************************************************/
+    		
+    	return model.height;
+    }
+    
+    public void move(ZZoint[] newPosition){
     	/*******************************************************
     	 * 
-    	 * Faire bouger le modele avec la kinect 1
+    	 *	algorithme principal d'animation du modele
     	 * 
     	 *******************************************************/
    	
-    	resetSkel();
+    	resetToBasis();
     	
-    	ZZector dl = newPosition[ZZkeleton.TORSO];		// translation generale
-    	PApplet.println(dl);
-    	dl.mult((float) 0.01);
-    	dl.z += 500;
-    	dl.sub(skeleton.joints[ZZkeleton.TORSO]);
-    	this.translate(dl);
+    	ZZector dl = newPosition[ZZkeleton.ROOT];				/****************************/
+    	dl.sub(skeleton.getJoint(ZZkeleton.ROOT));				//							//
+    	dl.div(8);												//	translation generale	//
+    	dl.z += 400;											//							//
+    	this.translate(dl);										/****************************/
     	
-    	movePart_2(ZZkeleton.NECK, newPosition);
-    	movePart_2(ZZkeleton.HEAD, newPosition);
-    	
-    	movePart_2(ZZkeleton.SHOULDER_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.ELBOW_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.WRIST_RIGHT, newPosition);
-    	
-    	movePart_2(ZZkeleton.SHOULDER_LEFT, newPosition);
-    	movePart_2(ZZkeleton.ELBOW_LEFT, newPosition);
-    	movePart_2(ZZkeleton.WRIST_LEFT, newPosition);
-
-    	movePart_2(ZZkeleton.KNEE_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.ANKLE_RIGHT, newPosition);
-
-    	movePart_2(ZZkeleton.KNEE_LEFT, newPosition);
-    	movePart_2(ZZkeleton.ANKLE_LEFT, newPosition);
-    }
-    
-    public void move_2(ZZoint[] newPosition) {
-	    /***************************************************************
-	     * 
-	     *  algorithme principal d'animation du modele
-	     *  pour kinect 2
-	     * 
-	     ***************************************************************/
-    	
-    	resetSkel();
-    	
-    	ZZector dl = newPosition[ZZkeleton.ROOT];		// translation generale
-    	dl.mult(4);
-    	dl.sub(skeleton.joints[ZZkeleton.ROOT]);
-    	this.translate(dl);
-
     	//movePart(ZZkeleton.TORSO, newPosition);		// rotation des sous membres
     	//movePart(ZZkeleton.WAIST, newPosition);
     	
-    	movePart_2(ZZkeleton.NECK, newPosition);
-    	movePart_2(ZZkeleton.HEAD, newPosition);
+    	//movePart(ZZkeleton.NECK, newPosition);
+    	movePart(ZZkeleton.HEAD, newPosition);
     	
-    	movePart_2(ZZkeleton.SHOULDER_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.ELBOW_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.WRIST_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.HAND_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.THUMB_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.INDEX_RIGHT, newPosition);
+    	//movePart(ZZkeleton.SHOULDER_RIGHT, newPosition);
+    	movePart(ZZkeleton.ELBOW_RIGHT, newPosition);
+    	movePart(ZZkeleton.WRIST_RIGHT, newPosition);
     	
-    	movePart_2(ZZkeleton.SHOULDER_LEFT, newPosition);
-    	movePart_2(ZZkeleton.ELBOW_LEFT, newPosition);
-    	movePart_2(ZZkeleton.WRIST_LEFT, newPosition);
-    	movePart_2(ZZkeleton.HAND_LEFT, newPosition);
-    	movePart_2(ZZkeleton.THUMB_LEFT, newPosition);
-    	movePart_2(ZZkeleton.INDEX_LEFT, newPosition);
+    	//movePart(ZZkeleton.SHOULDER_LEFT, newPosition);
+    	movePart(ZZkeleton.ELBOW_LEFT, newPosition);
+    	movePart(ZZkeleton.WRIST_LEFT, newPosition);
 
-    	movePart_2(ZZkeleton.HIP_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.KNEE_RIGHT, newPosition);
-    	movePart_2(ZZkeleton.ANKLE_RIGHT, newPosition);
-    	//movePart_2(ZZkeleton.FOOT_RIGHT, newPosition);	// inutile
+    	movePart(ZZkeleton.KNEE_RIGHT, newPosition);
+    	movePart(ZZkeleton.ANKLE_RIGHT, newPosition);
 
-    	movePart_2(ZZkeleton.HIP_LEFT, newPosition);
-    	movePart_2(ZZkeleton.KNEE_LEFT, newPosition);
-    	movePart_2(ZZkeleton.ANKLE_LEFT, newPosition);
-    	//movePart_2(ZZkeleton.FOOT_LEFT, newPosition);	// inutile
+    	movePart(ZZkeleton.KNEE_LEFT, newPosition);
+    	movePart(ZZkeleton.ANKLE_LEFT, newPosition);
     }
     
-    private void movePart_2(int part, ZZoint [] mouv) {
+    private void movePart(int part, ZZoint [] mouv) {
 	    /***************************************************************
 	     * 
 	     *  algorithme secondaire d'animation du modele
@@ -521,9 +507,9 @@ class ZZModel {
     	
     	// calcul des vecteurs
     	v1 = mouv[part].copy();
-    	v1.sub(mouv[skeleton.joints[part].getParent()]);
-    	v2 = this.skeleton.joints[part].copy();
-    	v2.sub(this.skeleton.joints[skeleton.joints[part].getParent()]);
+    	v1.sub(mouv[skeleton.getJoint(part).getParent()]);
+    	v2 = this.skeleton.getJoint(part).copy();
+    	v2.sub(this.skeleton.getJoint(skeleton.getJoint(part).getParent()));
 
     	// calcul des angles
     	f1 = PApplet.atan2(v1.y, v1.x);
@@ -539,65 +525,4 @@ class ZZModel {
     		rotatePart(part, f3, f4, 0); // application des rotations
     	}
     }
-
-    private void movePart_1(int part, ZZoint [] mouv) {
-	    /***************************************************************
-	     * 
-	     *  algorithme secondaire d'animation du modele
-	     * 
-	     ***************************************************************/
-    	double p = 0.1;	// seuil pour effectuer la rotation
-    	
-    	// declaration des variables
-    	PVector v1,v2;
-    	float f1, f2, f3, f4;
-    	
-    	int mouvPart=0; //recuperation au bon endroit pour kinect 1
-    	/* Matching squelette avec squelette kinect 1 */
-    	if (part == 2) {
-			mouvPart = 1;
-		} else if (part == 3){
-			mouvPart = 0;
-		} else if (part == 8){
-			mouvPart = 3;
-		} else if (part == 9){
-			mouvPart = 5;
-		} else if (part == 11){
-			mouvPart = 7;
-		} else if (part == 4){
-			mouvPart = 2;
-		} else if (part == 5){
-			mouvPart = 4;
-		} else if (part == 7){
-			mouvPart = 6;
-		} else if (part == 16){
-			mouvPart = 10;
-		} else if (part == 17){
-			mouvPart = 12;
-		} else if (part == 12){
-			mouvPart = 9;
-		} else if (part == 13){
-			mouvPart = 11;
-		}
-    	
-    	// calcul des vecteurs
-    	v1 = mouv[mouvPart].copy();
-    	v1.sub(mouv[skeleton.joints[mouvPart].getParent()]);
-    	v2 = this.skeleton.joints[part].copy();
-    	v2.sub(this.skeleton.joints[skeleton.joints[part].getParent()]);
-
-    	// calcul des angles
-    	f1 = PApplet.atan2(v1.y, v1.x);
-    	f2 = PApplet.atan2(v2.y, v2.x);
-    	f3 = f1 - f2;
-
-    	f1 = PApplet.atan2(v1.z, v1.x);
-    	f2 = PApplet.atan2(v2.z, v2.x);
-    	f4 = f1 - f2;
-    	
-    	if (app.abs(app.abs(skeleton.getLastRotation(part)[0]) - app.abs(f3)) > p ||
-    		app.abs(app.abs(skeleton.getLastRotation(part)[1]) - app.abs(f4)) > p) {
-    		rotatePart(part, f3, f4, 0); // application des rotations
-    	}
-    }
-} //class
+}

@@ -13,7 +13,7 @@ ROOT TORSO
 			CHANNELS 3 Xrotation Zrotation Yrotation
 			End Site
 			{
-				OFFSET 0.000000 0.154500 0.116200
+				OFFSET 0.000000 0.154500 0.016200
 			}
 		}
 	}

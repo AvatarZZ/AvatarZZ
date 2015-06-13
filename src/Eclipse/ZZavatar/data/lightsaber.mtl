@@ -1,0 +1,82 @@
+# Material file for lightsaber.obj
+
+newmtl anisotropic2SG
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.89 0.89 0.89
+	Ks 0.5 0.5 0.5
+	Ka 0.0 0.0 0.0
+
+newmtl blinn1SG
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.0 0.0 0.0
+	Ks 0.5 0.5 0.5
+	Ka 0.0 0.0 0.0
+
+newmtl blinn4SG
+	Ns 0
+	d 1
+	illum 2
+	Kd 1.0 0.0 0.0
+	Ks 0.5 0.5 0.5
+	Ka 0.0 0.0 0.0
+
+newmtl blinn5SG
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.0 0.0 1.0
+	Ks 0.5 0.5 0.5
+	Ka 0.0 0.0 0.0
+
+newmtl blinn6SG
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.0 1.0 0.0
+	Ks 0.5 0.5 0.5
+	Ka 0.0 0.0 0.0
+
+newmtl blinn7SG
+	Ns 0
+	d 1
+	illum 2
+	Kd 1.0 1.0 0.0
+	Ks 0.5 0.5 0.5
+	Ka 0.0 0.0 0.0
+
+newmtl blinn8SG
+	Ns 0
+	d 1
+	illum 2
+	Kd -0.0 -0.0 -0.0
+	Ks 0.5 0.5 0.5
+	Ka 0.0 0.0 0.0
+
+newmtl blinn9SG
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.0 0.0 0.0
+	Ks 0.5 0.5 0.5
+	Ka 0.0 0.0 0.0
+
+newmtl initialShadingGroup
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.5 0.5 0.5
+	Ks 0.0 0.0 0.0
+	Ka 0.0 0.0 0.0
+
+newmtl surfaceShader1SG
+	Ns 0
+	d 1
+	illum 2
+	Kd 0.0 0.63 1.0
+	Ks 0.0 0.0 0.0
+	Ka 0.0 0.63 1.0
+

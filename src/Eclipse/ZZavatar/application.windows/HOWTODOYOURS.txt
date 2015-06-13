@@ -1,0 +1,15 @@
+Comment préparer son propre avatar ?
+
+ETAPE 1 : choisir un mesh et l'importer sous blender.
+ETAPE 2 : lui assigner l'armature apropriée avec avec les bons noms (il est recommandé d'utiliser ./SkeletonTemplate.blend).
+ETAPE 3 : Sélectionner le mesh puis l'armature.
+ETAPE 4 : Ctrl+P : Set Parent to > Armature Deform > With Automatic Weights
+ETAPE 5 : Exporter le résultat :
+	ETAPE 5.1 : File > Export > Wavefront (.obj) avec les options : "Include UVs" "Write Materials" "Triangulate Faces" "Polygroups" "Objects as OBJ Objects"
+	Etape 5.2 : File > Export > Motion Capture (.bvh)
+ETAPE 6 : Dans Misfit Model 3D, charger le mesh et vérifier (et corriger) l'assignement automatique des faces aux groupes. Pour ce faire aller dans le menu "Groups > Edit Groups...". En particulier vérifier "No group" et d'éventuels "(null)".
+ETAPE 7 : Exporter le résultat obtenu dans Misfit (ne pas sauver les normales).
+ETAPE 8 : ENJOY.
+
+
+PS : donner le même nom à tous les fichiers.
